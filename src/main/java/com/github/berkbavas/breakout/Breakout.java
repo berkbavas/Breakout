@@ -1,14 +1,8 @@
 package com.github.berkbavas.breakout;
 
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javafx.animation.AnimationTimer;
+import com.github.berkbavas.breakout.engine.PhysicsEngine;
+import com.github.berkbavas.breakout.gui.ImageGenerator;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.geometry.Bounds;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -16,14 +10,19 @@ import javafx.scene.robot.Robot;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class MainWindow extends Application {
+import java.util.Objects;
+
+public class Breakout extends Application {
     static {
-        Font.loadFont(Objects.requireNonNull(MainWindow.class.getResource("/font/BlackOpsOne-Regular.ttf")).toExternalForm(), 0);
+        Font.loadFont(Objects.requireNonNull(Breakout.class.getResource("/font/BlackOpsOne-Regular.ttf")).toExternalForm(), 0);
     }
 
     private final Robot robot = new Robot();
     private final StackPane root = new StackPane();
-    private final Controller controller = new Controller();
+    private final PhysicsEngine engine;
+    private final ImageGenerator ig;
+
+    private final GameObjects gameObjects;
 
     private boolean focus = false;
 
@@ -31,10 +30,16 @@ public class MainWindow extends Application {
         launch(args);
     }
 
+    public Breakout() {
+        gameObjects = GameObjectConstructor.construct();
+        engine = new PhysicsEngine(gameObjects);
+        ig = new ImageGenerator(gameObjects);
+    }
+
     @Override
     public void start(Stage primaryStage) {
 
-        root.getChildren().add(controller.getContainer());
+        root.getChildren().add(ig.getContainer());
         Scene scene = new Scene(root, Color.BLACK);
 
 //        manager.getGameBoard().setOnMouseClicked(event -> {
@@ -62,11 +67,15 @@ public class MainWindow extends Application {
         primaryStage.centerOnScreen();
         primaryStage.show();
 
-        controller.start();
+        engine.start();
+        ig.start();
     }
 
     @Override
     public void stop() {
-        System.out.println("MainWindow.stop()");
+        System.out.println("Breakout.stop()");
+
+        engine.stop();
+        ig.stop();
     }
 }

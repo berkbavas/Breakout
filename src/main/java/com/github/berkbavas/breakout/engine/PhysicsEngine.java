@@ -1,71 +1,99 @@
 package com.github.berkbavas.breakout.engine;
 
-import com.github.berkbavas.breakout.Stopwatch;
-import com.github.berkbavas.breakout.shapes.base.Disk;
-import com.github.berkbavas.breakout.shapes.base.Point2D;
-import com.github.berkbavas.breakout.shapes.base.Rectangle;
-import com.github.berkbavas.breakout.shapes.base.Vector2D;
-import com.github.berkbavas.breakout.shapes.complex.Ball;
-import com.github.berkbavas.breakout.shapes.complex.Room;
+import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.engine.node.Ball;
+import com.github.berkbavas.breakout.engine.node.Paddle;
+import com.github.berkbavas.breakout.engine.node.Room;
+import com.github.berkbavas.breakout.math.Util;
+import com.github.berkbavas.breakout.util.Stopwatch;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PhysicsEngine {
 
+    private final Stopwatch chronometer = new Stopwatch();
+    private final Stopwatch performanceMonitor = new Stopwatch();
+    private final GameObjects gameObjects;
+    private final AtomicBoolean paused = new AtomicBoolean(false);
+
     private final Timer timer = new Timer("PhysicsEngine", true);
     private final TimerTask task = new TimerTask() {
-
         @Override
         public void run() {
             tick();
         }
     };
 
-    private final Stopwatch chronometer = new Stopwatch();
-    private Room room;
-    private ArrayList<Rectangle> bricks;
-    private Rectangle paddle;
-    private Disk ball;
-    private boolean paused = false;
-    private Disk nextBall = new Disk(0, 0, 0);
+    private Ball previousBall;
 
-    public PhysicsEngine(Room room, ArrayList<Rectangle> bricks, Rectangle paddle, Disk ball) {
-        this.room = room;
-        this.bricks = bricks;
-        this.paddle = paddle;
-        this.ball = ball;
+    public PhysicsEngine(GameObjects gameObjects) {
+        this.gameObjects = gameObjects;
+        this.previousBall = gameObjects.getBall();
     }
 
     public void tick() {
-        final float ifps = chronometer.restart();
 
-        nextBall.updateFrom(ball);
-        nextBall.next(ifps);
+        if (paused.get()) {
+            return;
+        }
+        
+        float remainingTime = chronometer.restart();
 
+        // Iterations
+        while (!Util.isFuzzyZero(remainingTime)) {
+            Room room = gameObjects.getRoom();
+            Ball ball = gameObjects.getBall();
+            Paddle paddle = gameObjects.getPaddle();
 
-        ArrayList<CollisionResult> results = room.checkCollision(nextBall);
-        process(results, ball, ifps);
+            ArrayList<CollisionResult> candidates = new ArrayList<>();
 
-        System.out.printf("x: %.2f, y: %.2f, ifps: %.4f, ThreadId: %d %n", ball.getX(), ball.getY(), ifps,
-                Thread.currentThread().getId());
+            candidates.addAll(CollisionChecker.checkCollision(room, ball, previousBall, remainingTime));
+            candidates.addAll(CollisionChecker.checkCollision(paddle, ball, previousBall, remainingTime));
+            previousBall = gameObjects.getBall();
+            remainingTime = process(candidates, remainingTime);
+        }
     }
 
-    public static void process(ArrayList<CollisionResult> results, Disk ball, float ifps) {
+    private float process(ArrayList<CollisionResult> candidates, float ifps) {
 
-        for (CollisionResult result : results) {
-            StaticObject obj = result.getCollidingObject();
-            synchronized (ball.lock()) {
-                obj.processCollision(ball, result, ifps);
+        CollisionResult collision = findCandidate(candidates);
+        float remainingTime;
+
+        if (collision != null) { // There is a collision
+            Ball newBall = collision.getNewBall();
+            gameObjects.setBall(newBall);
+            remainingTime = ifps - collision.getTimeToCollision();
+        } else { // No collision
+            Ball newBall = gameObjects.getBall().move(ifps);
+            gameObjects.setBall(newBall);
+            remainingTime = 0.0f;
+        }
+        remainingTime = Math.max(remainingTime, 0.0f);
+
+        return remainingTime;
+    }
+
+    private CollisionResult findCandidate(ArrayList<CollisionResult> candidates) {
+        float minConsumedTime = Float.MAX_VALUE;
+        CollisionResult collision = null;
+
+        for (CollisionResult candidate : candidates) {
+            final float consumedTime = candidate.getTimeToCollision();
+            if (consumedTime < minConsumedTime) {
+                minConsumedTime = consumedTime;
+                collision = candidate;
             }
         }
 
-        if (results.isEmpty()) {
-            synchronized (ball.lock()) {
-                ball.next(ifps);
-            }
-        }
+        return collision;
+    }
+
+    // x, y in [-1, 1] where (x,y) = (0,0) is the center and (x, y) = (-1, -1) is the left bottom
+    public void onMouseMoved(float x, float y) {
+
     }
 
     public void start() {
@@ -74,16 +102,18 @@ public class PhysicsEngine {
         timer.scheduleAtFixedRate(task, 0, 5);
     }
 
-    public void cancel() {
+
+    public void stop() {
         timer.cancel();
     }
 
+
     public void pause() {
-        paused = true;
+        paused.set(true);
     }
+
 
     public void resume() {
-        paused = false;
+        paused.set(false);
     }
-
 }
