@@ -52,6 +52,39 @@ public class Rectangle2D {
         this.height = height;
     }
 
+    public Rectangle2D(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom) {
+        this.leftTop = leftTop;
+        this.leftBottom = leftBottom;
+        this.rightTop = rightTop;
+        this.rightBottom = rightBottom;
+
+        left = new LineSegment2D(leftTop, leftBottom);
+        right = new LineSegment2D(rightTop, rightBottom);
+        top = new LineSegment2D(leftTop, rightTop);
+        bottom = new LineSegment2D(leftBottom, rightBottom);
+
+        edges.add(left);
+        edges.add(right);
+        edges.add(top);
+        edges.add(bottom);
+
+        width = leftTop.distanceTo(rightTop);
+        height = leftTop.distanceTo(leftBottom);
+    }
+
+
+    public boolean isPointInside(Point2D point) {
+        Vector2D v0 = point.subtract(leftBottom).toVector2D();
+        Vector2D v1 = point.subtract(rightTop).toVector2D();
+        Vector2D v2 = point.subtract(leftTop).toVector2D();
+        Vector2D v3 = point.subtract(rightBottom).toVector2D();
+
+        double dot0 = Vector2D.dot(v0, v1);
+        double dot1 = Vector2D.dot(v2, v3);
+
+        return Util.isLessThanOrEqualToZero(dot0) && Util.isLessThanOrEqualToZero(dot1);
+    }
+
     public ArrayList<Point2D> findIntersections(Ray2D ray) {
         ArrayList<Point2D> intersections = new ArrayList<>();
 
@@ -60,5 +93,24 @@ public class Rectangle2D {
         }
 
         return intersections;
+    }
+
+    public static boolean isRectangle2D(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom) {
+
+        LineSegment2D left = new LineSegment2D(leftTop, leftBottom);
+        LineSegment2D right = new LineSegment2D(rightTop, rightBottom);
+        LineSegment2D top = new LineSegment2D(leftTop, rightTop);
+        LineSegment2D bottom = new LineSegment2D(leftBottom, rightBottom);
+
+        Vector2D leftDir = left.direction();
+        Vector2D topDir = top.direction();
+
+        Vector2D rightDir = right.direction();
+        Vector2D bottomDir = bottom.direction();
+
+        return Util.isFuzzyZero(leftDir.dot(topDir)) &&
+                Util.isFuzzyZero(topDir.dot(rightDir)) &&
+                Util.isFuzzyZero(rightDir.dot(bottomDir)) &&
+                Util.isFuzzyZero(bottomDir.dot(leftDir));
     }
 }
