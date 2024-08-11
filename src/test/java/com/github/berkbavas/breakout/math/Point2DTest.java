@@ -32,8 +32,8 @@ public class Point2DTest {
         Point2D p1 = new Point2D(3.0f, 4.0f);
         Point2D p2 = new Point2D(0.0f, 0.0f);
 
-        float actual = Point2D.distanceBetween(p1, p2);
-        float expected = 5.0f;
+        double actual = Point2D.distanceBetween(p1, p2);
+        double expected = 5.0f;
 
         Assert.assertEquals(expected, actual, Util.EPSILON);
     }
@@ -43,8 +43,8 @@ public class Point2DTest {
         Point2D p1 = new Point2D(-3.0f, -4.0f);
         Point2D p2 = new Point2D(0.0f, 0.0f);
 
-        float actual = p1.distanceTo(p2);
-        float expected = 5.0f;
+        double actual = p1.distanceTo(p2);
+        double expected = 5.0f;
 
         Assert.assertEquals(expected, actual, Util.EPSILON);
     }

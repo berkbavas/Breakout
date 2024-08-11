@@ -52,7 +52,7 @@ public class Vector2DTest {
 
     @Test
     public void testNormalization() {
-        float inverseSqrt2 = 1.0f / (float) Math.sqrt(2.0f);
+        double inverseSqrt2 = 1.0f / (double) Math.sqrt(2.0f);
         Assert.assertEquals(new Vector2D(1.0f, 0.0f), new Vector2D(1.0f, 0.0f).normalized());
 
         Assert.assertEquals(new Vector2D(1.0f, 1.0f).multiply(inverseSqrt2), new Vector2D(1.0f, 1.0f).normalized());
@@ -62,10 +62,10 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testOpposite() {
-        Assert.assertEquals(new Vector2D(0.0f, 0.0f), new Vector2D(0.0f, 0.0f).opposite());
-        Assert.assertEquals(new Vector2D(-1.0f, 0.0f), new Vector2D(1.0f, 0.0f).opposite());
-        Assert.assertEquals(new Vector2D(0.0f, 10.0f), new Vector2D(0.0f, -10.0f).opposite());
-        Assert.assertEquals(new Vector2D(-1.0f, 10.0f), new Vector2D(1.0f, -10.0f).opposite());
+    public void testInvert() {
+        Assert.assertEquals(new Vector2D(0.0f, 0.0f), new Vector2D(0.0f, 0.0f).invert());
+        Assert.assertEquals(new Vector2D(-1.0f, 0.0f), new Vector2D(1.0f, 0.0f).invert());
+        Assert.assertEquals(new Vector2D(0.0f, 10.0f), new Vector2D(0.0f, -10.0f).invert());
+        Assert.assertEquals(new Vector2D(-1.0f, 10.0f), new Vector2D(1.0f, -10.0f).invert());
     }
 }

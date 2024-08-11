@@ -8,49 +8,40 @@ import java.util.Optional;
 @ToString
 @Getter
 public class Matrix2x2 {
-    //
-    // | m00 m01 |
-    // | m10 m11 |
-    //
-    // i.e.
-    //
-    // ((m00, m01),(m10, m11))
-    //
+    private final double m00;
+    private final double m01;
+    private final double m10;
+    private final double m11;
 
-    private final float m00;
-    private final float m01;
-    private final float m10;
-    private final float m11;
-
-    public Matrix2x2(float m00, float m01, float m10, float m11) {
+    public Matrix2x2(double m00, double m01, double m10, double m11) {
         this.m00 = m00;
         this.m01 = m01;
         this.m10 = m10;
         this.m11 = m11;
     }
 
-    public float determinant() {
+    public double determinant() {
         return m00 * m11 - m01 * m10;
     }
 
     public Matrix2x1 multiply(Matrix2x1 other) {
-        final float r0 = m00 * other.getM00() + m01 * other.getM10();
-        final float r1 = m10 * other.getM00() + m11 * other.getM10();
+        final double r0 = m00 * other.getM00() + m01 * other.getM10();
+        final double r1 = m10 * other.getM00() + m11 * other.getM10();
 
         return new Matrix2x1(r0, r1);
     }
 
     public Optional<Matrix2x2> inverted() {
-        final float det = determinant();
+        final double det = determinant();
 
         if (Util.isFuzzyZero(det)) {
             return Optional.empty();
         }
 
-        final float n00 = m11 / det;
-        final float n01 = m01 / det;
-        final float n10 = m10 / det;
-        final float n11 = m00 / det;
+        final double n00 = m11 / det;
+        final double n01 = m01 / det;
+        final double n10 = m10 / det;
+        final double n11 = m00 / det;
 
         return Optional.of(new Matrix2x2(n00, -n01, -n10, n11));
     }

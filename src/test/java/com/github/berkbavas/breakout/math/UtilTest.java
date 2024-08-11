@@ -39,4 +39,12 @@ public class UtilTest {
         Assert.assertTrue(Util.isFuzzyZero(Math.atan(1) - 0.25f * Math.PI));
         Assert.assertTrue(Util.isFuzzyZero(1.0 - 1.000000000000001));
     }
+
+    @Test
+    public void testFuzzyBetween(){
+        Assert.assertTrue(Util.isFuzzyBetween(0.0, 0.00001, 1.0));
+        Assert.assertTrue(Util.isFuzzyBetween(0.0, 0.0000001, 0.000001));
+        Assert.assertTrue(Util.isFuzzyBetween(0.0, 0, 0.000001));
+        Assert.assertFalse(Util.isFuzzyBetween(2 * Math.sqrt(4), 3.99999, 4.00000001));
+    }
 }

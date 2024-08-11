@@ -7,7 +7,14 @@ public final class Util {
     }
 
     public static <T extends Number> boolean fuzzyCompare(T a, T b) {
-        return Math.abs(a.doubleValue() - b.doubleValue()) < Util.EPSILON;
+        final double x = a.doubleValue();
+        final double y = b.doubleValue();
+
+        if (Double.isNaN(x) && Double.isNaN(y)) {
+            return true;
+        }
+
+        return Math.abs(x - y) < Util.EPSILON;
     }
 
     public static <T extends Number> boolean isFuzzyZero(T a) {

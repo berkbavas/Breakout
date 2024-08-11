@@ -7,230 +7,300 @@ import java.util.Optional;
 
 public class Ray2DTest {
 
+    public Optional<Double> findIntersectionParameter(Ray2D ray0, Ray2D ray1) {
+        return ray0.findParameterIfIntersects(ray1);
+    }
+
+    public Optional<Double> findParameterForGivenPoint(Ray2D ray, Point2D point) {
+        return ray.findParameterForGivenPoint(point);
+    }
+
+    public Optional<Boolean> isCollinear(Ray2D ray0, Ray2D ray1) {
+        return Optional.of(ray0.isCollinear(ray1));
+    }
+
+    public Optional<Boolean> isPointOnRay(Ray2D ray, Point2D point) {
+        return Optional.of(ray.isPointOnRay(point));
+    }
+
+    public Optional<Point2D> findIntersection(Ray2D ray0, Ray2D ray1) {
+        return ray0.findIntersection(ray1);
+    }
+
+    public Optional<Point2D> findIntersection(Ray2D ray, Line2D line) {
+        return ray.findIntersection(line);
+    }
+
     @Test
-    public void testPointPointAt() {
+    public void testPointCalculatePointAt() {
         Ray2D ray = new Ray2D(new Point2D(1.0f, 1.0f), new Vector2D(1.0f, 0.0f));
-        Point2D actual = ray.pointAt(1.123f);
+        Point2D actual = ray.calculatePointAt(1.123f);
         Point2D expected = new Point2D(2.123f, 1.0f);
         Assert.assertEquals(expected, actual);
     }
 
     @Test
-    public void findIntersectionCase1() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(1.0f, 1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
+    public void testFindIntersectionBetweenRayAndLine() {
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Line2D(new Point2D(0, 0), new Point2D(-1, -1))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, 0), point));
 
-        Point2D origin2 = new Point2D(0.0f, 1.0f);
-        Vector2D direction2 = new Vector2D(1.0f, 0.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
+        findIntersection(
+                new Ray2D(new Point2D(0, 1), new Vector2D(0, 1)),
+                new Line2D(new Point2D(0, 0), new Point2D(-1, -1))
+        ).ifPresent((Point2D point) -> Assert.fail());
 
-        Optional<Matrix2x1> result = ray1.findIntersection(ray2);
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Line2D(new Point2D(1, 1), new Point2D(1, 2))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(1, 1), point));
 
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get().getM00(), (float) Math.sqrt(2.0f), Util.EPSILON);
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Line2D(new Point2D(0.5, 0.5), new Point2D(-1, 0.5))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0.5, 0.5), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(1, 0), new Vector2D(-1, 0)),
+                new Line2D(new Point2D(-1, -1), new Point2D(1, 1))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, 0), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(1, 1), new Vector2D(0, -1)),
+                new Line2D(new Point2D(-1, 0), new Point2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(1, 0), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Line2D(new Point2D(0, -1), new Point2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.fail());
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, -1)),
+                new Line2D(new Point2D(0, -1), new Point2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(-0.5, -0.5), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(-100, -100), new Vector2D(1, 1)),
+                new Line2D(new Point2D(0, -1), new Point2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(-0.5, -0.5), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, -1), new Vector2D(0, 1)),
+                new Line2D(new Point2D(0, -1), new Point2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, -1), point));
     }
 
     @Test
-    public void findIntersectionCase2() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(-1.0f, 0.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
+    public void testFindIntersectionBetweenTwoRays() {
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(0, 1), new Vector2D(1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(1, 1), point));
 
-        Point2D origin2 = new Point2D(-5.0f, 5.0f);
-        Vector2D direction2 = new Vector2D(0.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, -1))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, 0), point));
 
-        Optional<Matrix2x1> result = ray1.findIntersection(ray2);
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(1, 1), new Vector2D(-1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(1, 1), point));
 
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get().getM00(), 5.0f, Util.EPSILON);
-        Assert.assertEquals(result.get().getM10(), 5.0f, Util.EPSILON);
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 0)),
+                new Ray2D(new Point2D(1, 1), new Vector2D(0, -1))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(1, 0), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, 1)),
+                new Ray2D(new Point2D(1, 0), new Vector2D(-1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, 0), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, 1)),
+                new Ray2D(new Point2D(1, 1), new Vector2D(-1, 0))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, 1), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(0.5, 0.5), new Vector2D(-1, 1))
+        ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0.5, 0.5), point));
+
+        findIntersection(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(-100, 0), new Vector2D(-1, -1))
+        ).ifPresent((Point2D point) -> Assert.fail());
+
+        findIntersection(
+                new Ray2D(new Point2D(1, 1), new Vector2D(1, 0)),
+                new Ray2D(new Point2D(-1, -1), new Vector2D(-1, 0))
+        ).ifPresent((Point2D point) -> Assert.fail());
     }
 
     @Test
-    public void findIntersectionCase3() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(1.0f, 1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
+    public void testFindParameterIfIntersects() {
+        findIntersectionParameter(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(0, 1), new Vector2D(1, 0))
+        ).ifPresent((Double parameter) -> Assert.assertEquals(Math.sqrt(2), parameter, Util.EPSILON));
 
-        Point2D origin2 = new Point2D(1.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
+        findIntersectionParameter(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, 0)),
+                new Ray2D(new Point2D(-5, 5), new Vector2D(0, -1))
+        ).ifPresent((Double parameter) -> Assert.assertEquals(5.0, parameter, Util.EPSILON));
 
-        Optional<Matrix2x1> result = ray1.findIntersection(ray2);
+        findIntersectionParameter(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(1, 0), new Vector2D(-1, -1))
+        ).ifPresent((Double parameter) -> Assert.fail());
 
-        Assert.assertTrue(result.isEmpty());
+        findIntersectionParameter(
+                new Ray2D(new Point2D(10, 0), new Vector2D(-1, 0)),
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, -1))
+        ).ifPresent((Double parameter) -> Assert.assertEquals(10.0, parameter, Util.EPSILON));
+
+
+        findIntersectionParameter(
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, -1)),
+                new Ray2D(new Point2D(10, 0), new Vector2D(-1, 0))
+        ).ifPresent((Double parameter) -> Assert.assertEquals(0.0, parameter, Util.EPSILON));
     }
 
     @Test
-    public void findIntersectionCase4() {
-        Point2D origin1 = new Point2D(10.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(-1.0f, 0.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
+    public void testFindParameter() {
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 0)),
+                new Point2D(0, 1)
+        ).ifPresent((Double parameter) -> Assert.fail());
 
-        Point2D origin2 = new Point2D(0.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(0.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(1, 1), new Vector2D(1, 0)),
+                new Point2D(0, 2)
+        ).ifPresent((Double parameter) -> Assert.fail());
 
-        Optional<Matrix2x1> result = ray1.findIntersection(ray2);
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 0)),
+                new Point2D(100, 0)
+        ).ifPresent((Double parameter) -> Assert.assertEquals(100, parameter, Util.EPSILON));
 
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get().getM00(), 10.0f, Util.EPSILON);
-        Assert.assertEquals(result.get().getM10(), 0.0f, Util.EPSILON);
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(100, 100)
+        ).ifPresent((Double parameter) -> Assert.assertEquals(100 * Math.sqrt(2), parameter, Util.EPSILON));
+
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, 0)),
+                new Point2D(100, 0)
+        ).ifPresent((Double parameter) -> Assert.assertEquals(-100.0, parameter, Util.EPSILON));
+
+        findParameterForGivenPoint(
+                new Ray2D(new Point2D(1, 1), new Vector2D(1, 1)),
+                new Point2D(100, 100)
+        ).ifPresent((Double parameter) -> Assert.assertEquals(99f * Math.sqrt(2.0f), parameter, Util.EPSILON));
     }
 
     @Test
-    public void testFindParameterCase1() {
-        Ray2D ray = new Ray2D(new Point2D(0, 0), new Vector2D(1.0f, 0));
-        Optional<Float> result = ray.findParameterFor(new Point2D(0.0f, 1.0f));
-        Assert.assertTrue(result.isEmpty());
+    public void testIsCollinear() {
+        isCollinear(
+                new Ray2D(new Point2D(1, 1), new Vector2D(1, 1)),
+                new Ray2D(new Point2D(-1, -1), new Vector2D(-1, -1))
+        ).ifPresent(Assert::assertTrue);
+
+        isCollinear(
+                new Ray2D(new Point2D(1, 0), new Vector2D(1, 0)),
+                new Ray2D(new Point2D(-1, 0), new Vector2D(-1, 0))
+        ).ifPresent(Assert::assertTrue);
+
+        isCollinear(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, -1)),
+                new Ray2D(new Point2D(1, 1), new Vector2D(-1, -1))
+        ).ifPresent(Assert::assertTrue);
+
+        isCollinear(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, -1)),
+                new Ray2D(new Point2D(1, 1), new Vector2D(1, 1))
+        ).ifPresent(Assert::assertTrue);
+
+        isCollinear(
+                new Ray2D(new Point2D(0, 0), new Vector2D(-1, -1)),
+                new Ray2D(new Point2D(1, 0), new Vector2D(-1, -1))
+        ).ifPresent(Assert::assertFalse);
+
+        isCollinear(
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, -1)),
+                new Ray2D(new Point2D(1, 0), new Vector2D(0, -1))
+        ).ifPresent(Assert::assertFalse);
+
+        isCollinear(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 2)),
+                new Ray2D(new Point2D(1, 0), new Vector2D(2, -1))
+        ).ifPresent(Assert::assertFalse);
     }
 
     @Test
-    public void testFindParameterCase2() {
-        Point2D origin = new Point2D(1.0f, 1.0f);
-        Vector2D direction = new Vector2D(1.0f, 0.0f);
-        Ray2D ray = new Ray2D(origin, direction);
+    public void testIsPointOnRay() {
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(0.5, 0.5)
+        ).ifPresent(Assert::assertTrue);
 
-        Optional<Float> result = ray.findParameterFor(new Point2D(0.0f, 2.0f));
-        Assert.assertTrue(result.isEmpty());
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(0.0, 0.0)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(1, 1)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(200, 200)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(1.00001, 1)
+        ).ifPresent(Assert::assertFalse);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(1, 1), new Vector2D(-1, -1)),
+                new Point2D(1.01, 1.01)
+        ).ifPresent(Assert::assertFalse);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(1, 1), new Vector2D(-1, -1)),
+                new Point2D(0, 0)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 0)),
+                new Point2D(100, 0)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(0, 1)),
+                new Point2D(0, 100)
+        ).ifPresent(Assert::assertTrue);
+
+        isPointOnRay(
+                new Ray2D(new Point2D(0, 0), new Vector2D(1, 1)),
+                new Point2D(0, 0.1)
+        ).ifPresent(Assert::assertFalse);
     }
 
     @Test
-    public void testFindParameterCase3() {
-        Point2D origin = new Point2D(0.0f, 0.0f);
-        Vector2D direction = new Vector2D(1.0f, 0.0f);
-        Ray2D ray = new Ray2D(origin, direction);
-
-        Optional<Float> result = ray.findParameterFor(new Point2D(100.0f, 0.0f));
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get(), 100.0f, Util.EPSILON);
-    }
-
-
-    @Test
-    public void testFindParameterCase4() {
-        Point2D origin = new Point2D(0.0f, 0.0f);
-        Vector2D direction = new Vector2D(1.0f, 1.0f);
-        Ray2D ray = new Ray2D(origin, direction);
-
-        Optional<Float> result = ray.findParameterFor(new Point2D(100.0f, 100.0f));
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get(), 100f * (float) Math.sqrt(2.0f), Util.EPSILON);
-    }
-
-    @Test
-    public void testFindParameterCase5() {
-        Point2D origin = new Point2D(0.0f, 0.0f);
-        Vector2D direction = new Vector2D(-1.0f, 0.0f);
-        Ray2D ray = new Ray2D(origin, direction);
-
-        Optional<Float> result = ray.findParameterFor(new Point2D(100.0f, 0.0f));
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get(), -100f, Util.EPSILON);
-    }
-
-    @Test
-    public void testFindParameterCase6() {
-        Point2D origin = new Point2D(1.0f, 1.0f);
-        Vector2D direction = new Vector2D(1.0f, 1.0f);
-        Ray2D ray = new Ray2D(origin, direction);
-
-        Optional<Float> result = ray.findParameterFor(new Point2D(100.0f, 100.0f));
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get(), 99f * (float) Math.sqrt(2.0f), Util.EPSILON);
-    }
-
-    @Test
-    public void testIsCollinearCase1() {
-        Point2D origin1 = new Point2D(1.0f, 1.0f);
-        Vector2D direction1 = new Vector2D(1.0f, 1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-
-        Point2D origin2 = new Point2D(-1.0f, -1.0f);
-        Vector2D direction2 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertTrue(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase2() {
-        Point2D origin1 = new Point2D(1.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(1.0f, 0.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(-1.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(-1.0f, 0.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertTrue(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase3() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(1.0f, 1.0f);
-        Vector2D direction2 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertTrue(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase4() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(1.0f, 1.0f);
-        Vector2D direction2 = new Vector2D(1.0f, 1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertTrue(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase5() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(1.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(-1.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertFalse(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase6() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(0.0f, -1.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(1.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(0.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertFalse(ray1.isCollinear(ray2));
-    }
-
-    @Test
-    public void testIsCollinearCase7() {
-        Point2D origin1 = new Point2D(0.0f, 0.0f);
-        Vector2D direction1 = new Vector2D(1.0f, 2.0f);
-        Ray2D ray1 = new Ray2D(origin1, direction1);
-
-        Point2D origin2 = new Point2D(1.0f, 0.0f);
-        Vector2D direction2 = new Vector2D(2.0f, -1.0f);
-        Ray2D ray2 = new Ray2D(origin2, direction2);
-
-        Assert.assertFalse(ray1.isCollinear(ray2));
+    public void testFindClosestPointToCircleCenter() {
+        Assert.assertEquals(new Point2D(0,0), new Ray2D(new Point2D(0,0), new Vector2D(1,1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(0.5,0.5), new Ray2D(new Point2D(0.5,0.5), new Vector2D(1,1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(0,0), new Ray2D(new Point2D(0.5,0.5), new Vector2D(-1,-1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(1,0), new Ray2D(new Point2D(1,-1), new Vector2D(0,1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(1,-1), new Ray2D(new Point2D(1,-1), new Vector2D(0,-1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(5,5),  new Ray2D(new Point2D(10,0), new Vector2D(-1,1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
+        Assert.assertEquals(new Point2D(10,0),  new Ray2D(new Point2D(10,-10), new Vector2D(0,1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
     }
 }

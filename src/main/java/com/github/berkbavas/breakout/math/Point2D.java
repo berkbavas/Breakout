@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class Point2D {
-    protected float x;
-    protected float y;
+    protected double x;
+    protected double y;
 
-    public Point2D(float x, float y) {
+    public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -20,14 +20,14 @@ public class Point2D {
         return new Point2D(x - other.x, y - other.y);
     }
 
-    public float distanceTo(Point2D other) {
+    public double distanceTo(Point2D other) {
         return distanceBetween(this, other);
     }
 
-    public static float distanceBetween(Point2D a, Point2D b) {
-        final float dx = (a.x - b.x);
-        final float dy = (a.y - b.y);
-        return (float) Math.sqrt(dx * dx + dy * dy);
+    public static double distanceBetween(Point2D a, Point2D b) {
+        final double dx = (a.x - b.x);
+        final double dy = (a.y - b.y);
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     public Vector2D toVector2D() {

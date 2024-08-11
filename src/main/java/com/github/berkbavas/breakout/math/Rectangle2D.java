@@ -6,21 +6,37 @@ import java.util.ArrayList;
 
 @Getter
 public class Rectangle2D {
+    //
+    //                     Top
+    //      Left Top                  Right Top
+    //          *------------------------*
+    //          |                        |
+    //    Left  |                        |  Right
+    //          |                        |
+    //          *------------------------*
+    //     Left Bottom              Right Bottom
+    //                    Bottom
+
     private final LineSegment2D left;
     private final LineSegment2D right;
     private final LineSegment2D top;
     private final LineSegment2D bottom;
 
-    private final float width;
-    private final float height;
+    private final Point2D leftTop;
+    private final Point2D leftBottom;
+    private final Point2D rightTop;
+    private final Point2D rightBottom;
+
+    private final double width;
+    private final double height;
 
     ArrayList<LineSegment2D> edges = new ArrayList<>();
 
-    public Rectangle2D(float x, float y, float width, float height) {
-        Point2D leftTop = new Point2D(x, y);
-        Point2D leftBottom = new Point2D(x, y + height);
-        Point2D rightTop = new Point2D(x + width, height);
-        Point2D rightBottom = new Point2D(x + width, y + height);
+    public Rectangle2D(double x, double y, double width, double height) {
+        leftTop = new Point2D(x, y);
+        leftBottom = new Point2D(x, y + height);
+        rightTop = new Point2D(x + width, height);
+        rightBottom = new Point2D(x + width, y + height);
 
         left = new LineSegment2D(leftTop, leftBottom);
         right = new LineSegment2D(rightTop, rightBottom);

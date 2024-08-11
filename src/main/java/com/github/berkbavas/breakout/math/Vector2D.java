@@ -2,11 +2,7 @@ package com.github.berkbavas.breakout.math;
 
 public class Vector2D extends Point2D {
 
-    public Vector2D() {
-        super(0.0f, 0.0f);
-    }
-
-    public Vector2D(float x, float y) {
+    public Vector2D(double x, double y) {
         super(x, y);
     }
 
@@ -18,21 +14,22 @@ public class Vector2D extends Point2D {
         return new Vector2D(x - other.x, y - other.y);
     }
 
-    public Vector2D multiply(float scalar) {
+    public Vector2D multiply(double scalar) {
         return new Vector2D(scalar * x, scalar * y);
     }
 
-    public Vector2D opposite() {
+    public Vector2D invert() {
         return this.multiply(-1.0f);
     }
 
     public Vector2D normalized() {
-        final float norm = norm();
+        final double l2norm = l2norm();
 
-        float x = this.x;
-        float y = this.y;
+        double x = this.x;
+        double y = this.y;
 
-        if (!Util.fuzzyCompare(norm, 1.0f) && !Util.isFuzzyZero(norm)) {
+        if (!Util.fuzzyCompare(l2norm, 1.0f) && !Util.isFuzzyZero(l2norm)) {
+            double norm = Math.sqrt(l2norm);
             x = x / norm;
             y = y / norm;
         }
@@ -46,28 +43,34 @@ public class Vector2D extends Point2D {
 
         normal = normal.normalized();
 
-        final float dot = dot(this, normal);
+        final double dot = dot(this, normal);
         return this.subtract(normal.multiply(2.0f * dot));
     }
 
-    public float dot(Vector2D other) {
+    public double dot(Vector2D other) {
         return dot(this, other);
     }
 
-    public static float dot(Vector2D a, Vector2D b) {
-        return a.getX() * b.getX() + a.getY() * b.getY();
+    public static double dot(Vector2D a, Vector2D b) {
+        return a.x * b.x + a.y * b.y;
     }
 
-    public float norm() {
-        final double xx = Math.pow(x, 2.0f);
-        final double yy = Math.pow(y, 2.0f);
-        return (float) Math.sqrt(xx + yy);
+    public boolean isCollinear(Vector2D other) {
+        Vector2D normal = normal();
+        double dot = normal.dot(other);
+        return Util.isFuzzyZero(dot);
     }
 
-    public float l2orm() {
-        final double xx = Math.pow(x, 2.0f);
-        final double yy = Math.pow(y, 2.0f);
-        return (float) (xx + yy);
+    public Vector2D normal() {
+        return new Vector2D(-y, x);
+    }
+
+    public double norm() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public double l2norm() {
+        return x * x + y * y;
     }
 
     @Override

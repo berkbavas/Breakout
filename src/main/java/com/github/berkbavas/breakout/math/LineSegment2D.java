@@ -6,7 +6,6 @@ import java.util.Optional;
 
 @Getter
 public class LineSegment2D {
-
     private final Point2D P;
     private final Point2D Q;
 
@@ -15,25 +14,29 @@ public class LineSegment2D {
         this.Q = Q;
     }
 
-    public Optional<Point2D> findIntersection(Ray2D other) {
-        // Ray(t) = P + t * (Q - P)
-        // Origin is P.
-        // Direction is (Q - P).
+    public boolean isPointOnLineSegment(Point2D point) {
+        double length = length();
+        double distance = P.distanceTo(point) + Q.distanceTo(point);
 
-        Vector2D direction = Q.subtract(P).toVector2D();
-        Vector2D normalized = direction.normalized();
-        Ray2D ray = new Ray2D(P, normalized);
-        Optional<Matrix2x1> result = ray.findIntersection(other);
-
-        if (result.isPresent()) {
-            float norm = direction.norm();
-            float t = result.get().getM00();
-            if (Util.isFuzzyBetween(0.0f, t, norm)) {
-                return Optional.of(ray.pointAt(t));
-            }
+        if (Util.fuzzyCompare(length, distance)) {
+            Vector2D expectedDirection = new Vector2D(point.x - P.x, point.y - P.y);
+            Vector2D direction = direction();
+            return direction.isCollinear(expectedDirection);
+        } else {
+            return false;
         }
+    }
 
-        return Optional.empty();
+    public double length() {
+        return P.distanceTo(Q);
+    }
+
+    public Vector2D direction() {
+        return new Vector2D(Q.x - P.x, Q.y - P.y);
+    }
+
+    public Optional<Point2D> findIntersection(Ray2D ray) {
+        return ray.findIntersection(this);
     }
 
     @Override
