@@ -29,7 +29,7 @@ public class Rectangle2DTest {
     }
 
     @Test
-    public void testIsPointInside() {
+    public void testContains() {
         Point2D leftTop = new Point2D(0, 3);
         Point2D rightTop = new Point2D(3, 0);
         Point2D leftBottom = new Point2D(-3, 0);
@@ -37,13 +37,13 @@ public class Rectangle2DTest {
 
         Rectangle2D rect = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
 
-        Assert.assertTrue(rect.isPointInside(new Point2D(0, 0)));
-        Assert.assertTrue(rect.isPointInside(new Point2D(0, 3)));
-        Assert.assertTrue(rect.isPointInside(new Point2D(3, 0)));
-        Assert.assertTrue(rect.isPointInside(new Point2D(-3, 0)));
-        Assert.assertTrue(rect.isPointInside(new Point2D(0, -3)));
+        Assert.assertTrue(rect.contains(new Point2D(0, 0)));
+        Assert.assertTrue(rect.contains(new Point2D(0, 3)));
+        Assert.assertTrue(rect.contains(new Point2D(3, 0)));
+        Assert.assertTrue(rect.contains(new Point2D(-3, 0)));
+        Assert.assertTrue(rect.contains(new Point2D(0, -3)));
 
-        Assert.assertFalse(rect.isPointInside(new Point2D(1, 4)));
+        Assert.assertFalse(rect.contains(new Point2D(1, 4)));
     }
 
     @Test
@@ -61,5 +61,66 @@ public class Rectangle2DTest {
         rightBottom = new Point2D(0, -4);
 
         Assert.assertFalse(Rectangle2D.isRectangle2D(leftTop, leftBottom, rightTop, rightBottom));
+    }
+
+    @Test
+    public void testCollidesCase1() {
+        Point2D leftTop = new Point2D(0, 1);
+        Point2D rightTop = new Point2D(1, 0);
+        Point2D leftBottom = new Point2D(-1, 0);
+        Point2D rightBottom = new Point2D(0, -1);
+
+        Rectangle2D rect0 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        leftTop = new Point2D(0, 4);
+        rightTop = new Point2D(3, 0);
+        leftBottom = new Point2D(-3, 0);
+        rightBottom = new Point2D(0, -4);
+
+        Rectangle2D rect1 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        Assert.assertTrue(rect0.collides(rect1));
+        Assert.assertTrue(rect1.collides(rect0));
+
+    }
+
+    @Test
+    public void testCollidesCase2() {
+        Point2D leftTop = new Point2D(0, 1);
+        Point2D rightTop = new Point2D(1, 0);
+        Point2D leftBottom = new Point2D(-1, 0);
+        Point2D rightBottom = new Point2D(0, -1);
+
+        Rectangle2D rect0 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        leftTop = new Point2D(10, 4);
+        rightTop = new Point2D(13, 0);
+        leftBottom = new Point2D(7, 0);
+        rightBottom = new Point2D(10, -4);
+
+        Rectangle2D rect1 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        Assert.assertFalse(rect0.collides(rect1));
+        Assert.assertFalse(rect1.collides(rect0));
+    }
+
+    @Test
+    public void testCollidesCase3() {
+        Point2D leftTop = new Point2D(-2, 2);
+        Point2D rightTop = new Point2D(2, 2);
+        Point2D leftBottom = new Point2D(-2, -2);
+        Point2D rightBottom = new Point2D(2, -2);
+
+        Rectangle2D rect0 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        leftTop = new Point2D(-4, 1);
+        rightTop = new Point2D(4, 1);
+        leftBottom = new Point2D(-4, -1);
+        rightBottom = new Point2D(4, -1);
+
+        Rectangle2D rect1 = new Rectangle2D(leftTop, leftBottom, rightTop, rightBottom);
+
+        Assert.assertTrue(rect0.collides(rect1));
+        Assert.assertTrue(rect1.collides(rect0));
     }
 }
