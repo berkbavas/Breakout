@@ -140,16 +140,16 @@ public class Ray2D {
     public Optional<Point2D> findIntersection(LineSegment2D ls) {
 
         var ref = new Object() {
-            Point2D point = null;
+            Point2D intersection = null;
         };
 
-        Ray2D.from(ls).findIntersection(this).ifPresent((Point2D point) -> {
-            if (ls.isPointOnLineSegment(point)) {
-                ref.point = point;
+        Ray2D.from(ls).findIntersection(this).ifPresent((Point2D intersection) -> {
+            if (ls.isPointOnLineSegment(intersection)) {
+                ref.intersection = intersection;
             }
         });
 
-        return Optional.ofNullable(ref.point);
+        return Optional.ofNullable(ref.intersection);
     }
 
     public List<Point2D> findIntersection(Circle circle) {

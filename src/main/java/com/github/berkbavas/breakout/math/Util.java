@@ -1,7 +1,7 @@
 package com.github.berkbavas.breakout.math;
 
 public final class Util {
-    public static final double EPSILON = 1e-6;
+    public static final double EPSILON = 1e-8;
 
     private Util() {
     }
@@ -22,11 +22,11 @@ public final class Util {
     }
 
     public static <T extends Number> boolean isGreaterThanOrEqualToZero(T a) {
-        return -Util.EPSILON < a.doubleValue();
+        return -0.5 * Util.EPSILON < a.doubleValue();
     }
 
     public static <T extends Number> boolean isLessThanOrEqualToZero(T a) {
-        return a.doubleValue() < Util.EPSILON;
+        return a.doubleValue() < 0.5 * Util.EPSILON;
     }
 
     public static <T extends Number> boolean isFuzzyBetween(T lower, T value, T upper) {

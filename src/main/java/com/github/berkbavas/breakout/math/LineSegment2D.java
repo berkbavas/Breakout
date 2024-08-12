@@ -18,13 +18,19 @@ public class LineSegment2D {
         OUTWARDS
     }
 
+    private String identifier;
+
     public LineSegment2D(Point2D P, Point2D Q) {
         this.P = P;
         this.Q = Q;
         direction = new Vector2D(Q.x - P.x, Q.y - P.y);
         length = P.distanceTo(Q);
-
         constructNormals();
+    }
+
+    public LineSegment2D(Point2D P, Point2D Q, String identifier) {
+        this(P, Q);
+        this.identifier = identifier;
     }
 
     public boolean isPointOnLineSegment(Point2D point) {
@@ -97,14 +103,14 @@ public class LineSegment2D {
 
     @Override
     public String toString() {
-        return String.format("LineSegment2D{P = %s, Q = %s}", P, Q);
+        return String.format("LineSegment2D%-10s : {P = %s, Q = %s}", identifier, P, Q);
     }
 
     private void constructNormals() {
         final double dx = Q.x - P.x;
         final double dy = Q.y - P.y;
 
-        normals.put(NormalOrientation.INWARDS, new Vector2D(-dy, dx).normalized());
-        normals.put(NormalOrientation.OUTWARDS, new Vector2D(dy, -dx).normalized());
+        normals.put(NormalOrientation.OUTWARDS, new Vector2D(-dy, dx).normalized());
+        normals.put(NormalOrientation.INWARDS, new Vector2D(dy, -dx).normalized());
     }
 }

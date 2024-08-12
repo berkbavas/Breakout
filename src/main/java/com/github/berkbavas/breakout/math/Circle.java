@@ -1,10 +1,12 @@
 package com.github.berkbavas.breakout.math;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @Getter
 public class Circle {
     public static final Circle UNIT_CIRCLE = new Circle(new Point2D(0, 0), 1);

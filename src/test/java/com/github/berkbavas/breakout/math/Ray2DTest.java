@@ -33,9 +33,9 @@ public class Ray2DTest {
 
     @Test
     public void testPointCalculatePointAt() {
-        Ray2D ray = new Ray2D(new Point2D(1.0f, 1.0f), new Vector2D(1.0f, 0.0f));
-        Point2D actual = ray.calculatePointAt(1.123f);
-        Point2D expected = new Point2D(2.123f, 1.0f);
+        Ray2D ray = new Ray2D(new Point2D(1.0, 1.0), new Vector2D(1.0, 0.0));
+        Point2D actual = ray.calculatePointAt(1.123);
+        Point2D expected = new Point2D(2.123, 1.0);
         Assert.assertEquals(expected, actual);
     }
 
@@ -199,7 +199,7 @@ public class Ray2DTest {
         findParameterForGivenPoint(
                 new Ray2D(new Point2D(1, 1), new Vector2D(1, 1)),
                 new Point2D(100, 100)
-        ).ifPresent((Double parameter) -> Assert.assertEquals(99f * Math.sqrt(2.0f), parameter, Util.EPSILON));
+        ).ifPresent((Double parameter) -> Assert.assertEquals(99f * Math.sqrt(2.0), parameter, Util.EPSILON));
     }
 
     @Test

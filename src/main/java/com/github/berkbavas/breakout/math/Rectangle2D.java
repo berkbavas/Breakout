@@ -40,20 +40,12 @@ public class Rectangle2D {
     HashSet<Point2D> vertices = new HashSet<>();
 
     public Rectangle2D(double x, double y, double width, double height) {
-        leftTop = new Point2D(x, y);
-        leftBottom = new Point2D(x, y + height);
-        rightTop = new Point2D(x + width, height);
-        rightBottom = new Point2D(x + width, y + height);
-
-        left = new LineSegment2D(leftTop, leftBottom);
-        right = new LineSegment2D(rightTop, rightBottom);
-        top = new LineSegment2D(leftTop, rightTop);
-        bottom = new LineSegment2D(leftBottom, rightBottom);
-
-        this.width = width;
-        this.height = height;
-
-        constructVertexAndEdgeSet();
+        this(
+                new Point2D(x, y),
+                new Point2D(x, y + height),
+                new Point2D(x + width, y),
+                new Point2D(x + width, y + height)
+        );
     }
 
     public Rectangle2D(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom) {
@@ -62,10 +54,12 @@ public class Rectangle2D {
         this.rightTop = rightTop;
         this.rightBottom = rightBottom;
 
-        left = new LineSegment2D(leftTop, leftBottom);
-        right = new LineSegment2D(rightTop, rightBottom);
-        top = new LineSegment2D(leftTop, rightTop);
-        bottom = new LineSegment2D(leftBottom, rightBottom);
+        // Be aware of the order of vertices.
+        // It affects the direction of normal.
+        left = new LineSegment2D(leftTop, leftBottom, "[Left]");
+        right = new LineSegment2D(rightBottom, rightTop, "[Right]");
+        top = new LineSegment2D(rightTop, leftTop, "[Top]");
+        bottom = new LineSegment2D(leftBottom, rightBottom, "[Bottom]");
 
         width = leftTop.distanceTo(rightTop);
         height = leftTop.distanceTo(leftBottom);

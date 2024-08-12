@@ -7,65 +7,65 @@ public class Vector2DTest {
 
     @Test
     public void testMultiplication() {
-        Assert.assertEquals( new Vector2D(0.0f, 0.0f), new Vector2D(0.0f, 0.0f).multiply(0.0f));
-        Assert.assertEquals( new Vector2D(0.0f, 0.0f), new Vector2D(1.0f, -2.0f).multiply(0.0f));
-        Assert.assertEquals( new Vector2D(0.0f, 0.0f), new Vector2D(0.0f, 0.0f).multiply(1.0f));
-        Assert.assertEquals( new Vector2D(-1.19f, 2.38f), new Vector2D(1.0f, -2.0f).multiply(-1.19f));
+        Assert.assertEquals( new Vector2D(0.0, 0.0), new Vector2D(0.0, 0.0).multiply(0.0));
+        Assert.assertEquals( new Vector2D(0.0, 0.0), new Vector2D(1.0, -2.0).multiply(0.0));
+        Assert.assertEquals( new Vector2D(0.0, 0.0), new Vector2D(0.0, 0.0).multiply(1.0));
+        Assert.assertEquals( new Vector2D(-1.19f, 2.38f), new Vector2D(1.0, -2.0).multiply(-1.19f));
     }
 
     @Test
     public void testDotProduct() {
-        Assert.assertEquals(0.0f, Vector2D.dot(new Vector2D(0.0f, 0.0f), new Vector2D(1.0f, 1.0f)), Util.EPSILON);
-        Assert.assertEquals(2.0f, Vector2D.dot(new Vector2D(1.0f, 1.0f), new Vector2D(1.0f, 1.0f)), Util.EPSILON);
-        Assert.assertEquals(0.0f, Vector2D.dot(new Vector2D(1.0f, 0.0f), new Vector2D(0.0f, 1.0f)), Util.EPSILON);
-        Assert.assertEquals(0.0f, Vector2D.dot(new Vector2D(2.0f, -2.0f), new Vector2D(2.0f, 2.0f)), Util.EPSILON);
-        Assert.assertEquals(0.0f, Vector2D.dot(new Vector2D(-2.0f, 2.0f), new Vector2D(2.0f, 2.0f)), Util.EPSILON);
-        Assert.assertEquals(-8.0f, Vector2D.dot(new Vector2D(-2.0f, -2.0f), new Vector2D(2.0f, 2.0f)), Util.EPSILON);
-        Assert.assertEquals(0.0f, Vector2D.dot(new Vector2D(-1.0f, 2.0f), new Vector2D(2.0f, 1.0f)), Util.EPSILON);
+        Assert.assertEquals(0.0, Vector2D.dot(new Vector2D(0.0, 0.0), new Vector2D(1.0, 1.0)), Util.EPSILON);
+        Assert.assertEquals(2.0, Vector2D.dot(new Vector2D(1.0, 1.0), new Vector2D(1.0, 1.0)), Util.EPSILON);
+        Assert.assertEquals(0.0, Vector2D.dot(new Vector2D(1.0, 0.0), new Vector2D(0.0, 1.0)), Util.EPSILON);
+        Assert.assertEquals(0.0, Vector2D.dot(new Vector2D(2.0, -2.0), new Vector2D(2.0, 2.0)), Util.EPSILON);
+        Assert.assertEquals(0.0, Vector2D.dot(new Vector2D(-2.0, 2.0), new Vector2D(2.0, 2.0)), Util.EPSILON);
+        Assert.assertEquals(-8.0, Vector2D.dot(new Vector2D(-2.0, -2.0), new Vector2D(2.0, 2.0)), Util.EPSILON);
+        Assert.assertEquals(0.0, Vector2D.dot(new Vector2D(-1.0, 2.0), new Vector2D(2.0, 1.0)), Util.EPSILON);
     }
 
     @Test
     public void testReflection() {
-        Assert.assertEquals(new Vector2D(2.0f, 0.0f), new Vector2D(-2.0f, 0.0f).reflect(new Vector2D(1.0f, 0.0f)));
-        Assert.assertEquals(new Vector2D(2.0f, 0.0f), new Vector2D(-2.0f, 0.0f).reflect(new Vector2D(1.0f, 0.0f)));
-        Assert.assertEquals(new Vector2D(-2.0f, 0.0f), new Vector2D(2.0f, 0.0f).reflect(new Vector2D(-1.0f, 0.0f)));
-        Assert.assertEquals(new Vector2D(-2.0f, 1.0f), new Vector2D(2.0f, 1.0f).reflect(new Vector2D(-1.0f, 0.0f)));
+        Assert.assertEquals(new Vector2D(2.0, 0.0), new Vector2D(-2.0, 0.0).reflect(new Vector2D(1.0, 0.0)));
+        Assert.assertEquals(new Vector2D(2.0, 0.0), new Vector2D(-2.0, 0.0).reflect(new Vector2D(1.0, 0.0)));
+        Assert.assertEquals(new Vector2D(-2.0, 0.0), new Vector2D(2.0, 0.0).reflect(new Vector2D(-1.0, 0.0)));
+        Assert.assertEquals(new Vector2D(-2.0, 1.0), new Vector2D(2.0, 1.0).reflect(new Vector2D(-1.0, 0.0)));
 
-        Assert.assertEquals(new Vector2D(0.0f, 2.0f), new Vector2D(0.0f, -2.0f).reflect(new Vector2D(0.0f, 1.0f)));
-        Assert.assertEquals(new Vector2D(1.0f, 2.0f), new Vector2D(1.0f, -2.0f).reflect(new Vector2D(0.0f, 1.0f)));
-        Assert.assertEquals(new Vector2D(0.0f, -2.0f), new Vector2D(0.0f, 2.0f).reflect(new Vector2D(0.0f, -1.0f)));
-        Assert.assertEquals(new Vector2D(1.0f, -2.0f), new Vector2D(1.0f, 2.0f).reflect(new Vector2D(0.0f, -1.0f)));
+        Assert.assertEquals(new Vector2D(0.0, 2.0), new Vector2D(0.0, -2.0).reflect(new Vector2D(0.0, 1.0)));
+        Assert.assertEquals(new Vector2D(1.0, 2.0), new Vector2D(1.0, -2.0).reflect(new Vector2D(0.0, 1.0)));
+        Assert.assertEquals(new Vector2D(0.0, -2.0), new Vector2D(0.0, 2.0).reflect(new Vector2D(0.0, -1.0)));
+        Assert.assertEquals(new Vector2D(1.0, -2.0), new Vector2D(1.0, 2.0).reflect(new Vector2D(0.0, -1.0)));
 
-        Assert.assertEquals(new Vector2D(1.0f, -1.0f), new Vector2D(-1.0f, 1.0f).reflect(new Vector2D(1.0f, -1.0f)));
-        Assert.assertEquals(new Vector2D(0.0f, -1.0f), new Vector2D(-1.0f, 0.0f).reflect(new Vector2D(1.0f, -1.0f)));
+        Assert.assertEquals(new Vector2D(1.0, -1.0), new Vector2D(-1.0, 1.0).reflect(new Vector2D(1.0, -1.0)));
+        Assert.assertEquals(new Vector2D(0.0, -1.0), new Vector2D(-1.0, 0.0).reflect(new Vector2D(1.0, -1.0)));
 
-        Assert.assertEquals(new Vector2D(-1.0f, 1.0f), new Vector2D(1.0f, -1.0f).reflect(new Vector2D(-1.0f, 1.0f)));
-        Assert.assertEquals(new Vector2D(0.0f, 1.0f), new Vector2D(1.0f, 0.0f).reflect(new Vector2D(-1.0f, 1.0f)));
+        Assert.assertEquals(new Vector2D(-1.0, 1.0), new Vector2D(1.0, -1.0).reflect(new Vector2D(-1.0, 1.0)));
+        Assert.assertEquals(new Vector2D(0.0, 1.0), new Vector2D(1.0, 0.0).reflect(new Vector2D(-1.0, 1.0)));
 
-        Assert.assertEquals(new Vector2D(1.0f, 0.0f), new Vector2D(0.0f, -1.0f).reflect(new Vector2D(1.0f, 1.0f)));
-        Assert.assertEquals(new Vector2D(1.0f, 1.0f), new Vector2D(-1.0f, -1.0f).reflect(new Vector2D(1.0f, 1.0f)));
+        Assert.assertEquals(new Vector2D(1.0, 0.0), new Vector2D(0.0, -1.0).reflect(new Vector2D(1.0, 1.0)));
+        Assert.assertEquals(new Vector2D(1.0, 1.0), new Vector2D(-1.0, -1.0).reflect(new Vector2D(1.0, 1.0)));
 
-        Assert.assertEquals(new Vector2D(-1.0f, 0.0f), new Vector2D(0.0f, 1.0f).reflect(new Vector2D(-1.0f, -1.0f)));
-        Assert.assertEquals(new Vector2D(-1.0f, -1.0f), new Vector2D(1.0f, 1.0f).reflect(new Vector2D(-1.0f, -1.0f)));
+        Assert.assertEquals(new Vector2D(-1.0, 0.0), new Vector2D(0.0, 1.0).reflect(new Vector2D(-1.0, -1.0)));
+        Assert.assertEquals(new Vector2D(-1.0, -1.0), new Vector2D(1.0, 1.0).reflect(new Vector2D(-1.0, -1.0)));
 
     }
 
     @Test
     public void testNormalization() {
-        double inverseSqrt2 = 1.0f / (double) Math.sqrt(2.0f);
-        Assert.assertEquals(new Vector2D(1.0f, 0.0f), new Vector2D(1.0f, 0.0f).normalized());
+        double inverseSqrt2 = 1.0 / (double) Math.sqrt(2.0);
+        Assert.assertEquals(new Vector2D(1.0, 0.0), new Vector2D(1.0, 0.0).normalized());
 
-        Assert.assertEquals(new Vector2D(1.0f, 1.0f).multiply(inverseSqrt2), new Vector2D(1.0f, 1.0f).normalized());
-        Assert.assertEquals(new Vector2D(-1.0f, 1.0f).multiply(inverseSqrt2), new Vector2D(-1.0f, 1.0f).normalized());
-        Assert.assertEquals(new Vector2D(-1.0f, -1.0f).multiply(inverseSqrt2), new Vector2D(-1.0f, -1.0f).normalized());
-        Assert.assertEquals(new Vector2D(1.0f, -1.0f).multiply(inverseSqrt2), new Vector2D(1.0f, -1.0f).normalized());
+        Assert.assertEquals(new Vector2D(1.0, 1.0).multiply(inverseSqrt2), new Vector2D(1.0, 1.0).normalized());
+        Assert.assertEquals(new Vector2D(-1.0, 1.0).multiply(inverseSqrt2), new Vector2D(-1.0, 1.0).normalized());
+        Assert.assertEquals(new Vector2D(-1.0, -1.0).multiply(inverseSqrt2), new Vector2D(-1.0, -1.0).normalized());
+        Assert.assertEquals(new Vector2D(1.0, -1.0).multiply(inverseSqrt2), new Vector2D(1.0, -1.0).normalized());
     }
 
     @Test
     public void testInvert() {
-        Assert.assertEquals(new Vector2D(0.0f, 0.0f), new Vector2D(0.0f, 0.0f).invert());
-        Assert.assertEquals(new Vector2D(-1.0f, 0.0f), new Vector2D(1.0f, 0.0f).invert());
-        Assert.assertEquals(new Vector2D(0.0f, 10.0f), new Vector2D(0.0f, -10.0f).invert());
-        Assert.assertEquals(new Vector2D(-1.0f, 10.0f), new Vector2D(1.0f, -10.0f).invert());
+        Assert.assertEquals(new Vector2D(0.0, 0.0), new Vector2D(0.0, 0.0).invert());
+        Assert.assertEquals(new Vector2D(-1.0, 0.0), new Vector2D(1.0, 0.0).invert());
+        Assert.assertEquals(new Vector2D(0.0, 10.0), new Vector2D(0.0, -10.0).invert());
+        Assert.assertEquals(new Vector2D(-1.0, 10.0), new Vector2D(1.0, -10.0).invert());
     }
 }

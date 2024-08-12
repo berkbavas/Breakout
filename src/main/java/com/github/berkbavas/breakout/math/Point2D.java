@@ -20,6 +20,10 @@ public class Point2D {
         return new Point2D(x - other.x, y - other.y);
     }
 
+    public Point2D multiply(double scalar) {
+        return new Point2D(scalar * x, scalar * y);
+    }
+
     public double distanceTo(Point2D other) {
         return distanceBetween(this, other);
     }
@@ -36,7 +40,7 @@ public class Point2D {
 
     @Override
     public String toString() {
-        return String.format("Point2D{x = %.3f, y = %.3f}", x, y);
+        return String.format("Point2D{x = %.2f y = %.2f}", x, y);
     }
 
     @Override

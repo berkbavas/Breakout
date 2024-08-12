@@ -19,7 +19,7 @@ public class Vector2D extends Point2D {
     }
 
     public Vector2D invert() {
-        return this.multiply(-1.0f);
+        return this.multiply(-1.0);
     }
 
     public Vector2D normalized() {
@@ -28,7 +28,7 @@ public class Vector2D extends Point2D {
         double x = this.x;
         double y = this.y;
 
-        if (!Util.fuzzyCompare(l2norm, 1.0f) && !Util.isFuzzyZero(l2norm)) {
+        if (!Util.fuzzyCompare(l2norm, 1.0) && !Util.isFuzzyZero(l2norm)) {
             double norm = Math.sqrt(l2norm);
             x = x / norm;
             y = y / norm;
@@ -44,7 +44,7 @@ public class Vector2D extends Point2D {
         normal = normal.normalized();
 
         final double dot = dot(this, normal);
-        return this.subtract(normal.multiply(2.0f * dot));
+        return this.subtract(normal.multiply(2.0 * dot));
     }
 
     public double dot(Vector2D other) {
@@ -65,6 +65,10 @@ public class Vector2D extends Point2D {
         return new Vector2D(-y, x);
     }
 
+    public double length() {
+        return Math.sqrt(x * x + y * y);
+    }
+
     public double norm() {
         return Math.sqrt(x * x + y * y);
     }
@@ -83,8 +87,14 @@ public class Vector2D extends Point2D {
         }
     }
 
+    public Vector2D projectOnto(Vector2D other) {
+        double dot = dot(other);
+        double l2 = other.l2norm();
+        return other.multiply(dot / l2);
+    }
+
     @Override
     public String toString() {
-        return String.format("Vector2D{x = %.3f, y = %.3f}", x, y);
+        return String.format("Vector2D{x = %.2f, y = %.2f}", x, y);
     }
 }
