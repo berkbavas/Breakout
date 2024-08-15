@@ -72,7 +72,7 @@ public class Ray2D {
         }
 
         boolean same = direction.equals(other.direction);
-        boolean opposite = direction.equals(other.direction.invert());
+        boolean opposite = direction.equals(other.direction.reversed());
 
         return same || opposite;
     }
@@ -90,26 +90,27 @@ public class Ray2D {
     }
 
     public Optional<Double> findParameterIfIntersects(Ray2D other) {
-        final Line2D l0 = Line2D.from(this);
-        final Line2D l1 = Line2D.from(other);
+        final Point2D origin0 = origin;
+        final Point2D origin1 = other.origin;
 
-        var ref = new Object() {
-            Double parameter = null;
-        };
+        final Vector2D dir0 = direction;
+        final Vector2D dir1 = other.direction;
 
-        l0.findIntersection(l1).ifPresent((Point2D intersection) -> {
-            final Optional<Double> opt0 = findParameterForGivenPoint(intersection);
-            final Optional<Double> opt1 = other.findParameterForGivenPoint(intersection);
-            if (opt0.isPresent() && opt1.isPresent()) {
-                final double t0 = opt0.get();
-                final double t1 = opt1.get();
-                if (Util.isGreaterThanOrEqualToZero(t0) && Util.isGreaterThanOrEqualToZero(t1)) {
-                    ref.parameter = t0;
-                }
+        final Matrix2x1 lhs = new Matrix2x1(origin1.x - origin0.x, origin1.y - origin0.y);
+        final Matrix2x2 rhs = new Matrix2x2(dir0.x, -dir1.x, dir0.y, -dir1.y);
+
+        final Optional<Matrix2x1> solution = Matrix2x2.solve(lhs, rhs);
+
+        if (solution.isPresent()) {
+            final double t = solution.get().getM00();
+            final double s = solution.get().getM10();
+
+            if (Util.isGreaterThanOrEqualToZero(t) && Util.isGreaterThanOrEqualToZero(s)) {
+                return Optional.of(t);
             }
-        });
+        }
 
-        return Optional.ofNullable(ref.parameter);
+        return Optional.empty();
     }
 
     public Optional<Point2D> findIntersection(Ray2D other) {
@@ -157,7 +158,7 @@ public class Ray2D {
     }
 
     public Point2D findClosestPointToCircleCenter(Circle circle) {
-        Vector2D originToCenter = circle.getCenter().subtract(origin).toVector2D();
+        Vector2D originToCenter = circle.getCenter().subtract(origin);
         double dot = direction.dot(originToCenter);
         // If dot is negative, then the closest point is not on ray but the line
         // constructed from the ray.
@@ -182,4 +183,5 @@ public class Ray2D {
         Vector2D direction = new Vector2D(line.getQ().x - line.getP().x, line.getQ().y - line.getP().y);
         return new Ray2D(line.getP(), direction);
     }
+
 }

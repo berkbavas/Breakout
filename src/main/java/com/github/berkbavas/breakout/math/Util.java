@@ -1,7 +1,7 @@
 package com.github.berkbavas.breakout.math;
 
 public final class Util {
-    public static final double EPSILON = 1e-8;
+    public static final double EPSILON = 1e-6;
 
     private Util() {
     }

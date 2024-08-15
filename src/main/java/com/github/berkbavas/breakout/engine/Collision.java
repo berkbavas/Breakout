@@ -15,16 +15,15 @@ public class Collision {
     // The object subject to the collision with the ball.
     private StaticNode collider;
 
-    // This is the edge of the collider takes role in this collision.
+    // This is the edge of the collider that will take role in this potential collision.
     private LineSegment2D edge;
 
-    // A collision happens when the distance between
-    // contactPointOnBall and contactPointOnEdge can be zero in the given ifps time.
+    // A collision happens when the distance between contactPointOnBall and contactPointOnEdge can be zero in the given ifps time.
     // Note that the distance between contactPointOnBall and contactPointOnEdge may be too long for a collision to happen
     // in the given time. These members are filled regardless of this case.
     private Point2D contactPointOnBall;
     private Point2D contactPointOnEdge;
 
-    // Time in seconds needs to pass for this prospective collision to happen.
+    // Time needed for this potential collision to happen.
     private double timeToCollision;
 }

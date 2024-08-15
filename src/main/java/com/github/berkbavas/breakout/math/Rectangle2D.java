@@ -76,6 +76,7 @@ public class Rectangle2D {
         return Collections.unmodifiableSet(vertices);
     }
 
+
     public boolean collides(Rectangle2D other) {
         for (LineSegment2D edge : edges) {
             for (LineSegment2D otherEdge : other.edges) {
@@ -101,16 +102,16 @@ public class Rectangle2D {
     }
 
     public boolean contains(Point2D point) {
-        Vector2D v0 = point.subtract(leftBottom).toVector2D();
-        Vector2D v1 = point.subtract(rightTop).toVector2D();
+        Vector2D v0 = point.subtract(leftBottom);
+        Vector2D v1 = point.subtract(rightTop);
         double dot0 = Vector2D.dot(v0, v1);
 
         if (!Util.isLessThanOrEqualToZero(dot0)) {
             return false;
         }
 
-        Vector2D v2 = point.subtract(leftTop).toVector2D();
-        Vector2D v3 = point.subtract(rightBottom).toVector2D();
+        Vector2D v2 = point.subtract(leftTop);
+        Vector2D v3 = point.subtract(rightBottom);
         double dot1 = Vector2D.dot(v2, v3);
 
         return Util.isLessThanOrEqualToZero(dot1);

@@ -90,6 +90,14 @@ public class Ray2DTest {
                 new Ray2D(new Point2D(0, -1), new Vector2D(0, 1)),
                 new Line2D(new Point2D(0, -1), new Point2D(1, 0))
         ).ifPresent((Point2D point) -> Assert.assertEquals(new Point2D(0, -1), point));
+
+        // A Buggy case from Breakout
+        System.out.println("----");
+        findIntersection(
+                new Ray2D(new Point2D(192.44, 597.56), new Vector2D(1, -1)),
+                new Line2D(new Point2D(200, 600), new Point2D(500, 600))
+        ).ifPresent(System.out::println);
+        System.out.println("----");
     }
 
     @Test

@@ -145,7 +145,7 @@ public class Line2D {
         Ray2D ray = Ray2D.from(this);
         Point2D origin = ray.getOrigin();
         Vector2D direction = ray.getDirection();
-        Vector2D originToCenter = circle.getCenter().subtract(origin).toVector2D();
+        Vector2D originToCenter = circle.getCenter().subtract(origin);
         double dot = direction.dot(originToCenter);
         return origin.add(direction.multiply(dot));
     }

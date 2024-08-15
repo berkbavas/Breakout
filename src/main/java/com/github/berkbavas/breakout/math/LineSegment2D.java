@@ -11,6 +11,7 @@ public class LineSegment2D {
     private final Point2D Q;
     private final Vector2D direction;
     private final double length;
+    private final String identifier;
     private final HashMap<NormalOrientation, Vector2D> normals = new HashMap<>();
 
     public enum NormalOrientation {
@@ -18,22 +19,25 @@ public class LineSegment2D {
         OUTWARDS
     }
 
-    private String identifier;
 
     public LineSegment2D(Point2D P, Point2D Q) {
-        this.P = P;
-        this.Q = Q;
-        direction = new Vector2D(Q.x - P.x, Q.y - P.y);
-        length = P.distanceTo(Q);
-        constructNormals();
+        this(P, Q, "");
     }
 
     public LineSegment2D(Point2D P, Point2D Q, String identifier) {
-        this(P, Q);
+        this.P = P;
+        this.Q = Q;
+        this.direction = new Vector2D(Q.x - P.x, Q.y - P.y);
+        this.length = P.distanceTo(Q);
         this.identifier = identifier;
+        constructNormals();
     }
 
     public boolean isPointOnLineSegment(Point2D point) {
+        if (point.equals(P) || point.equals(Q)) {
+            return true;
+        }
+
         double length = getLength();
         double distance = P.distanceTo(point) + Q.distanceTo(point);
 
@@ -44,6 +48,13 @@ public class LineSegment2D {
         } else {
             return false;
         }
+    }
+
+    public Point2D getClosestVertexToPoint(Point2D point) {
+        double distance0 = point.distanceTo(P);
+        double distance1 = point.distanceTo(Q);
+
+        return distance0 < distance1 ? P : Q;
     }
 
     public Vector2D getNormal(NormalOrientation normalOrientation) {

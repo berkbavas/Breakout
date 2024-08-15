@@ -206,18 +206,22 @@ public class CircleTest {
     }
 
     @Test
-    public void testFindClosestPointToLine() {
-        Assert.assertEquals(new Point2D(1, 0), Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(1, -1), new Point2D(1, 1))));
-        Assert.assertEquals(new Point2D(-1, 0), Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(-1, -1), new Point2D(-1, 1))));
-        Assert.assertEquals(new Point2D(1, 0), Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(10, -1), new Point2D(10, 1))));
-        Assert.assertEquals(new Point2D(0, -1), Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(-1, -10), new Point2D(1, -10))));
+    public void testFindPointOnCircleClosestToLine() {
+        Assert.assertEquals(new Point2D(1, 0), Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(1, -1), new Point2D(1, 1))));
+        Assert.assertEquals(new Point2D(-1, 0), Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(-1, -1), new Point2D(-1, 1))));
+        Assert.assertEquals(new Point2D(1, 0), Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(10, -1), new Point2D(10, 1))));
+        Assert.assertEquals(new Point2D(0, -1), Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(-1, -10), new Point2D(1, -10))));
         Assert.assertEquals(new Point2D(-0.5 * Math.sqrt(2), -0.5 * Math.sqrt(2)),
-                Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(-1, 0), new Point2D(0, -1))));
+                Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(-1, 0), new Point2D(0, -1))));
 
         Assert.assertEquals(new Point2D(0.5 * Math.sqrt(2), 0.5 * Math.sqrt(2)),
-                Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(10, 0), new Point2D(0, 10))));
+                Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(10, 0), new Point2D(0, 10))));
 
-        Assert.assertEquals(new Point2D(0, 1), Circle.UNIT_CIRCLE.findClosestPointToLine(new Line2D(new Point2D(1, 1), new Point2D(-1, 1))));
+        Assert.assertEquals(new Point2D(0, 1),
+                Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(1, 1), new Point2D(-1, 1))));
+
+        Assert.assertEquals(new Point2D(0, 1),
+                Circle.UNIT_CIRCLE.findPointOnCircleClosestToLine(new Line2D(new Point2D(1, 1), new Point2D(-1, 1))));
     }
 
     @Test
@@ -321,6 +325,19 @@ public class CircleTest {
                 Set.of(new Point2D(0, 1)));
     }
 
+    @Test
+    public void testPointOnCircleClosestToLine() {
+        testPointOnCircleClosestToLine(
+                new Circle(new Point2D(192.44, 607.56), 10.0),
+                new Line2D(new Point2D(200, 600), new Point2D(500, 600)),
+                new Point2D(192.44, 597.56));
+    }
+
+    public void testPointOnCircleClosestToLine(Circle circle, Line2D line, Point2D expected) {
+        Point2D actual = circle.findPointOnCircleClosestToLine(line);
+        Assert.assertEquals(expected, actual);
+    }
+
     public void calculatePointAt(Circle circle, double theta, Consumer<Point2D> action) {
         action.accept(circle.calculatePointAt(theta));
     }
@@ -358,13 +375,11 @@ public class CircleTest {
     public void testFindLineIntersection(Circle circle, Line2D line, Set<Point2D> expected) {
         List<Point2D> actual = circle.findIntersection(line);
         Assert.assertEquals(expected, Set.copyOf(actual));
-
     }
 
     public void testFindLineSegmentIntersection(Circle circle, LineSegment2D lineSegment, Set<Point2D> expected) {
         List<Point2D> actual = circle.findIntersection(lineSegment);
         Assert.assertEquals(expected, Set.copyOf(actual));
-
     }
 
     public void testFindRayIntersection(Circle circle, Ray2D ray, Set<Point2D> expected) {

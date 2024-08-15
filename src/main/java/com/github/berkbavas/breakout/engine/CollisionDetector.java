@@ -1,25 +1,25 @@
 package com.github.berkbavas.breakout.engine;
 
 import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.engine.node.Ball;
-import com.github.berkbavas.breakout.engine.node.Paddle;
-import com.github.berkbavas.breakout.engine.node.StaticNode;
-import com.github.berkbavas.breakout.engine.node.World;
+import com.github.berkbavas.breakout.engine.node.*;
 import com.github.berkbavas.breakout.math.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class CollisionDetector {
+    private final GameObjects gameObjects;
 
-    public Set<Collision> findCollisions(GameObjects gameObjects) {
+    public CollisionDetector(GameObjects gameObjects) {
+        this.gameObjects = gameObjects;
+    }
+
+    public Set<Collision> findPotentialCollisions() {
         Ball ball = gameObjects.getBall();
         World world = gameObjects.getWorld();
         Paddle paddle = gameObjects.getPaddle();
+        ArrayList<Brick> bricks = gameObjects.getBricks();
 
-        double speed = ball.getVelocity().length();
+        final double speed = ball.getVelocity().length();
 
         // If the ball is stationary no need to calculate collisions.
         // Return an empty set.
@@ -27,132 +27,271 @@ public class CollisionDetector {
             return Set.of();
         }
 
+        Set<Collision> potentialCollisions = new HashSet<>();
+        potentialCollisions.addAll(findPotentialCollisions(world, ball));
+        potentialCollisions.addAll(findPotentialCollisions(paddle, ball));
+        potentialCollisions.addAll(findPotentialCollisions(bricks, ball));
+
+        return potentialCollisions;
+    }
+
+    private static Set<Collision> findPotentialCollisions(List<Brick> bricks, Ball ball) {
         Set<Collision> collisions = new HashSet<>();
-        collisions.addAll(findCollisions(world, ball));
-        collisions.addAll(findCollisions(paddle, ball));
+
+        for (Brick brick : bricks) {
+            if (brick.isHit()) {
+                continue;
+            }
+            collisions.addAll(findPotentialCollisions(brick, ball));
+        }
 
         return collisions;
     }
 
-    private Set<Collision> findCollisions(StaticNode node, Ball ball) {
+    private static Set<Collision> findPotentialCollisions(StaticNode node, Ball ball) {
         // Ball may collide with a vertex of the node, that is counted as two collisions with two edges of the node.
         // That's why we have set here.
         Set<Collision> collisions = new HashSet<>();
-
         Set<LineSegment2D> edges = node.getEdges();
-
         for (LineSegment2D edge : edges) {
-            findCollision(edge, ball).ifPresent((Collision collision) -> {
-                collision.setCollider(node);
-                collisions.add(collision);
-            });
+            findPotentialCollision(node, edge, ball).ifPresent(collisions::add);
         }
 
         return collisions;
     }
 
-    // Checks if a collision possible between ball and edge given the velocity of ball.
+    // Checks if a collision is potential between the ball and edge.
     // This method assumes that edge and ball is not colliding already.
-    private Optional<Collision> findCollision(LineSegment2D edge, Ball ball) {
-        Vector2D velocity = ball.getVelocity();
-        Line2D line = Line2D.from(edge);
-        Point2D closestPointToLine = ball.findClosestPointToLine(line);
-        Ray2D rayToLine = new Ray2D(closestPointToLine, velocity);
 
-        var ref = new Object() {
-            Collision collision = null;
-        };
-
-        // Let's check if the ray casting from ball to the line whose origin is the closest point to the line
-        // and direction is the velocity intersects the line.
-        line.findIntersection(rayToLine).ifPresent((Point2D contact) -> {
-            // Okay, the ray intersects the line.
-            // But does it intersect the edge as well?
-
-            if (edge.isPointOnLineSegment(contact)) {
-                // Contact point is on the edge as well, this means the ray intersects the edge as well.
-                ref.collision = createCollision(edge, closestPointToLine, contact, velocity);
-            } else {
-                // Contact point is not on the line segment.
-                // Let's find the closest vertex of the edge to the contact point on the line,
-                // and cast a ray originating from this vertex to the ball having direction same as the inverse velocity.
-                // If there is an intersection, then this is the collision contact.
-                findCollisionBetweenRayFromEdgeToBall(contact, edge, ball).ifPresent((Collision collision) -> ref.collision = collision);
-            }
-
-        });
-
-        return Optional.ofNullable(ref.collision);
-    }
-
-    //                     ( ) Ball
-    //                     /
-    //                    /
-    //                   /
-    //                  /
-    //                 /
-    //      *         *--------------*
-    //   Contact      P     Edge     Q
+    // Case 1:
+    // Line passing through the edge does not intersect the circle.
+    //
+    //                     ▲
+    //                     |   Line
+    //                     |
+    //                     * Q
+    //                     |
+    //                     |   Edge = [P, Q]
+    //        *  *         |
+    //     *        *      * P
+    //    *  Circle  *     |
+    //    *    .     *     |
+    //     *        *      ▼
+    //        *  *
     //
 
-    private Optional<Collision> findCollisionBetweenRayFromEdgeToBall(Point2D contact, LineSegment2D edge, Ball ball) {
-        // Contact point is not on the line segment.
-        // Let's find the closest vertex of the edge to the contact point on the line.
 
-        double distance0 = contact.distanceTo(edge.getP());
-        double distance1 = contact.distanceTo(edge.getQ());
+    // Case 2:
+    // Line passing through the edge does intersect the circle.
+    //
+    //             ▲
+    //             |   Line
+    //             |
+    //             * Q
+    //             |
+    //             |   Edge = [P, Q]
+    //             |
+    //             * P
+    //        *  * |
+    //     *       |*
+    //    *    .   ▼ *
+    //    *  Circle   *
+    //     *        *
+    //        *  *
+    //
 
-        Point2D contactPointOnEdge = null;
+    private static Optional<Collision> findPotentialCollision(StaticNode node, LineSegment2D edge, Ball ball) {
+        Line2D line = Line2D.from(edge);
 
-        if (distance0 < distance1) {
-            contactPointOnEdge = edge.getP();
+        if (ball.findIntersection(line).isEmpty()) {
+            return findPotentialCollisionCase1(node, edge, ball);
         } else {
-            contactPointOnEdge = edge.getQ();
+            return findPotentialCollisionCase2(node, edge, ball);
         }
+    }
 
-        // Let's cast a ray originating from the closest vertex of edge to the contact point
-        // and having direction same as the inverse velocity vector.
-        Vector2D inverseVelocity = ball.getVelocity().invert();
-        Ray2D rayToBall = new Ray2D(contactPointOnEdge, inverseVelocity);
+    private static Optional<Collision> findPotentialCollisionCase1(StaticNode node, LineSegment2D edge, Ball ball) {
+        Line2D line = Line2D.from(edge);
 
-        // There may be 0, 1 or 2 intersection points.
-        List<Point2D> intersections = ball.findIntersection(rayToBall);
+        Point2D pointOnCircleClosestToLine = ball.findPointOnCircleClosestToLine(line);
 
-        if (intersections.isEmpty()) {
+        Vector2D velocity = ball.getVelocity();
+        Point2D centerOfBall = ball.getCenter();
+
+        if (!isPointInsideCriticalRegion(centerOfBall, pointOnCircleClosestToLine, velocity)) {
             return Optional.empty();
         }
 
-        // If there are two intersections, choose the closest one to the vertex.
-        Point2D contactPointOnBall = null;
+        // If we are here, then the point is inside the critical region, i.e,
+        // it might lie in the collision trajectory of the ball.
 
-        double minDistance = Double.MAX_VALUE;
+        // Next we cast a ray originating from the point on circle closest to the line along the direction of velocity
+        // in order to find collision contact point on the line.
 
-        for (Point2D intersection : intersections) {
-            double distance = intersection.distanceTo(contactPointOnEdge);
-            if (distance < minDistance) {
-                minDistance = distance;
-                contactPointOnBall = intersection;
+        Optional<Point2D> maybe = line.findIntersection(new Ray2D(pointOnCircleClosestToLine, velocity));
+
+        if (maybe.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Point2D contactPointOnLine = maybe.get();
+
+        // Check if this point is on the edge as well.
+        // If it is on the edge, then this is the collision contact point on edge as
+        // it lies inside the collision trajectory region of the ball
+        boolean isContactPointOnLineOnEdgeAsWell = edge.isPointOnLineSegment(contactPointOnLine);
+
+        if (isContactPointOnLineOnEdgeAsWell) {
+            // We found a potential collision with edge.
+            // Let's calculate the time of impact for given velocity and collision contacts (our points above).
+            // Here the point on the circle closest to the line is the contact point on the ball.
+            Collision collision = constructCollision(node, edge, pointOnCircleClosestToLine, contactPointOnLine, velocity);
+            return Optional.of(collision);
+
+        } else {
+            // If the point is not on the edge, then we follow another logic.
+
+            // First we find the vertex of the edge that is closest the contact point on the line.
+            Point2D closestVertexToContactPointOnLine = edge.getClosestVertexToPoint(contactPointOnLine);
+
+            // Cast a ray originating from this point along the direction of the inverse velocity vector.
+            Ray2D rayOriginationFromClosestVertex = new Ray2D(closestVertexToContactPointOnLine, velocity.reversed());
+            Optional<Point2D> contactPointOnBall = ball.findIntersectionClosestToOriginOfRay(rayOriginationFromClosestVertex);
+            // Here contactPointOnBall might be empty.
+            // If there is no intersection then it means that the edge does not lie in the collision trajectory of the ball.
+
+            if (contactPointOnBall.isPresent()) {
+                // We found a potential collision with the edge.
+
+                // Here the vertex of the edge closest to the 'speculative' contact point on the line
+                // is the 'actual' contact point.
+                Collision collision = constructCollision(node, edge, contactPointOnBall.get(), closestVertexToContactPointOnLine, velocity);
+                return Optional.of(collision);
             }
         }
 
-        assert contactPointOnBall != null;
-        return Optional.of(createCollision(edge, contactPointOnBall, contactPointOnEdge, inverseVelocity));
+        // If we are here, then there is no potential collision with the edge along the direction of the velocity.
+        return Optional.empty();
     }
 
-    private Collision createCollision(LineSegment2D edge, Point2D contactPointOnBall, Point2D contactPointOnEdge, Vector2D velocity) {
-        double distance = contactPointOnBall.distanceTo(contactPointOnEdge);
+    private static Optional<Collision> findPotentialCollisionCase2(StaticNode node, LineSegment2D edge, Ball ball) {
+        // First find the vertex closest to the circle.
+        Point2D center = ball.getCenter();
+
+        Point2D closestVertex;
+        double distance0 = edge.getP().distanceTo(center);
+        double distance1 = edge.getQ().distanceTo(center);
+
+        if (distance0 < distance1) {
+            closestVertex = edge.getP();
+        } else {
+            closestVertex = edge.getQ();
+        }
+
+        // Cast a ray originating from the closest vertex to the center of circle.
+        Ray2D rayFromClosestVertexToCenterOfCircle = new Ray2D(closestVertex, center.subtract(closestVertex));
+
+        // Choose the closest intersection point on the circle to the edge.
+        Optional<Point2D> maybe = ball.findIntersectionClosestToOriginOfRay(rayFromClosestVertexToCenterOfCircle);
+
+        // rayFromClosestVertexToCenterOfCircle and circle must intersect by the construction of rayFromClosestVertexToCenterOfCircle.
+        // In order to be on the safe side, return here.
+        if (maybe.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Point2D pointOnCircleClosestToEdge = maybe.get();
+
+        // Now cast a ray originating from the point on circle that is closest to the edge and along the direction of
+        // the velocity vector.
+        Ray2D rayFromPointOnCircleAlongVelocityDirection = new Ray2D(pointOnCircleClosestToEdge, ball.getVelocity());
+
+        var ref = new Object() {
+            Point2D contactPointOnEdge = null;
+            Point2D contactPointOnCircle = null;
+        };
+
+        rayFromPointOnCircleAlongVelocityDirection.findIntersection(edge)
+                .ifPresent((Point2D point) -> ref.contactPointOnEdge = point);
+
+        if (ref.contactPointOnEdge != null) {
+            Collision collision = constructCollision(node, edge, pointOnCircleClosestToEdge, ref.contactPointOnEdge, ball.getVelocity());
+            return Optional.of(collision);
+        }
+
+        // Now cast a ray from the closest vertex of the edge along the direction of reverse velocity vector
+        // in order to find the contact point on the circle for a potential collision.
+        Ray2D rayFromClosestVertexOfEdgeHavingDirectionReverseVelocityVector = new Ray2D(closestVertex, ball.getVelocity().reversed());
+
+        ball.findIntersectionClosestToOriginOfRay(rayFromClosestVertexOfEdgeHavingDirectionReverseVelocityVector)
+                .ifPresent((Point2D point) -> ref.contactPointOnCircle = point);
+
+        if (ref.contactPointOnCircle != null) {
+            Collision collision = constructCollision(node, edge, ref.contactPointOnCircle, closestVertex, ball.getVelocity().reversed());
+            return Optional.of(collision);
+        }
+
+        return Optional.empty();
+    }
+
+
+    //
+    //                          |
+    //                          |
+    //                          |
+    //                 Velocity |
+    //                    <---  *  Center of the ball
+    //      *                   |
+    //    Point                 |             *
+    //                          |            Point
+    //                          |
+    //    Critical Region
+
+    private static boolean isPointInsideCriticalRegion(Point2D center, Point2D point, Vector2D velocity) {
+        // If the vector origination from center to point has positive dot product with the velocity vector,
+        // then it is inside the critical region.
+        Vector2D centerToPoint = point.subtract(center);
+        double dot = Vector2D.dot(centerToPoint, velocity);
+        return dot > 0;
+    }
+
+    private static Collision constructCollision(StaticNode node, LineSegment2D edge, Point2D contactPointOnBall, Point2D contactPointOnEdge, Vector2D velocity) {
+        double distanceToCollision = contactPointOnBall.distanceTo(contactPointOnEdge);
         double speed = velocity.length();
-        //  Here we assume that the velocity vector
-        // and the vector from contact point on edge to contact point on ball
-        // has the same direction.
-        double timeToCollision = distance / speed;
+        double timeToCollision = distanceToCollision / speed;
 
         Collision collision = new Collision();
+        collision.setCollider(node);
         collision.setEdge(edge);
         collision.setContactPointOnBall(contactPointOnBall);
         collision.setContactPointOnEdge(contactPointOnEdge);
         collision.setTimeToCollision(timeToCollision);
-        
+
         return collision;
+    }
+
+    // Cast a ray originating from a point on the circle along the given direction.
+    // This method assumes that the ray intersects the line.
+    public static Optional<Point2D> findIntersectionUnsafe(Line2D line, Point2D pointOnCircle, Vector2D direction) {
+        return line.findIntersection(new Ray2D(pointOnCircle, direction));
+    }
+
+    // Cast a ray originating from point and pointing the center of the circle.
+    // This ray must intersect the circle inevitably.
+    public static Point2D findIntersectionUnsafe(Circle circle, Point2D point) {
+        Point2D center = circle.getCenter();
+        Vector2D direction = center.subtract(point);
+
+        List<Point2D> intersections = circle.findIntersection(new Ray2D(center, direction));
+        assert intersections.size() == 2;
+
+        Point2D i0 = intersections.get(0);
+        Point2D i1 = intersections.get(1);
+
+        // Find the closest one to the point.
+        double distance0 = point.distanceTo(i0);
+        double distance1 = point.distanceTo(i1);
+
+        return distance0 < distance1 ? i0 : i1;
     }
 }

@@ -5,6 +5,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ToString
 @Getter
@@ -131,8 +132,8 @@ public class Circle {
     }
 
     // Assumes the given line does not intersect the circle
-    // otherwise the result is not valid.
-    public Point2D findClosestPointToLine(Line2D line) {
+    // otherwise the result is wrong.
+    public Point2D findPointOnCircleClosestToLine(Line2D line) {
         double slope = line.getSlope();
         List<Point2D> points = findPointsAtWhichTangentLinesHasGivenSlope(slope);
         Point2D p0 = points.get(0);
@@ -145,6 +146,17 @@ public class Circle {
         } else {
             return p1;
         }
+    }
+
+    // Assumes the given line does not intersect the circle
+    // otherwise the result is wrong.
+    public Point2D findPointOnLineClosestToCircle(Line2D line) {
+        Point2D pointOnCircleClosestToLine = findPointOnCircleClosestToLine(line);
+        Vector2D centerToPoint = pointOnCircleClosestToLine.subtract(center);
+        Ray2D ray = new Ray2D(pointOnCircleClosestToLine, centerToPoint);
+        Optional<Point2D> optional = line.findIntersection(ray);
+        assert optional.isPresent();
+        return optional.get();
     }
 
     public boolean isPointOnCircle(Point2D point) {
@@ -181,7 +193,7 @@ public class Circle {
         // We assume direction is normalized, i.e., has length 1.
         Vector2D direction = new Vector2D(line.getQ().x - line.getP().x, line.getQ().y - line.getP().y).normalized();
 
-        Vector2D originToCenter = center.subtract(origin).toVector2D();
+        Vector2D originToCenter = center.subtract(origin);
         double dot = direction.dot(originToCenter);
         Point2D closestPointToCenter = origin.add(direction.multiply(dot));
 
@@ -213,6 +225,27 @@ public class Circle {
         );
 
         return list;
+    }
+
+    public Optional<Point2D> findIntersectionClosestToOriginOfRay(Ray2D ray) {
+        List<Point2D> intersections = findIntersection(ray);
+
+        double minDistance = Double.MAX_VALUE;
+        Point2D pointOnCircleClosestToOriginOfRay = null;
+
+        for (Point2D point : intersections) {
+            double distance = point.distanceTo(ray.getOrigin());
+            if (distance < minDistance) {
+                minDistance = distance;
+                pointOnCircleClosestToOriginOfRay = point;
+            }
+        }
+
+        if (pointOnCircleClosestToOriginOfRay != null) {
+            return Optional.of(pointOnCircleClosestToOriginOfRay);
+        }
+
+        return Optional.empty();
     }
 
     public List<Point2D> findIntersection(LineSegment2D lineSegment) {

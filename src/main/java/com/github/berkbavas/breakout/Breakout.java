@@ -1,7 +1,8 @@
 package com.github.berkbavas.breakout;
 
-import com.github.berkbavas.breakout.engine.PhysicsEngine;
+import com.github.berkbavas.breakout.engine.Engine;
 import com.github.berkbavas.breakout.gui.ImageGenerator;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -19,12 +20,25 @@ public class Breakout extends Application {
 
     private final Robot robot = new Robot();
     private final StackPane root = new StackPane();
-    private final PhysicsEngine engine;
+    private final Engine engine;
     private final ImageGenerator ig;
 
     private final GameObjects gameObjects;
+    private final SharedState sharedState;
+
+    AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            update();
+        }
+    };
 
     private boolean focus = false;
+
+    public void update() {
+        engine.update();
+        ig.update();
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -32,8 +46,9 @@ public class Breakout extends Application {
 
     public Breakout() {
         gameObjects = GameObjectConstructor.construct();
-        engine = new PhysicsEngine(gameObjects);
-        ig = new ImageGenerator(gameObjects);
+        sharedState = new SharedState();
+        engine = new Engine(gameObjects, sharedState);
+        ig = new ImageGenerator(gameObjects, sharedState);
     }
 
     @Override
@@ -67,15 +82,13 @@ public class Breakout extends Application {
         primaryStage.centerOnScreen();
         primaryStage.show();
 
+        timer.start();
         engine.start();
-        ig.start();
     }
 
     @Override
     public void stop() {
         System.out.println("Breakout.stop()");
-
         engine.stop();
-        ig.stop();
     }
 }

@@ -1,9 +1,13 @@
 package com.github.berkbavas.breakout.math;
 
 public class Vector2D extends Point2D {
+    private final double length;
+    private final double l2norm;
 
     public Vector2D(double x, double y) {
         super(x, y);
+        length = length();
+        l2norm = l2norm();
     }
 
     public Vector2D add(Vector2D other) {
@@ -14,11 +18,7 @@ public class Vector2D extends Point2D {
         return new Vector2D(x - other.x, y - other.y);
     }
 
-    public Vector2D multiply(double scalar) {
-        return new Vector2D(scalar * x, scalar * y);
-    }
-
-    public Vector2D invert() {
+    public Vector2D reversed() {
         return this.multiply(-1.0);
     }
 
@@ -66,7 +66,7 @@ public class Vector2D extends Point2D {
     }
 
     public double length() {
-        return Math.sqrt(x * x + y * y);
+        return Math.pow(Math.pow(x, 2.0) + Math.pow(y, 2.0), 0.5);
     }
 
     public double norm() {
@@ -81,6 +81,10 @@ public class Vector2D extends Point2D {
     public boolean equals(Object object) {
         if (object instanceof Vector2D) {
             Vector2D other = (Vector2D) object;
+            return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
+        }
+        if (object instanceof Point2D) {
+            Point2D other = (Point2D) object;
             return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
         } else {
             return false;

@@ -62,10 +62,10 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testInvert() {
-        Assert.assertEquals(new Vector2D(0.0, 0.0), new Vector2D(0.0, 0.0).invert());
-        Assert.assertEquals(new Vector2D(-1.0, 0.0), new Vector2D(1.0, 0.0).invert());
-        Assert.assertEquals(new Vector2D(0.0, 10.0), new Vector2D(0.0, -10.0).invert());
-        Assert.assertEquals(new Vector2D(-1.0, 10.0), new Vector2D(1.0, -10.0).invert());
+    public void testReversed() {
+        Assert.assertEquals(new Vector2D(0.0, 0.0), new Vector2D(0.0, 0.0).reversed());
+        Assert.assertEquals(new Vector2D(-1.0, 0.0), new Vector2D(1.0, 0.0).reversed());
+        Assert.assertEquals(new Vector2D(0.0, 10.0), new Vector2D(0.0, -10.0).reversed());
+        Assert.assertEquals(new Vector2D(-1.0, 10.0), new Vector2D(1.0, -10.0).reversed());
     }
 }

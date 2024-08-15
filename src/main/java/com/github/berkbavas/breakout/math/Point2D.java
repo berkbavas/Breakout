@@ -12,16 +12,16 @@ public class Point2D {
         this.y = y;
     }
 
-    public Point2D add(Point2D other) {
-        return new Point2D(x + other.x, y + other.y);
+    public Vector2D add(Point2D other) {
+        return new Vector2D(x + other.x, y + other.y);
     }
 
-    public Point2D subtract(Point2D other) {
-        return new Point2D(x - other.x, y - other.y);
+    public Vector2D subtract(Point2D other) {
+        return new Vector2D(x - other.x, y - other.y);
     }
 
-    public Point2D multiply(double scalar) {
-        return new Point2D(scalar * x, scalar * y);
+    public Vector2D multiply(double scalar) {
+        return new Vector2D(scalar * x, scalar * y);
     }
 
     public double distanceTo(Point2D other) {
