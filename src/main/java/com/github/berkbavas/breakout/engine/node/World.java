@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.engine.node;
 
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Rectangle2D;
 
@@ -13,4 +14,8 @@ public class World extends Rectangle2D implements StaticNode {
         super(leftTop, leftBottom, rightTop, rightBottom);
     }
 
+    @Override
+    public double getCollisionImpactFactor() {
+        return Constants.World.COLLISION_IMPACT_FACTOR;
+    }
 }

@@ -4,7 +4,7 @@ import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.SharedState;
 import com.github.berkbavas.breakout.engine.Collision;
-import com.github.berkbavas.breakout.engine.TickProcessorResult;
+import com.github.berkbavas.breakout.engine.TickResult;
 import com.github.berkbavas.breakout.engine.node.Ball;
 import com.github.berkbavas.breakout.engine.node.Brick;
 import com.github.berkbavas.breakout.engine.node.Paddle;
@@ -23,6 +23,7 @@ public class ImageGenerator {
 
     @Getter
     private final Group container;
+    @Getter
     private final Canvas gameBoard;
 
     private final GameObjects gameObjects;
@@ -45,9 +46,9 @@ public class ImageGenerator {
         final double height = gameBoard.getHeight();
 
         GraphicsContext gc = gameBoard.getGraphicsContext2D();
+
         // Clear
         gc.clearRect(0, 0, width, height);
-
 
         // Background
         gc.setFill(Color.rgb(15, 15, 30));
@@ -63,13 +64,12 @@ public class ImageGenerator {
         Paddle paddle = gameObjects.getPaddle();
         paint(paddle);
 
-
         ArrayList<Brick> bricks = gameObjects.getBricks();
         paint(bricks);
     }
 
     private void paintForDebug() {
-        TickProcessorResult result = sharedState.getTickProcessorResult();
+        TickResult result = sharedState.getTickResult();
 
         if (result == null) {
             return;

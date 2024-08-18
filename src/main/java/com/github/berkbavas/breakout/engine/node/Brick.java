@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.engine.node;
 
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -23,4 +24,10 @@ public class Brick extends Rectangle2D implements StaticNode {
         this.color = color;
         this.hit = false;
     }
+
+    @Override
+    public double getCollisionImpactFactor() {
+        return Constants.Brick.COLLISION_IMPACT_FACTOR;
+    }
+
 }

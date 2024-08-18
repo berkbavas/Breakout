@@ -40,11 +40,19 @@ public class Vector2D extends Point2D {
     public Vector2D reflect(Vector2D normal) {
         // Reflected vector is given by the following equation.
         // r = v - 2 * (v ∙ n) * n
-
         normal = normal.normalized();
-
         final double dot = dot(this, normal);
         return this.subtract(normal.multiply(2.0 * dot));
+    }
+
+    public Vector2D collide(Vector2D normal) {
+        double dot = dot(this, normal);
+
+        if (0 < dot) {
+            return reflect(new Vector2D(-normal.y, normal.x));
+        }
+
+        return reflect(normal);
     }
 
     public double dot(Vector2D other) {

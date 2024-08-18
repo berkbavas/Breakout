@@ -40,4 +40,9 @@ public final class Util {
         final double val = value.doubleValue();
         return lw - EPSILON < val && val < up + EPSILON;
     }
+
+    public static double clamp(double min, double value, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
 }

@@ -6,4 +6,5 @@ import java.util.Set;
 
 public interface StaticNode extends GameObject {
     Set<LineSegment2D> getEdges();
+    double getCollisionImpactFactor();
 }

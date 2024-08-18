@@ -4,7 +4,9 @@ import com.github.berkbavas.breakout.engine.Engine;
 import com.github.berkbavas.breakout.gui.ImageGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
@@ -13,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class Breakout extends Application {
+public class Breakout extends Application implements EventHandler<MouseEvent> {
     static {
         Font.loadFont(Objects.requireNonNull(Breakout.class.getResource("/font/BlackOpsOne-Regular.ttf")).toExternalForm(), 0);
     }
@@ -62,19 +64,13 @@ public class Breakout extends Application {
 //            scene.setCursor(focus ? Cursor.NONE : Cursor.DEFAULT);
 //        });
 
-//        scene.setOnMouseMoved(event -> {
-//            if (focus) {
-//                manager.movePaddle(event.getX() - scene.getWidth() * 0.5);
-//                double x = scene.getWindow().getX() + scene.getWindow().getWidth() * 0.5;
-//                double y = scene.getWindow().getY() + scene.getWindow().getHeight() * 0.5;
-//                robot.mouseMove(x, y);
-//            }
-//        });
 
 //        Bounds bounds = controller.getContainer().getLayoutBounds();
 //        primaryStage.setMinWidth(bounds.getWidth() / 1.25);
 //        primaryStage.setMinHeight(bounds.getHeight() / 1.25);
 
+
+        ig.getGameBoard().addEventHandler(MouseEvent.ANY, engine);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Breakout");
@@ -91,4 +87,10 @@ public class Breakout extends Application {
         System.out.println("Breakout.stop()");
         engine.stop();
     }
+
+    @Override
+    public void handle(MouseEvent mouseEvent) {
+
+    }
+
 }

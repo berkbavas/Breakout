@@ -1,6 +1,9 @@
 package com.github.berkbavas.breakout.math;
 
+import javafx.util.Pair;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class Point2D {
@@ -34,6 +37,10 @@ public class Point2D {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    public static double distanceBetween(Pair<Point2D, Point2D> pair) {
+        return distanceBetween(pair.getKey(), pair.getValue());
+    }
+
     public Vector2D toVector2D() {
         return new Vector2D(x, y);
     }
@@ -52,4 +59,35 @@ public class Point2D {
             return false;
         }
     }
+
+    public static Point2D findClosestPoint(Point2D subject, List<Point2D> points) {
+        double minDistance = Double.MAX_VALUE;
+        Point2D closestPoint = null;
+
+        for (Point2D point : points) {
+            double distance = subject.distanceTo(point);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = point;
+            }
+        }
+
+        return closestPoint;
+    }
+
+    public static Pair<Point2D, Point2D> findClosestPair(List<Pair<Point2D, Point2D>> listOfPairs) {
+        Pair<Point2D, Point2D> closestPair = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Pair<Point2D, Point2D> pair : listOfPairs) {
+            double distance = distanceBetween(pair);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPair = pair;
+            }
+
+        }
+        return closestPair;
+    }
+
 }
