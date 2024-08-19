@@ -5,26 +5,24 @@ import com.github.berkbavas.breakout.SharedState;
 import com.github.berkbavas.breakout.engine.node.Brick;
 import com.github.berkbavas.breakout.engine.node.StaticNode;
 import com.github.berkbavas.breakout.util.Stopwatch;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
+import lombok.Getter;
 
 import java.util.Set;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Engine implements EventHandler<MouseEvent> {
+public class Engine {
     private static final long TICK_STEP_IN_MS = 5;
 
     private final Stopwatch chronometer = new Stopwatch();
     private final Stopwatch performanceMonitor = new Stopwatch();
     private final GameObjects gameObjects;
     private final AtomicBoolean paused = new AtomicBoolean(false);
+    @Getter
     private final PaddleActionListener paddleActionListener;
     private final TickProcessor tickProcessor;
-
-    private final Timer timer = new Timer("PhysicsEngine", true);
 
     private final TimerTask task = new TimerTask() {
         @Override
@@ -82,14 +80,11 @@ public class Engine implements EventHandler<MouseEvent> {
     }
 
     public void start() {
-        chronometer.start();
-        performanceMonitor.start();
         resume();
-        //timer.scheduleAtFixedRate(task, 1000 ,TICK_STEP_IN_MS);
     }
 
     public void stop() {
-        //timer.cancel();
+        paused.set(true);
     }
 
     public void pause() {
@@ -97,27 +92,8 @@ public class Engine implements EventHandler<MouseEvent> {
     }
 
     public void resume() {
+        chronometer.start();
+        performanceMonitor.start();
         paused.set(false);
-    }
-
-    @Override
-    public void handle(MouseEvent event) {
-        Object o = event.getSource();
-
-        if (o instanceof Canvas) {
-            Canvas source = (Canvas) o;
-            double x = event.getSceneX() / source.getWidth();
-            double y = event.getSceneY() / source.getHeight();
-            var eventType = event.getEventType();
-
-            if (MouseEvent.MOUSE_PRESSED == eventType) {
-                paddleActionListener.onMousePressed(x, y);
-            }
-
-            if (MouseEvent.MOUSE_DRAGGED == eventType) {
-                paddleActionListener.onMouseDragged(x, y);
-            }
-
-        }
     }
 }

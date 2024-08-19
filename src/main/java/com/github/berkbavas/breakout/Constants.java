@@ -7,7 +7,7 @@ public final class Constants {
     }
 
     public final static class World {
-        public static final double WIDTH = 800;
+        public static final double WIDTH = 1200;
         public static final double HEIGHT = 800;
         public static final double TOP_PADDING = 150;
         public static final double COLLISION_IMPACT_FACTOR = 1.0;
