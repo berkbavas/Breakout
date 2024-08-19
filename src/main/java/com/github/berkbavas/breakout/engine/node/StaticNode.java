@@ -3,10 +3,11 @@ package com.github.berkbavas.breakout.engine.node;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 
+import java.util.List;
 import java.util.Set;
 
 public interface StaticNode extends GameObject {
-    Set<LineSegment2D> getEdges();
+    List<LineSegment2D> getEdges();
     double getCollisionImpactFactor();
 
     default Vector2D getNormalFor(LineSegment2D edge) {

@@ -51,7 +51,7 @@ public final class CollisionDetector {
         // Ball may collide with a vertex of the node, that is counted as two collisions with two edges of the node.
         // That's why we have set here.
         Set<Collision> collisions = new HashSet<>();
-        Set<LineSegment2D> edges = node.getEdges();
+        List<LineSegment2D> edges = node.getEdges();
         for (LineSegment2D edge : edges) {
             findPotentialCollision(node, edge, ball).ifPresent(collisions::add);
         }

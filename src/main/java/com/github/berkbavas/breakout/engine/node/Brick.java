@@ -19,12 +19,6 @@ public class Brick extends Rectangle2D implements StaticNode {
         this.hit = false;
     }
 
-    public Brick(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom, Color color) {
-        super(leftTop, leftBottom, rightTop, rightBottom);
-        this.color = color;
-        this.hit = false;
-    }
-
     @Override
     public double getCollisionImpactFactor() {
         return Constants.Brick.COLLISION_IMPACT_FACTOR;

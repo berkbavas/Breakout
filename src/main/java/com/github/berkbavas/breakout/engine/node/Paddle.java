@@ -20,17 +20,12 @@ public class Paddle extends Rectangle2D implements StaticNode {
         this.color = color;
     }
 
-    public Paddle(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom, Color color) {
-        super(leftTop, leftBottom, rightTop, rightBottom);
-        this.color = color;
-    }
-
     // Returns a new paddle instance by taking care of a potential collision between circle, i.e.,
     // checks if a collision is potential along the path from current position to the new position and
     // makes sure that the returned paddle instance is not colliding with the circle.
     public Paddle getNewPaddleByTakingCareOfCollision(Point2D newPreferredTopLeft, Circle circle) {
         List<Pair<Point2D, Point2D>> collisionContacts = new ArrayList<>();
-        Set<LineSegment2D> edges = getEdges();
+        List<LineSegment2D> edges = getEdges();
         Vector2D velocity = newPreferredTopLeft.subtract(getLeftTop());
         edges.forEach((edge) -> CollisionDetector.findCollision(edge, velocity, circle).ifPresent(collisionContacts::add));
 

@@ -1,14 +1,11 @@
 package com.github.berkbavas.breakout.math;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
-public class Rectangle2D {
+public class Rectangle2D extends Polygon2D {
     //
     //                     Top
     //      Left Top                  Right Top
@@ -20,11 +17,6 @@ public class Rectangle2D {
     //     Left Bottom              Right Bottom
     //                    Bottom
 
-    private final LineSegment2D left;
-    private final LineSegment2D right;
-    private final LineSegment2D top;
-    private final LineSegment2D bottom;
-
     private final Point2D leftTop;
     private final Point2D leftBottom;
     private final Point2D rightTop;
@@ -33,49 +25,27 @@ public class Rectangle2D {
     private final double width;
     private final double height;
 
-    @Getter(AccessLevel.NONE)
-    HashSet<LineSegment2D> edges = new HashSet<>();
-
-    @Getter(AccessLevel.NONE)
-    HashSet<Point2D> vertices = new HashSet<>();
+    private final double x;
+    private final double y;
 
     public Rectangle2D(double x, double y, double width, double height) {
-        this(
-                new Point2D(x, y),
-                new Point2D(x, y + height),
-                new Point2D(x + width, y),
-                new Point2D(x + width, y + height)
-        );
+        super(List.of(
+                        new Point2D(x, y),
+                        new Point2D(x, y + height),
+                        new Point2D(x + width, y + height),
+                        new Point2D(x + width, y)),
+                List.of("[Left]", "[Bottom]", "[Right]", "[Top]"));
+
+        this.leftTop = new Point2D(x, y);
+        this.leftBottom = new Point2D(x, y + height);
+        this.rightBottom = new Point2D(x + width, y + height);
+        this.rightTop = new Point2D(x + width, y);
+
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
-
-    public Rectangle2D(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom) {
-        this.leftTop = leftTop;
-        this.leftBottom = leftBottom;
-        this.rightTop = rightTop;
-        this.rightBottom = rightBottom;
-
-        // Be aware of the order of vertices.
-        // It affects the direction of normal.
-        left = new LineSegment2D(leftTop, leftBottom, "[Left]");
-        right = new LineSegment2D(rightBottom, rightTop, "[Right]");
-        top = new LineSegment2D(rightTop, leftTop, "[Top]");
-        bottom = new LineSegment2D(leftBottom, rightBottom, "[Bottom]");
-
-        width = leftTop.distanceTo(rightTop);
-        height = leftTop.distanceTo(leftBottom);
-
-        constructVertexAndEdgeSet();
-    }
-
-
-    public Set<LineSegment2D> getEdges() {
-        return Collections.unmodifiableSet(edges);
-    }
-
-    public Set<Point2D> getVertices() {
-        return Collections.unmodifiableSet(vertices);
-    }
-
 
     public boolean collides(Rectangle2D other) {
         for (LineSegment2D edge : edges) {
@@ -115,68 +85,5 @@ public class Rectangle2D {
         double dot1 = Vector2D.dot(v2, v3);
 
         return Util.isLessThanOrEqualToZero(dot1);
-    }
-
-    public Set<Point2D> findIntersections(Rectangle2D other) {
-        Set<Point2D> intersections = new HashSet<>();
-
-        for (LineSegment2D edge : edges) {
-            for (LineSegment2D otherEdge : other.edges) {
-                edge.findIntersection(otherEdge).ifPresent(intersections::add);
-            }
-        }
-
-        return intersections;
-    }
-
-    public Set<Point2D> findIntersections(LineSegment2D ls) {
-        Set<Point2D> intersections = new HashSet<>();
-
-        for (LineSegment2D edge : edges) {
-            edge.findIntersection(ls).ifPresent(intersections::add);
-        }
-
-        return intersections;
-    }
-
-    public Set<Point2D> findIntersections(Ray2D ray) {
-        Set<Point2D> intersections = new HashSet<>();
-
-        for (LineSegment2D edge : edges) {
-            edge.findIntersection(ray).ifPresent(intersections::add);
-        }
-
-        return intersections;
-    }
-
-    public static boolean isRectangle2D(Point2D leftTop, Point2D leftBottom, Point2D rightTop, Point2D rightBottom) {
-
-        LineSegment2D left = new LineSegment2D(leftTop, leftBottom);
-        LineSegment2D right = new LineSegment2D(rightTop, rightBottom);
-        LineSegment2D top = new LineSegment2D(leftTop, rightTop);
-        LineSegment2D bottom = new LineSegment2D(leftBottom, rightBottom);
-
-        Vector2D leftDir = left.getDirection();
-        Vector2D topDir = top.getDirection();
-
-        Vector2D rightDir = right.getDirection();
-        Vector2D bottomDir = bottom.getDirection();
-
-        return Util.isFuzzyZero(leftDir.dot(topDir)) &&
-                Util.isFuzzyZero(topDir.dot(rightDir)) &&
-                Util.isFuzzyZero(rightDir.dot(bottomDir)) &&
-                Util.isFuzzyZero(bottomDir.dot(leftDir));
-    }
-
-    private void constructVertexAndEdgeSet() {
-        edges.add(left);
-        edges.add(right);
-        edges.add(top);
-        edges.add(bottom);
-
-        vertices.add(leftTop);
-        vertices.add(rightTop);
-        vertices.add(leftBottom);
-        vertices.add(rightBottom);
     }
 }

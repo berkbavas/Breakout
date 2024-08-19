@@ -12,8 +12,6 @@ public class Ball extends Circle implements GameObject {
     public Ball(Point2D center, double radius, Vector2D velocity) {
         super(center, radius);
         this.velocity = velocity;
-        double x = center.getX() - radius;
-        double y = center.getY() - radius;
     }
 
     public Ball move(double deltaTime) {
@@ -21,7 +19,7 @@ public class Ball extends Circle implements GameObject {
         final double dy = velocity.getY() * deltaTime;
 
         Point2D newCenter = getCenter().add(new Point2D(dx, dy));
-        return new Ball(newCenter, getRadius(), velocity);
+        return constructFrom(newCenter);
     }
 
     public Ball collide(Vector2D collisionNormal, double timeToCollision, double translationDistance) {
@@ -36,7 +34,7 @@ public class Ball extends Circle implements GameObject {
 
     public Ball translateAlongDirection(Vector2D direction, double distance) {
         Point2D newCenter = getCenter().add(direction.multiply(distance));
-        return new Ball(newCenter, getRadius(), getVelocity());
+        return constructFrom(newCenter);
     }
 
     public Ball constructFrom(Point2D newCenter) {

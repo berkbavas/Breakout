@@ -87,6 +87,7 @@ public class Point2D {
             }
 
         }
+
         return closestPair;
     }
 
@@ -95,10 +96,10 @@ public class Point2D {
         Pair<Point2D, Point2D> closestPair = null;
         double minDistance = Double.MAX_VALUE;
 
-        for(Point2D p0 : list0) {
-            for(Point2D p1 : list1) {
+        for (Point2D p0 : list0) {
+            for (Point2D p1 : list1) {
                 double distance = p0.distanceTo(p1);
-                if(distance < minDistance) {
+                if (distance < minDistance) {
                     minDistance = distance;
                     closestPair = new Pair<>(p0, p1);
                 }

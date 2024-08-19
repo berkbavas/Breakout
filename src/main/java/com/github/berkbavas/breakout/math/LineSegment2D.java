@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.math;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -12,13 +13,14 @@ public class LineSegment2D {
     private final Vector2D direction;
     private final double length;
     private final String identifier;
+
+    @Getter(AccessLevel.NONE)
     private final HashMap<NormalOrientation, Vector2D> normals = new HashMap<>();
 
     public enum NormalOrientation {
         INWARDS,
         OUTWARDS
     }
-
 
     public LineSegment2D(Point2D P, Point2D Q) {
         this(P, Q, "");
@@ -38,23 +40,17 @@ public class LineSegment2D {
             return true;
         }
 
-        double length = getLength();
-        double distance = P.distanceTo(point) + Q.distanceTo(point);
+        double distance = point.distanceTo(P) + point.distanceTo(Q);
 
-        if (Util.fuzzyCompare(length, distance)) {
-            Vector2D expectedDirection = new Vector2D(point.x - P.x, point.y - P.y);
-            Vector2D direction = getDirection();
-            return direction.isCollinear(expectedDirection);
-        } else {
-            return false;
-        }
+        return Util.fuzzyCompare(length, distance);
+
     }
 
     public Point2D getClosestVertexToPoint(Point2D point) {
-        double distance0 = point.distanceTo(P);
-        double distance1 = point.distanceTo(Q);
+        double d0 = point.distanceTo(P);
+        double d1 = point.distanceTo(Q);
 
-        return distance0 < distance1 ? P : Q;
+        return d0 < d1 ? P : Q;
     }
 
     public Vector2D getNormal(NormalOrientation normalOrientation) {

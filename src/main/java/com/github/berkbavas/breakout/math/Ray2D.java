@@ -157,12 +157,37 @@ public class Ray2D {
         return circle.findIntersection(this);
     }
 
+
+    //
+    //             x  x
+    //          x        x
+    //         x    .     x
+    //         x  Circle  x
+    //          x        x
+    //             x  x
+    //
+    //
+    //    (*)----------------►
+    //   Origin         Direction
+    //
+
     public Point2D findClosestPointToCircleCenter(Circle circle) {
         Vector2D originToCenter = circle.getCenter().subtract(origin);
         double dot = direction.dot(originToCenter);
-        // If dot is negative, then the closest point is not on ray but the line
-        // constructed from the ray.
+
         if (dot <= 0.0) {
+            // If dot is negative then the closest point is the origin.
+            // In fact, if dot product is negative, then the point on the line passing through this ray that is
+            // closest to circle lies on other direction of this ray.
+
+            //             x  x
+            //          x        x    Closest Point
+            //         x    .     x ↙
+            //         x          x         (*)----------------►
+            //          x        x         Origin         Direction
+            //             x  x
+            //
+
             dot = 0.0;
         }
 

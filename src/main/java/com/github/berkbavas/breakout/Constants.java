@@ -18,8 +18,8 @@ public final class Constants {
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 50;
-        public static final double MAX_SPEED = 90;
+        public static final double MIN_SPEED = 1500;
+        public static final double MAX_SPEED = 1900;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
@@ -32,8 +32,8 @@ public final class Constants {
         public static final double INITIAL_Y = World.HEIGHT - 200;
         public static final Color COLOR = Color.WHITE;
         public static final double ARC_RADIUS = 4;
-        public static final double DO_NOT_MOVE_PADDLE_IF_BALL_TOO_CLOSE_OFFSET = 5.00;
-        public static final double COLLISION_IMPACT_FACTOR = 7.5;
+        public static final double DO_NOT_MOVE_PADDLE_IF_BALL_TOO_CLOSE_OFFSET = 0.00;
+        public static final double COLLISION_IMPACT_FACTOR = 5.0;
     }
 
     public final static class Brick {

@@ -14,7 +14,6 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -126,8 +125,8 @@ public class ImageGenerator {
         gc.save();
         gc.setFill(Constants.Paddle.COLOR);
 
-        double x = paddle.getLeft().getP().getX();
-        double y = paddle.getLeft().getP().getY();
+        double x = paddle.getX();
+        double y = paddle.getY();
         double w = paddle.getWidth();
         double h = paddle.getHeight();
         gc.fillRoundRect(x, y, w, h, Constants.Paddle.ARC_RADIUS, Constants.Paddle.ARC_RADIUS);

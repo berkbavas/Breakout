@@ -21,6 +21,7 @@ public final class TickProcessor {
         this.gameObjects = gameObjects;
     }
 
+    // This method clamps the center of the ball inside the world.
     public void preprocess() {
         Ball ball = gameObjects.getBall();
         World world = gameObjects.getWorld();
@@ -50,9 +51,9 @@ public final class TickProcessor {
     public TickResult nextTick(double deltaTime) {
         final Set<Collision> potentialCollisions = CollisionDetector.findPotentialCollisions(gameObjects);
 
-        final Pair<Set<Collision>, Double> earliestCollisionsAndTimeToCollision = findEarliestCollisions(potentialCollisions);
-        final Set<Collision> earliestCollisions = earliestCollisionsAndTimeToCollision.getKey();
-        final double timeToCollision = earliestCollisionsAndTimeToCollision.getValue();
+        final Pair<Set<Collision>, Double> pairs = findEarliestCollisions(potentialCollisions);
+        final Set<Collision> earliestCollisions = pairs.getKey();
+        final double timeToCollision = pairs.getValue();
 
         if (earliestCollisions.isEmpty()) {
             // We are good, there is no collision.
@@ -67,10 +68,16 @@ public final class TickProcessor {
         if (!collides) {
             // If we are here a collision won't happen in the given delta time.
             moveBall(deltaTime);
+
             return new TickResult(false, deltaTime, earliestCollisions);
         }
 
         // If we are here a collision will happen in the given delta time.
+
+        // Make sure that timeToCollision is not zero.
+        // If it is zero, then it means that we are already colliding.
+        // Just move the ball a little bit in order to get rid of the -sticky- collision.
+        final double clampedTimeToCollision = Util.clamp( Util.EPSILON, timeToCollision, deltaTime);
 
         // Calculate the collision normal
         Vector2D collisionNormal = calculateCollisionNormal(earliestCollisions, gameObjects.getBall());
@@ -78,10 +85,11 @@ public final class TickProcessor {
         // Who is the collider?
         StaticNode collider = TickResult.findCollider(earliestCollisions);
         assert collider != null;
-        collideBall(collider, collisionNormal, timeToCollision);
 
         // Process the ball
-        return new TickResult(true, timeToCollision, earliestCollisions);
+        collideBall(collider, collisionNormal, clampedTimeToCollision);
+
+        return new TickResult(true, clampedTimeToCollision, earliestCollisions);
     }
 
     public static Vector2D calculateCollisionNormal(Set<Collision> collisions, Ball ball) {
@@ -98,6 +106,9 @@ public final class TickProcessor {
             // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
             if (dot < 0.0) {
                 collisionNormal = collisionNormal.add(normal);
+            } else {
+                // TODO: Remove this after tests
+                System.out.println(collision);
             }
         }
 
