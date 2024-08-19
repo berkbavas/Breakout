@@ -26,10 +26,5 @@ public class TickResult {
         }
         return null;
     }
-
-    public Vector2D getCollisionNormal() {
-        return TickProcessor.calculateCollisionNormal(collisions);
-    }
-
 }
 

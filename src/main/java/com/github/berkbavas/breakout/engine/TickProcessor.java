@@ -1,7 +1,10 @@
 package com.github.berkbavas.breakout.engine;
 
 import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.engine.node.*;
+import com.github.berkbavas.breakout.engine.node.Ball;
+import com.github.berkbavas.breakout.engine.node.Paddle;
+import com.github.berkbavas.breakout.engine.node.StaticNode;
+import com.github.berkbavas.breakout.engine.node.World;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
@@ -37,11 +40,14 @@ public final class TickProcessor {
         }
     }
 
-    public void updatePaddle(Point2D newTopLeft) {
-        gameObjects.updatePaddle(newTopLeft);
+    public void updatePaddle(Point2D newPreferredTopLeft) {
+        Ball ball = gameObjects.getBall();
+        Paddle paddle = gameObjects.getPaddle();
+        Paddle newPaddle = paddle.getNewPaddleByTakingCareOfCollision(newPreferredTopLeft, ball);
+        gameObjects.setPaddle(newPaddle);
     }
 
-    public TickResult process(double deltaTime) {
+    public TickResult nextTick(double deltaTime) {
         final Set<Collision> potentialCollisions = CollisionDetector.findPotentialCollisions(gameObjects);
 
         final Pair<Set<Collision>, Double> earliestCollisionsAndTimeToCollision = findEarliestCollisions(potentialCollisions);
@@ -50,7 +56,7 @@ public final class TickProcessor {
 
         if (earliestCollisions.isEmpty()) {
             // We are good, there is no collision.
-            gameObjects.moveBall(deltaTime);
+            moveBall(deltaTime);
 
             // Return an empty set as there is no collision.
             return new TickResult(false, deltaTime, Set.of());
@@ -60,42 +66,38 @@ public final class TickProcessor {
 
         if (!collides) {
             // If we are here a collision won't happen in the given delta time.
-            gameObjects.moveBall(deltaTime);
+            moveBall(deltaTime);
             return new TickResult(false, deltaTime, earliestCollisions);
         }
 
         // If we are here a collision will happen in the given delta time.
 
         // Calculate the collision normal
-        Vector2D collisionNormal = calculateCollisionNormal(earliestCollisions);
+        Vector2D collisionNormal = calculateCollisionNormal(earliestCollisions, gameObjects.getBall());
 
         // Who is the collider?
         StaticNode collider = TickResult.findCollider(earliestCollisions);
-
-        if (timeToCollision < 0.01) {
-            gameObjects.collideBall(collider, collisionNormal, 0);
-        } else {
-            gameObjects.collideBall(collider, collisionNormal, timeToCollision);
-        }
+        assert collider != null;
+        collideBall(collider, collisionNormal, timeToCollision);
 
         // Process the ball
         return new TickResult(true, timeToCollision, earliestCollisions);
     }
 
-
-    public static Vector2D calculateCollisionNormal(Set<Collision> collisions) {
+    public static Vector2D calculateCollisionNormal(Set<Collision> collisions, Ball ball) {
         Vector2D collisionNormal = new Vector2D(0, 0);
+        Vector2D velocity = ball.getVelocity();
 
         for (Collision collision : collisions) {
             StaticNode node = collision.getCollider();
             LineSegment2D edge = collision.getEdge();
+            Vector2D normal = node.getNormalFor(edge);
 
-            if (node instanceof World) {
-                collisionNormal = collisionNormal.add(edge.getNormal(LineSegment2D.NormalOrientation.INWARDS));
-            } else if (node instanceof Paddle || node instanceof Brick) {
-                collisionNormal = collisionNormal.add(edge.getNormal(LineSegment2D.NormalOrientation.OUTWARDS));
-            } else {
-                throw new RuntimeException("This branch is not implemented!");
+            double dot = normal.dot(velocity);
+            // We only consider normals whose dot product with the velocity is negative.
+            // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
+            if (dot < 0.0) {
+                collisionNormal = collisionNormal.add(normal);
             }
         }
 
@@ -127,4 +129,17 @@ public final class TickProcessor {
 
         return new Pair<>(earliestCollisions, minTimeToCollision);
     }
+
+    private void moveBall(double deltaTime) {
+        Ball ball = gameObjects.getBall();
+        Ball newBall = ball.move(deltaTime);
+        gameObjects.setBall(newBall);
+    }
+
+    private void collideBall(StaticNode collider, Vector2D collisionNormal, double timeToCollision) {
+        Ball ball = gameObjects.getBall();
+        Ball newBall = ball.collide(collisionNormal, timeToCollision, collider.getCollisionImpactFactor());
+        gameObjects.setBall(newBall);
+    }
+
 }

@@ -5,8 +5,6 @@ import com.github.berkbavas.breakout.SharedState;
 import com.github.berkbavas.breakout.engine.node.Brick;
 import com.github.berkbavas.breakout.engine.node.StaticNode;
 import com.github.berkbavas.breakout.util.Stopwatch;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.input.MouseEvent;
 import lombok.Getter;
 
 import java.util.Set;
@@ -57,7 +55,7 @@ public class Engine {
         paddleActionListener.getNewTopLeftPositionOfPaddleIfChanged().ifPresent(tickProcessor::updatePaddle);
 
         // Find all potential collisions along the direction of velocity of the ball and process.
-        TickResult result = tickProcessor.process(deltaTime);
+        TickResult result = tickProcessor.nextTick(deltaTime);
 
         sharedState.setTickResult(result);
 

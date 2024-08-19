@@ -19,20 +19,4 @@ public class GameObjects {
     private volatile Ball ball;
     @Setter
     private volatile Paddle paddle;
-
-    public void moveBall(double deltaTime) {
-        Ball newBall = ball.move(deltaTime);
-        setBall(newBall);
-    }
-
-    public void collideBall(StaticNode collider , Vector2D collisionNormal, double timeToCollision) {
-        Ball newBall = ball.collide(collisionNormal, timeToCollision, collider.getCollisionImpactFactor());
-        setBall(newBall);
-    }
-
-    public void updatePaddle(Point2D newTopLeft) {
-        Paddle newPaddle = paddle.getNewPaddleByTakingCareOfCollision(newTopLeft, ball);
-        setPaddle(newPaddle);
-    }
-
 }

@@ -28,10 +28,10 @@ public class Paddle extends Rectangle2D implements StaticNode {
     // Returns a new paddle instance by taking care of a potential collision between circle, i.e.,
     // checks if a collision is potential along the path from current position to the new position and
     // makes sure that the returned paddle instance is not colliding with the circle.
-    public Paddle getNewPaddleByTakingCareOfCollision(Point2D newTopLeftPosition, Circle circle) {
+    public Paddle getNewPaddleByTakingCareOfCollision(Point2D newPreferredTopLeft, Circle circle) {
         List<Pair<Point2D, Point2D>> collisionContacts = new ArrayList<>();
         Set<LineSegment2D> edges = getEdges();
-        Vector2D velocity = newTopLeftPosition.subtract(getLeftTop());
+        Vector2D velocity = newPreferredTopLeft.subtract(getLeftTop());
         edges.forEach((edge) -> CollisionDetector.findCollision(edge, velocity, circle).ifPresent(collisionContacts::add));
 
         // Find the closest pair among all collision contact pairs.
@@ -44,7 +44,6 @@ public class Paddle extends Rectangle2D implements StaticNode {
             Point2D contactPointOnEdge = earliestCollision.getKey();
             Point2D contactPointOnCircle = earliestCollision.getValue();
 
-
             double xDeltaMaxPermitted = Math.abs(contactPointOnEdge.getX() - contactPointOnCircle.getX());
             boolean isPaddleAndCircleTooClose = xDeltaMaxPermitted < Constants.Paddle.DO_NOT_MOVE_PADDLE_IF_BALL_TOO_CLOSE_OFFSET;
 
@@ -53,24 +52,33 @@ public class Paddle extends Rectangle2D implements StaticNode {
                 return this;
             }
 
-            double xDeltaAskedFor = newTopLeftPosition.getX() - getLeftTop().getX();
+            double xDeltaAskedFor = newPreferredTopLeft.getX() - getLeftTop().getX();
             double xDelta = Util.clamp(-xDeltaMaxPermitted, xDeltaAskedFor, xDeltaMaxPermitted);
             double xClampedTopLeft = getLeftTop().getX() + xDelta;
 
-            return constructFromNewTopLeftXPosition(xClampedTopLeft);
+            double yDeltaMaxPermitted = Math.abs(contactPointOnEdge.getY() - contactPointOnCircle.getY());
+            double yDeltaAskedFor = newPreferredTopLeft.getY() - getLeftTop().getY();
+            double yDelta = Util.clamp(-yDeltaMaxPermitted, yDeltaAskedFor, yDeltaMaxPermitted);
+            double yClampedTopLeft = getLeftTop().getY() + yDelta;
+
+            return constructFromNewTopLeftPosition(xClampedTopLeft, yClampedTopLeft);
         }
 
         // No collision, just update to the new top left position.
-        return constructFromNewTopLeftXPosition(newTopLeftPosition.getX());
+        return constructFromNewTopLeftPosition(newPreferredTopLeft.getX(), newPreferredTopLeft.getY());
     }
 
     private Paddle constructFromNewTopLeftXPosition(double x) {
-        double y = getLeftTop().getY();
+        return constructFromNewTopLeftPosition(x, getLeftTop().getY());
+    }
+
+    private Paddle constructFromNewTopLeftPosition(double x, double y) {
         double w = getWidth();
         double h = getHeight();
         Color c = getColor();
         return new Paddle(x, y, w, h, c);
     }
+
 
     @Override
     public double getCollisionImpactFactor() {

@@ -1,13 +1,9 @@
 package com.github.berkbavas.breakout.math;
 
 public class Vector2D extends Point2D {
-    private final double length;
-    private final double l2norm;
 
     public Vector2D(double x, double y) {
         super(x, y);
-        length = length();
-        l2norm = l2norm();
     }
 
     public Vector2D add(Vector2D other) {
@@ -43,16 +39,6 @@ public class Vector2D extends Point2D {
         normal = normal.normalized();
         final double dot = dot(this, normal);
         return this.subtract(normal.multiply(2.0 * dot));
-    }
-
-    public Vector2D collide(Vector2D normal) {
-        double dot = dot(this, normal);
-
-        if (0 < dot) {
-            return reflect(new Vector2D(-normal.y, normal.x));
-        }
-
-        return reflect(normal);
     }
 
     public double dot(Vector2D other) {

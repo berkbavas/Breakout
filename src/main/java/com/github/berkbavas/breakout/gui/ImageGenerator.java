@@ -27,8 +27,6 @@ public class ImageGenerator {
     @Getter
     private final Canvas gameBoard;
 
-    private final Rectangle borders;
-
     private final GameObjects gameObjects;
     private final SharedState sharedState;
 
@@ -38,17 +36,9 @@ public class ImageGenerator {
 
         container = new Group();
         gameBoard = new Canvas(Constants.World.WIDTH, Constants.World.HEIGHT);
-        borders = new Rectangle(
-                 Constants.World.WIDTH + 2 * Constants.World.BORDER_HORIZONTAL,
-                Constants.World.HEIGHT + 2 * Constants.World.BORDER_VERTICAL);
-
-        borders.setFill(Constants.World.BORDER_COLOR);
-
-        container.getChildren().add(borders);
         container.getChildren().add(gameBoard);
-        gameBoard.setLayoutX(Constants.World.BORDER_HORIZONTAL);
-        gameBoard.setLayoutY(Constants.World.BORDER_VERTICAL);
-
+        gameBoard.setLayoutX(0);
+        gameBoard.setLayoutY(0);
     }
 
     public void update() {

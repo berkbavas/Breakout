@@ -21,7 +21,7 @@ public final class GameObjectConstructor {
         World world = constructWorld(Constants.World.WIDTH, Constants.World.HEIGHT);
         Ball ball = constructBall(Constants.Ball.INITIAL_X, Constants.Ball.INITIAL_Y, Constants.Ball.RADIUS, Constants.Ball.MIN_SPEED, Constants.Ball.MAX_SPEED);
         Paddle paddle = constructPaddle(Constants.Paddle.INITIAL_X, Constants.Paddle.INITIAL_Y, Constants.Paddle.WIDTH, Constants.Paddle.HEIGHT, Constants.Paddle.COLOR);
-        ArrayList<Brick> bricks = constructBricks(8, 13);
+        ArrayList<Brick> bricks = constructBricks(0, 0);
 
         return new GameObjects(world, bricks, ball, paddle);
     }

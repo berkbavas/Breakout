@@ -13,43 +13,42 @@ public class Line2D {
     public Line2D(Point2D p, Point2D q) {
         this.p = p;
         this.q = q;
-
-        //    There are 3 cases for slope.
-
-        //    Case 1:
-        //    Slope is (y2-y1) / (x2-x1).
-        //
-        //     \
-        //      *  q = (x2, y2)
-        //       \
-        //        \
-        //         \
-        //          \
-        //           *  p = (x1, y1)
-        //            \
-
-
-        //    Case 2:
-        //    Slope is 0.
-        //
-        //    <----*---------------------------*------>
-        //         p = (x1, c)                 q = (x2, c)
-
-
-        //    Case 3:
-        //    Slope is undefined
-        //
-        //    |
-        //    *  q = (c, y2)
-        //    |
-        //    |
-        //    |
-        //    |
-        //    *  p = (c, y1)
-        //    |
-
-        slope = calculateSlope(p, q);
+        this.slope = calculateSlope(p, q);
     }
+
+    //    There are 3 cases for the slope calculation.
+
+    //    Case 1:
+    //    Slope is (y2-y1) / (x2-x1).
+    //
+    //     \
+    //      *  q = (x2, y2)
+    //       \
+    //        \
+    //         \
+    //          \
+    //           *  p = (x1, y1)
+    //            \
+
+
+    //    Case 2:
+    //    Slope is 0.
+    //
+    //    <----*---------------------------*------>
+    //         p = (x1, c)                 q = (x2, c)
+
+
+    //    Case 3:
+    //    Slope is undefined
+    //
+    //    |
+    //    *  q = (c, y2)
+    //    |
+    //    |
+    //    |
+    //    |
+    //    *  p = (c, y1)
+    //    |
 
     public static double calculateSlope(Point2D p0, Point2D p1) {
         if (Util.fuzzyCompare(p0.getX(), p1.getX())) {

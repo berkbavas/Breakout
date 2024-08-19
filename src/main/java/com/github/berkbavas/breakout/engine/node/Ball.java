@@ -29,7 +29,7 @@ public class Ball extends Circle implements GameObject {
         double dy = velocity.getY() * timeToCollision;
 
         Point2D newCenter = getCenter().add(new Point2D(dx, dy)).add(collisionNormal.multiply(translationDistance));
-        Vector2D newVelocity = velocity.collide(collisionNormal);
+        Vector2D newVelocity = velocity.reflect(collisionNormal);
 
         return constructFrom(newCenter, newVelocity);
     }

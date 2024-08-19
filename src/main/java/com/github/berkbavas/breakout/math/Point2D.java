@@ -90,4 +90,22 @@ public class Point2D {
         return closestPair;
     }
 
+
+    public static Pair<Point2D, Point2D> findClosestPairAmongTwoList(List<Point2D> list0, List<Point2D> list1) {
+        Pair<Point2D, Point2D> closestPair = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for(Point2D p0 : list0) {
+            for(Point2D p1 : list1) {
+                double distance = p0.distanceTo(p1);
+                if(distance < minDistance) {
+                    minDistance = distance;
+                    closestPair = new Pair<>(p0, p1);
+                }
+            }
+        }
+
+        return closestPair;
+    }
+
 }

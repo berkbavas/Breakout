@@ -34,7 +34,7 @@ public class PaddleActionListener {
 
     public Optional<Point2D> getNewTopLeftPositionOfPaddleIfChanged() {
 
-        if (Util.isFuzzyZero(mouse.dx)) {
+        if (Util.isFuzzyZero(mouse.dx) && Util.isFuzzyZero(mouse.dy)) {
             // If mouse has not moved since the last call, then no need to update the paddle.
             return Optional.empty();
         }
@@ -48,10 +48,18 @@ public class PaddleActionListener {
         double xDelta = mouse.dx * gameObjects.getWorld().getWidth();
 
         double xNewTopLeft = Util.clamp(xMin, xPreviousTopLeft + xDelta, xMax);
-        double yNewTopLeft = gameObjects.getPaddle().getLeftTop().getY();
 
-        // Consume dx
+        double yMin = 0.0;
+        double yMax = gameObjects.getWorld().getHeight() - paddle.getHeight();
+        double yPreviousTopLeft = paddle.getLeftTop().getY();
+        double yDelta = mouse.dy * gameObjects.getWorld().getHeight();
+
+        double yNewTopLeft = Util.clamp(yMin, yPreviousTopLeft + yDelta, yMax);
+        //double yNewTopLeft = gameObjects.getPaddle().getLeftTop().getY();
+
+        // Consume dx, dy
         mouse.dx = 0;
+        mouse.dy = 0;
 
         return Optional.of(new Point2D(xNewTopLeft, yNewTopLeft));
     }
