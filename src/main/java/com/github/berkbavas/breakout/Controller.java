@@ -53,6 +53,8 @@ public class Controller implements EventHandler<Event> {
             }
         });
 
+
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle("Breakout");
         stage.sizeToScene();

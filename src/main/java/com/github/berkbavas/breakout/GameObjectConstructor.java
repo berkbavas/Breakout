@@ -10,6 +10,7 @@ import com.github.berkbavas.breakout.util.RandomGenerator;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public final class GameObjectConstructor {
 
@@ -20,7 +21,7 @@ public final class GameObjectConstructor {
         World world = constructWorld(Constants.World.WIDTH, Constants.World.HEIGHT);
         Ball ball = constructBall(Constants.Ball.INITIAL_X, Constants.Ball.INITIAL_Y, Constants.Ball.RADIUS, Constants.Ball.MIN_SPEED, Constants.Ball.MAX_SPEED);
         Paddle paddle = constructPaddle(Constants.Paddle.INITIAL_X, Constants.Paddle.INITIAL_Y, Constants.Paddle.WIDTH, Constants.Paddle.HEIGHT, Constants.Paddle.COLOR);
-        ArrayList<Brick> bricks = constructBricks(6, 8);
+        ArrayList<Brick> bricks = constructBricks(8, 13);
 
         return new GameObjects(world, bricks, ball, paddle);
     }
@@ -49,8 +50,9 @@ public final class GameObjectConstructor {
             for (int j = 0; j < columns; j++) {
                 final double x = j * (Constants.Brick.WIDTH + Constants.Brick.HORIZONTAL_SPACING) + left;
                 final double y = i * (Constants.Brick.HEIGHT + Constants.Brick.VERTICAL_SPACING) + Constants.World.TOP_PADDING;
-
-                bricks.add(new Brick(x, y, Constants.Brick.WIDTH, Constants.Brick.HEIGHT, Constants.Brick.COLOR));
+                //final Color color = Constants.Brick.INTERPOLATION_START_COLOR.interpolate(Constants.Brick.INTERPOLATION_END_COLOR, (double) i / rows);
+                final Color color = Constants.Brick.COLORS_PER_ROW.getOrDefault(i, Color.WHITE);
+                bricks.add(new Brick(x, y, Constants.Brick.WIDTH, Constants.Brick.HEIGHT, color));
             }
         }
 

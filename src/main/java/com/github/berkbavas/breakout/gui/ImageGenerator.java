@@ -14,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class ImageGenerator {
     @Getter
     private final Canvas gameBoard;
 
+    private final Rectangle borders;
+
     private final GameObjects gameObjects;
     private final SharedState sharedState;
 
@@ -35,10 +38,17 @@ public class ImageGenerator {
 
         container = new Group();
         gameBoard = new Canvas(Constants.World.WIDTH, Constants.World.HEIGHT);
+        borders = new Rectangle(
+                 Constants.World.WIDTH + 2 * Constants.World.BORDER_HORIZONTAL,
+                Constants.World.HEIGHT + 2 * Constants.World.BORDER_VERTICAL);
 
+        borders.setFill(Constants.World.BORDER_COLOR);
+
+        container.getChildren().add(borders);
         container.getChildren().add(gameBoard);
-        gameBoard.setLayoutX(0);
-        gameBoard.setLayoutY(0);
+        gameBoard.setLayoutX(Constants.World.BORDER_HORIZONTAL);
+        gameBoard.setLayoutY(Constants.World.BORDER_VERTICAL);
+
     }
 
     public void update() {
@@ -51,7 +61,7 @@ public class ImageGenerator {
         gc.clearRect(0, 0, width, height);
 
         // Background
-        gc.setFill(Color.rgb(15, 15, 30));
+        gc.setFill(Constants.World.BACKGROUND_COLOR);
         gc.fillRect(0, 0, width, height);
 
         paintForDebug();
@@ -130,7 +140,7 @@ public class ImageGenerator {
         double y = paddle.getLeft().getP().getY();
         double w = paddle.getWidth();
         double h = paddle.getHeight();
-        gc.fillRect(x, y, w, h);
+        gc.fillRoundRect(x, y, w, h, Constants.Paddle.ARC_RADIUS, Constants.Paddle.ARC_RADIUS);
         gc.restore();
     }
 
@@ -148,7 +158,7 @@ public class ImageGenerator {
             final double y = brick.getLeftTop().getY();
             final double w = brick.getWidth();
             final double h = brick.getHeight();
-            gc.fillRect(x, y, w, h);
+            gc.fillRoundRect(x, y, w, h, Constants.Brick.ARC_RADIUS, Constants.Brick.ARC_RADIUS);
         }
 
         gc.restore();
