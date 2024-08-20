@@ -9,8 +9,8 @@ public final class Constants {
     }
 
     public final static class World {
-        public static final double WIDTH = 300;
-        public static final double HEIGHT = 300;
+        public static final double WIDTH = 1200;
+        public static final double HEIGHT = 900;
         public static final double TOP_PADDING = 100;
         public static final double COLLISION_IMPACT_FACTOR = 1.0;
         public static final Color BACKGROUND_COLOR = Color.rgb(0, 0, 0);
@@ -18,15 +18,15 @@ public final class Constants {
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 1500;
-        public static final double MAX_SPEED = 1900;
+        public static final double MIN_SPEED = 2500;
+        public static final double MAX_SPEED = 5900;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
     }
 
     public final static class Paddle {
-        public static final double WIDTH = 50;
+        public static final double WIDTH = 300;
         public static final double HEIGHT = 28;
         public static final double INITIAL_X = 0.5f * (World.WIDTH - Paddle.WIDTH);
         public static final double INITIAL_Y = World.HEIGHT - 200;

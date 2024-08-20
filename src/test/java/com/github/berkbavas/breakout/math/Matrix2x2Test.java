@@ -79,22 +79,18 @@ public class Matrix2x2Test {
 
     @Test
     public void testSolveSingularMatrix() {
-        final Matrix2x1 A = new Matrix2x1(1.0, 2.0);
-        final Matrix2x2 B = new Matrix2x2(0.0, 1.0, 0.0, 0.0);
+        final Matrix2x2 A = new Matrix2x2(0.0, 1.0, 0.0, 0.0);
+        final Matrix2x1 B = new Matrix2x1(1.0, 2.0);
         Assert.assertTrue(Matrix2x2.solve(A, B).isEmpty());
     }
 
     @Test
     public void testSolve() {
-        final Matrix2x1 A = new Matrix2x1(1.0, 2.0);
-        final Matrix2x2 B = new Matrix2x2(1.3, 10.01, -4.5, 1.0);
-        final Optional<Matrix2x1> solution = Matrix2x2.solve(A, B);
+        final Matrix2x2 A = new Matrix2x2(1.3, 10.01, -4.5, 1.0);
+        final Matrix2x1 B = new Matrix2x1(1.0, 2.0);
 
-        Assert.assertTrue(solution.isPresent());
+        Matrix2x2.solve(A, B)
+                .ifPresentOrElse(solution -> Assert.assertEquals(new Matrix2x1(-0.4104002589276081, 0.1531988348257633), solution), Assert::fail);
 
-        final Matrix2x1 actual = solution.get();
-        final Matrix2x1 expected = new Matrix2x1(-0.4104002589276081, 0.1531988348257633);
-
-        Assert.assertEquals(expected, actual);
     }
 }

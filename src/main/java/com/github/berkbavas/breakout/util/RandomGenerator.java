@@ -11,8 +11,8 @@ public final class RandomGenerator {
     }
 
     public static Vector2D generateRandomVelocity(double speed) {
-        final double vx = nextDouble();
-        final double vy = nextDouble();
+        final double vx = nextDouble(0.5, 1.0);
+        final double vy = nextDouble(0.5, 1.0);
         Vector2D direction = new Vector2D(vx, vy).normalized();
 
         return direction.multiply(speed);

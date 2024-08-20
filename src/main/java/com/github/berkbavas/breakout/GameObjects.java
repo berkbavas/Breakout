@@ -1,8 +1,6 @@
 package com.github.berkbavas.breakout;
 
 import com.github.berkbavas.breakout.engine.node.*;
-import com.github.berkbavas.breakout.math.Point2D;
-import com.github.berkbavas.breakout.math.Vector2D;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

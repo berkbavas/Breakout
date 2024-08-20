@@ -1,16 +1,14 @@
 package com.github.berkbavas.breakout.engine;
 
 import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.engine.node.Ball;
-import com.github.berkbavas.breakout.engine.node.Paddle;
-import com.github.berkbavas.breakout.engine.node.StaticNode;
-import com.github.berkbavas.breakout.engine.node.World;
+import com.github.berkbavas.breakout.engine.node.*;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,15 +39,8 @@ public final class TickProcessor {
         }
     }
 
-    public void updatePaddle(Point2D newPreferredTopLeft) {
-        Ball ball = gameObjects.getBall();
-        Paddle paddle = gameObjects.getPaddle();
-        Paddle newPaddle = paddle.getNewPaddleByTakingCareOfCollision(newPreferredTopLeft, ball);
-        gameObjects.setPaddle(newPaddle);
-    }
-
     public TickResult nextTick(double deltaTime) {
-        final Set<Collision> potentialCollisions = CollisionDetector.findPotentialCollisions(gameObjects);
+        final Set<Collision> potentialCollisions = findPotentialCollisions();
 
         final Pair<Set<Collision>, Double> pairs = findEarliestCollisions(potentialCollisions);
         final Set<Collision> earliestCollisions = pairs.getKey();
@@ -83,7 +74,7 @@ public final class TickProcessor {
         Vector2D collisionNormal = calculateCollisionNormal(earliestCollisions, gameObjects.getBall());
 
         // Who is the collider?
-        StaticNode collider = TickResult.findCollider(earliestCollisions);
+        ColliderNode collider = TickResult.findCollider(earliestCollisions);
         assert collider != null;
 
         // Process the ball
@@ -92,14 +83,45 @@ public final class TickProcessor {
         return new TickResult(true, clampedTimeToCollision, earliestCollisions);
     }
 
+    public Set<Collision> findPotentialCollisions() {
+        Ball ball = gameObjects.getBall();
+        World world = gameObjects.getWorld();
+        Paddle paddle = gameObjects.getPaddle();
+        ArrayList<Brick> bricks = gameObjects.getBricks();
+        Vector2D velocity = ball.getVelocity();
+
+        final double speed = velocity.length();
+
+        // If the ball is stationary no need to calculate collisions.
+        // Return an empty set.
+        if (Util.isFuzzyZero(speed)) {
+            return Set.of();
+        }
+
+
+        Set<Collision> potentialCollisions = new HashSet<>();
+
+        potentialCollisions.addAll(world.findCollisions(ball, velocity));
+        potentialCollisions.addAll(paddle.findCollisions(ball, velocity));
+
+        for (Brick brick : bricks) {
+            if (brick.isHit()) {
+                continue;
+            }
+            potentialCollisions.addAll(brick.findCollisions(ball, velocity));
+        }
+
+        return potentialCollisions;
+    }
+
     public static Vector2D calculateCollisionNormal(Set<Collision> collisions, Ball ball) {
         Vector2D collisionNormal = new Vector2D(0, 0);
         Vector2D velocity = ball.getVelocity();
 
         for (Collision collision : collisions) {
-            StaticNode node = collision.getCollider();
+            ColliderNode node = collision.getCollider();
             LineSegment2D edge = collision.getEdge();
-            Vector2D normal = node.getNormalFor(edge);
+            Vector2D normal = node.getNormalOf(edge);
 
             double dot = normal.dot(velocity);
             // We only consider normals whose dot product with the velocity is negative.
@@ -147,10 +169,9 @@ public final class TickProcessor {
         gameObjects.setBall(newBall);
     }
 
-    private void collideBall(StaticNode collider, Vector2D collisionNormal, double timeToCollision) {
+    private void collideBall(ColliderNode collider, Vector2D collisionNormal, double timeToCollision) {
         Ball ball = gameObjects.getBall();
         Ball newBall = ball.collide(collisionNormal, timeToCollision, collider.getCollisionImpactFactor());
         gameObjects.setBall(newBall);
     }
-
 }

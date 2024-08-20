@@ -4,5 +4,4 @@ module com.github.berkbavas.breakout {
     requires jdk.jshell;
     exports com.github.berkbavas.breakout;
     exports com.github.berkbavas.breakout.math;
-    exports com.github.berkbavas.breakout.engine.node;
 }

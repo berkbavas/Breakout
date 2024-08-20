@@ -3,7 +3,7 @@ package com.github.berkbavas.breakout.engine;
 import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.SharedState;
 import com.github.berkbavas.breakout.engine.node.Brick;
-import com.github.berkbavas.breakout.engine.node.StaticNode;
+import com.github.berkbavas.breakout.engine.node.ColliderNode;
 import com.github.berkbavas.breakout.util.Stopwatch;
 import lombok.Getter;
 
@@ -52,7 +52,7 @@ public class Engine {
         tickProcessor.preprocess();
 
         // Update paddle
-        paddleActionListener.getNewTopLeftPositionOfPaddleIfChanged().ifPresent(tickProcessor::updatePaddle);
+       // paddleActionListener.getNewTopLeftPositionOfPaddleIfChanged().ifPresent(tickProcessor::updatePaddle);
 
         // Find all potential collisions along the direction of velocity of the ball and process.
         TickResult result = tickProcessor.nextTick(deltaTime);
@@ -67,7 +67,7 @@ public class Engine {
         if (result.isCollided()) {
             Set<Collision> collisions = result.getCollisions();
             for (Collision collision : collisions) {
-                StaticNode collider = collision.getCollider();
+                ColliderNode collider = collision.getCollider();
 
                 if (collider instanceof Brick) {
                     Brick brick = (Brick) collider;

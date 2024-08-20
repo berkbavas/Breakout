@@ -4,19 +4,24 @@ import javafx.util.Pair;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 public class Point2D {
-    protected double x;
-    protected double y;
+    private final double x;
+    private final double y;
 
     public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public Vector2D add(Point2D other) {
-        return new Vector2D(x + other.x, y + other.y);
+    public Point2D add(Point2D other) {
+        return new Point2D(x + other.x, y + other.y);
+    }
+
+    public Point2D add(Vector2D other) {
+        return new Point2D(x + other.getX(), y + other.getY());
     }
 
     public Vector2D subtract(Point2D other) {
@@ -60,7 +65,7 @@ public class Point2D {
         }
     }
 
-    public static Point2D findClosestPoint(Point2D subject, List<Point2D> points) {
+    public static Point2D findClosestPoint(Point2D subject, Set<Point2D> points) {
         double minDistance = Double.MAX_VALUE;
         Point2D closestPoint = null;
 
@@ -75,7 +80,7 @@ public class Point2D {
         return closestPoint;
     }
 
-    public static Pair<Point2D, Point2D> findClosestPair(List<Pair<Point2D, Point2D>> listOfPairs) {
+    public static Pair<Point2D, Point2D> findClosestPair(Set<Pair<Point2D, Point2D>> listOfPairs) {
         Pair<Point2D, Point2D> closestPair = null;
         double minDistance = Double.MAX_VALUE;
 
@@ -91,8 +96,7 @@ public class Point2D {
         return closestPair;
     }
 
-
-    public static Pair<Point2D, Point2D> findClosestPairAmongTwoList(List<Point2D> list0, List<Point2D> list1) {
+    public static Pair<Point2D, Point2D> findClosestPairAmongTwoList(Set<Point2D> list0, Set<Point2D> list1) {
         Pair<Point2D, Point2D> closestPair = null;
         double minDistance = Double.MAX_VALUE;
 

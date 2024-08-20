@@ -10,7 +10,6 @@ import com.github.berkbavas.breakout.util.RandomGenerator;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public final class GameObjectConstructor {
 
@@ -21,7 +20,7 @@ public final class GameObjectConstructor {
         World world = constructWorld(Constants.World.WIDTH, Constants.World.HEIGHT);
         Ball ball = constructBall(Constants.Ball.INITIAL_X, Constants.Ball.INITIAL_Y, Constants.Ball.RADIUS, Constants.Ball.MIN_SPEED, Constants.Ball.MAX_SPEED);
         Paddle paddle = constructPaddle(Constants.Paddle.INITIAL_X, Constants.Paddle.INITIAL_Y, Constants.Paddle.WIDTH, Constants.Paddle.HEIGHT, Constants.Paddle.COLOR);
-        ArrayList<Brick> bricks = constructBricks(0, 0);
+        ArrayList<Brick> bricks = constructBricks(7, 13);
 
         return new GameObjects(world, bricks, ball, paddle);
     }

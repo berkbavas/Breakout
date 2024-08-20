@@ -3,8 +3,6 @@ package com.github.berkbavas.breakout.math;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Optional;
-
 public class Line2DTest {
 
     @Test
@@ -24,42 +22,37 @@ public class Line2DTest {
 
     @Test
     public void testFindIntersectionWithLine() {
-        testFindIntersectionWithOtherLine(
-                new Line2D(new Point2D(0, 0), new Point2D(1, 1)),
-                new Line2D(new Point2D(1, 0), new Point2D(1, 1)),
-                new Point2D(1, 1));
+        new Line2D(new Point2D(0, 0), new Point2D(1, 1))
+                .findIntersection(new Line2D(new Point2D(1, 0), new Point2D(1, 1)))
+                .ifPresentOrElse(result -> Assert.assertEquals(new Point2D(1, 1), result), Assert::fail);
 
-        testFindIntersectionWithOtherLine(
-                new Line2D(new Point2D(0, 0), new Point2D(1, 1)),
-                new Line2D(new Point2D(1, 0), new Point2D(2, 1)),
-                null);
+        new Line2D(new Point2D(0, 0), new Point2D(1, 1))
+                .findIntersection(new Line2D(new Point2D(1, 0), new Point2D(2, 1)))
+                .ifPresent(result -> Assert.fail());
 
-        testFindIntersectionWithOtherLine(
-                new Line2D(new Point2D(0, 0), new Point2D(1, 1)),
-                new Line2D(new Point2D(0, 0), new Point2D(-1, 1)),
-                new Point2D(0, 0));
+        new Line2D(new Point2D(0, 0), new Point2D(1, 1))
+                .findIntersection(new Line2D(new Point2D(0, 0), new Point2D(-1, 1)))
+                .ifPresentOrElse(result -> Assert.assertEquals(new Point2D(0, 0), result), Assert::fail);
 
-        testFindIntersectionWithOtherLine(
-                new Line2D(new Point2D(0, 0), new Point2D(1, 1)),
-                new Line2D(new Point2D(1, -1), new Point2D(-1, 1)),
-                new Point2D(0, 0));
+        new Line2D(new Point2D(0, 0), new Point2D(1, 1))
+                .findIntersection(new Line2D(new Point2D(1, -1), new Point2D(-1, 1)))
+                .ifPresentOrElse(result -> Assert.assertEquals(new Point2D(0, 0), result), Assert::fail);
 
-        testFindIntersectionWithOtherLine(
-                new Line2D(new Point2D(1, 0), new Point2D(2, 0)),
-                new Line2D(new Point2D(1, -1), new Point2D(2, -1)),
-                null);
+        new Line2D(new Point2D(1, 0), new Point2D(2, 0))
+                .findIntersection(new Line2D(new Point2D(1, -1), new Point2D(2, -1)))
+                .ifPresent(result -> Assert.fail());
     }
 
     @Test
     public void testCalculateDistanceBetweenPointAndLine() {
-        Assert.assertEquals(0, new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistance(new Point2D(0, 0)), Util.EPSILON);
-        Assert.assertEquals(0.5 * Math.sqrt(2), new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistance(new Point2D(1, 0)), Util.EPSILON);
-        Assert.assertEquals(0.5 * Math.sqrt(2), new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistance(new Point2D(0, 1)), Util.EPSILON);
-        Assert.assertEquals(0, new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistance(new Point2D(1, 1)), Util.EPSILON);
-        Assert.assertEquals(1, new Line2D(new Point2D(-1, -1), new Point2D(1, 1)).calculateDistance(new Point2D(0, -Math.sqrt(2))), Util.EPSILON);
-        Assert.assertEquals(0, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistance(new Point2D(0, 0)), Util.EPSILON);
-        Assert.assertEquals(0, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistance(new Point2D(0, 10)), Util.EPSILON);
-        Assert.assertEquals(10, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistance(new Point2D(10, 0)), Util.EPSILON);
+        Assert.assertEquals(0, new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistanceToPoint(new Point2D(0, 0)), Util.EPSILON);
+        Assert.assertEquals(0.5 * Math.sqrt(2), new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistanceToPoint(new Point2D(1, 0)), Util.EPSILON);
+        Assert.assertEquals(0.5 * Math.sqrt(2), new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistanceToPoint(new Point2D(0, 1)), Util.EPSILON);
+        Assert.assertEquals(0, new Line2D(new Point2D(0, 0), new Point2D(1, 1)).calculateDistanceToPoint(new Point2D(1, 1)), Util.EPSILON);
+        Assert.assertEquals(1, new Line2D(new Point2D(-1, -1), new Point2D(1, 1)).calculateDistanceToPoint(new Point2D(0, -Math.sqrt(2))), Util.EPSILON);
+        Assert.assertEquals(0, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistanceToPoint(new Point2D(0, 0)), Util.EPSILON);
+        Assert.assertEquals(0, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistanceToPoint(new Point2D(0, 10)), Util.EPSILON);
+        Assert.assertEquals(10, new Line2D(new Point2D(0, -1), new Point2D(0, 1)).calculateDistanceToPoint(new Point2D(10, 0)), Util.EPSILON);
     }
 
     @Test
@@ -72,17 +65,4 @@ public class Line2DTest {
         Assert.assertEquals(new Point2D(0.5, 0.5), new Line2D(new Point2D(1, 0), new Point2D(0, 1)).findClosestPointToCircleCenter(Circle.UNIT_CIRCLE));
     }
 
-    public void testFindIntersectionWithOtherLine(Line2D line0, Line2D line1, Point2D expected) {
-        Optional<Point2D> actual = line0.findIntersection(line1);
-
-        if (expected == null) {
-            Assert.assertTrue(actual.isEmpty());
-        } else {
-            if (actual.isPresent()) {
-                Assert.assertEquals(expected, actual.get());
-            } else {
-                Assert.fail();
-            }
-        }
-    }
 }

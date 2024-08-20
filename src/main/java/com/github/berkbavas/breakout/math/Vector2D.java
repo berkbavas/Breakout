@@ -1,9 +1,15 @@
 package com.github.berkbavas.breakout.math;
 
-public class Vector2D extends Point2D {
+import lombok.Getter;
+
+@Getter
+public class Vector2D {
+    private final double x;
+    private final double y;
 
     public Vector2D(double x, double y) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
     }
 
     public Vector2D add(Vector2D other) {
@@ -12,6 +18,10 @@ public class Vector2D extends Point2D {
 
     public Vector2D subtract(Vector2D other) {
         return new Vector2D(x - other.x, y - other.y);
+    }
+
+    public Vector2D multiply(double scalar) {
+        return new Vector2D(scalar * x, scalar * y);
     }
 
     public Vector2D reversed() {
@@ -50,9 +60,7 @@ public class Vector2D extends Point2D {
     }
 
     public boolean isCollinear(Vector2D other) {
-        Vector2D normal = normal();
-        double dot = normal.dot(other);
-        return Util.isFuzzyZero(dot);
+        return Util.isFuzzyZero(normal().dot(other));
     }
 
     public Vector2D normal() {
@@ -60,11 +68,11 @@ public class Vector2D extends Point2D {
     }
 
     public double length() {
-        return Math.pow(Math.pow(x, 2.0) + Math.pow(y, 2.0), 0.5);
+        return Math.sqrt(x * x + y * y);
     }
 
     public double norm() {
-        return Math.sqrt(x * x + y * y);
+        return length();
     }
 
     public double l2norm() {
@@ -76,10 +84,9 @@ public class Vector2D extends Point2D {
         if (object instanceof Vector2D) {
             Vector2D other = (Vector2D) object;
             return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
-        }
-        if (object instanceof Point2D) {
+        } else if (object instanceof Point2D) {
             Point2D other = (Point2D) object;
-            return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
+            return Util.fuzzyCompare(x, other.getX()) && Util.fuzzyCompare(y, other.getY());
         } else {
             return false;
         }
@@ -94,5 +101,9 @@ public class Vector2D extends Point2D {
     @Override
     public String toString() {
         return String.format("Vector2D{x = %.2f, y = %.2f}", x, y);
+    }
+
+    public Point2D toPoint2D() {
+        return new Point2D(x, y);
     }
 }

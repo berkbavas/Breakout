@@ -4,9 +4,7 @@ import javafx.util.Pair;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @ToString
 @Getter
@@ -44,17 +42,16 @@ public class Circle {
     // Here when theta = 0 or theta = PI the slope is undefined.
 
     public Circle(Point2D center, double radius) {
-        if (radius <= 0.0) {
-            throw new IllegalArgumentException(String.format("Radius (%.5f) must be a positive number.", radius));
-        }
-
         this.center = center;
         this.radius = radius;
     }
 
     // C(theta) = (a, b) + (r * cos(theta), r * sin(theta)), where (a,b) is the center and r is the radius.
     public Point2D calculatePointAt(double theta) {
-        return new Point2D(center.x + radius * Math.cos(theta), center.y + radius * Math.sin(theta));
+        double x = center.getX() + radius * Math.cos(theta);
+        double y = center.getY() + radius * Math.sin(theta);
+
+        return new Point2D(x, y);
     }
 
     // C'(theta) = (-r * sin(theta), r * cos(theta)).
@@ -76,7 +73,7 @@ public class Circle {
         }
     }
 
-    public List<Double> findParametersAtWhichTangentLinesHasGivenSlope(double slope) {
+    public List<Double> findParametersForGivenSlope(double slope) {
         if (Double.isNaN(slope)) {
             return List.of(0.0, Math.PI);
         } else if (Util.isFuzzyZero(slope)) {
@@ -87,60 +84,35 @@ public class Circle {
         }
     }
 
-    // For the given slope, it finds two points where the lines tangent to the circle.
-    public List<Point2D> findPointsAtWhichTangentLinesHasGivenSlope(double slope) {
-        final List<Double> parameters = findParametersAtWhichTangentLinesHasGivenSlope(slope);
+    // Finds two points at which the lines tangent to the circle has given slope.
+    public List<Point2D> findPointsForGivenSlope(double slope) {
+        final List<Double> parameters = findParametersForGivenSlope(slope);
         final Point2D p0 = calculatePointAt(parameters.get(0));
         final Point2D p1 = calculatePointAt(parameters.get(1));
         return List.of(p0, p1);
     }
 
     public boolean doesIntersect(Line2D line) {
-        double slope = line.getSlope();
-        Ray2D normalRay = constructNormalRayAtGivenSlope(slope, 0);
-        Line2D normalLine = Line2D.from(normalRay);
+        List<Point2D> points = findPointsForGivenSlope(line.getSlope());
+        Line2D perpendicularLine = new Line2D(points.get(0), points.get(1));
+        Point2D intersection = perpendicularLine.findIntersection(line).orElse(null);
 
-        var ref = new Object() {
-            boolean intersects = false;
-        };
+        if (intersection != null) {
+            return isPointInsideCircle(intersection);
+        }
 
-        line.findIntersection(normalLine).ifPresent((Point2D point) -> {
-            ref.intersects = isPointInsideCircle(point);
-        });
-
-        return ref.intersects;
-    }
-
-    public boolean doesIntersect(LineSegment2D ls) {
-        Ray2D ray = Ray2D.from(ls);
-
-        var ref = new Object() {
-            boolean intersects = false;
-        };
-
-        ray.findIntersection(this).forEach((Point2D point) -> {
-            if (ls.isPointOnLineSegment(point)) {
-                ref.intersects = true;
-            }
-        });
-
-        return ref.intersects;
-    }
-
-    public boolean doesIntersect(Ray2D ray) {
-        Point2D closestPointToCenter = ray.findClosestPointToCircleCenter(this);
-        return isPointInsideCircle(closestPointToCenter);
+        return false;
     }
 
     // Assumes the given line does not intersect the circle
     // otherwise the result is wrong.
     public Point2D findPointOnCircleClosestToLine(Line2D line) {
         double slope = line.getSlope();
-        List<Point2D> points = findPointsAtWhichTangentLinesHasGivenSlope(slope);
+        List<Point2D> points = findPointsForGivenSlope(slope);
         Point2D p0 = points.get(0);
         Point2D p1 = points.get(1);
-        double distance0 = line.calculateDistance(p0);
-        double distance1 = line.calculateDistance(p1);
+        double distance0 = line.calculateDistanceToPoint(p0);
+        double distance1 = line.calculateDistanceToPoint(p1);
 
         if (distance0 < distance1) {
             return p0;
@@ -149,103 +121,28 @@ public class Circle {
         }
     }
 
-    // Finds a pair of two points where one is the point on the edge closest to the circle
-    // and the other one is its corresponding counterpart on the circle.
-    public Pair<Point2D, Point2D> findPointOnEdgeClosestToCircle(LineSegment2D edge) {
-        var ref = new Object() {
-            Pair<Point2D, Point2D> result = null;
-        };
-
-        // Construct the line passing through the edge.
-        Line2D linePassingThroughEdge = Line2D.from(edge);
-
-        // Do the line and this circle intersect?
-        List<Point2D> circleLineIntersectionPoints = findIntersection(linePassingThroughEdge);
-
-        // If the line and circle intersect, then check that these intersection points on the edge as well.
-        circleLineIntersectionPoints.forEach((point -> {
-            if (edge.isPointOnLineSegment(point)) {
-                // Intersection point is on the edge as well, this is the closest point to circle.
-                ref.result = new Pair<>(point, point);
-            }
-        }));
-
-        if (ref.result != null) {
-            return ref.result;
-        }
-
-        // If the intersection between line and circle is empty, we apply a different logic here.
-        if (circleLineIntersectionPoints.isEmpty()) {
-            Point2D pointOnCircleClosestToLine = findPointOnCircleClosestToLine(linePassingThroughEdge);
-            Ray2D rayFromCircleToLine = new Ray2D(pointOnCircleClosestToLine, pointOnCircleClosestToLine.subtract(center));
-
-            linePassingThroughEdge.findIntersection(rayFromCircleToLine).ifPresent((Point2D pointOnLineClosestToCircle) -> {
-
-                if (edge.isPointOnLineSegment(pointOnLineClosestToCircle)) {
-                    ref.result = new Pair<>(pointOnLineClosestToCircle, pointOnCircleClosestToLine);
-                } else {
-                    // Choose the closest vertex of edge to the intersection point.
-                    Point2D pointOnEdge = Point2D.findClosestPoint(pointOnLineClosestToCircle, List.of(edge.getP(), edge.getQ()));
-
-                    // Find the point on circle closest to pointOnEdge.
-                    Point2D pointOnCircle = findPointOnCircleClosestToGivenPoint(pointOnEdge);
-                    ref.result = new Pair<>(pointOnEdge, pointOnCircle);
-                }
-            });
-
-        } else {
-
-            var pair = Point2D.findClosestPairAmongTwoList(List.of(edge.getP(), edge.getQ()), circleLineIntersectionPoints);
-            Point2D pointOnEdgeClosestToCircle = pair.getKey();
-            Point2D pointOnCircleClosestToEdge = findPointOnCircleClosestToGivenPoint(pointOnEdgeClosestToCircle);
-
-            ref.result = new Pair<>(pointOnEdgeClosestToCircle, pointOnCircleClosestToEdge);
-        }
-
-        return ref.result;
-    }
-
     public boolean isPointOnCircle(Point2D point) {
-        double dx = center.x - point.x;
-        double dy = center.y - point.y;
+        double dx = center.getX() - point.getX();
+        double dy = center.getY() - point.getY();
         return Util.fuzzyCompare(radius * radius, dx * dx + dy * dy);
     }
 
     public boolean isPointInsideCircle(Point2D point) {
-        double dx = center.x - point.x;
-        double dy = center.y - point.y;
+        double dx = center.getX() - point.getX();
+        double dy = center.getY() - point.getY();
         return Util.isFuzzyBetween(0.0, dx * dx + dy * dy, radius * radius);
     }
 
-    public Ray2D constructTangentRayAtGivenSlope(double slope, int whichRay) {
-        List<Double> parameters = findParametersAtWhichTangentLinesHasGivenSlope(slope);
-        double parameter = parameters.get(whichRay);
-        Point2D origin = calculatePointAt(parameter);
-        Vector2D direction = calculateGradientAt(parameter);
-        return new Ray2D(origin, direction);
-    }
-
-    public Ray2D constructNormalRayAtGivenSlope(double slope, int whichRay) {
-        List<Double> parameters = findParametersAtWhichTangentLinesHasGivenSlope(slope);
-        double parameter = parameters.get(whichRay);
-        Point2D origin = calculatePointAt(parameter);
-        Vector2D direction = calculateNormalAt(parameter);
-        return new Ray2D(origin, direction);
-    }
-
-    public List<Point2D> findIntersection(Line2D line) {
+    public Set<Point2D> findIntersection(Line2D line) {
         Point2D origin = line.getQ();
-
-        // We assume direction is normalized, i.e., has length 1.
-        Vector2D direction = new Vector2D(line.getQ().x - line.getP().x, line.getQ().y - line.getP().y).normalized();
-
+        Vector2D direction = line.getDirection();
         Vector2D originToCenter = center.subtract(origin);
         double dot = direction.dot(originToCenter);
         Point2D closestPointToCenter = origin.add(direction.multiply(dot));
 
         if (isPointOnCircle(closestPointToCenter)) {
             // Line is tangent to the circle at [closestPointToCenter]
-            return List.of(closestPointToCenter);
+            return Set.of(closestPointToCenter);
 
         } else if (isPointInsideCircle(closestPointToCenter)) {
             double distanceToCenter = center.distanceTo(closestPointToCenter);
@@ -253,54 +150,41 @@ public class Circle {
             Point2D p0 = closestPointToCenter.add(direction.multiply(distanceToIntersectionPoint));
             Point2D p1 = closestPointToCenter.add(direction.multiply(-distanceToIntersectionPoint));
 
-            return List.of(p0, p1);
+            return Set.of(p0, p1);
         }
 
-        return List.of();
+        return Set.of();
     }
 
-    public List<Point2D> findIntersection(Ray2D ray) {
-        ArrayList<Point2D> list = new ArrayList<>();
+    public Set<Point2D> findIntersection(Ray2D ray) {
+        Set<Point2D> result = new HashSet<>();
         Line2D line = Line2D.from(ray);
 
-        findIntersection(line).forEach(
-                (Point2D point) -> {
-                    if (ray.isPointOnRay(point)) {
-                        list.add(point);
-                    }
-                }
-        );
+        findIntersection(line).forEach((Point2D intersection) -> {
+            if (ray.isPointOnRay(intersection)) {
+                result.add(intersection);
+            }
+        });
 
-        return list;
+        return result;
     }
 
-    public Optional<Point2D> findIntersectionClosestToOriginOfRay(Ray2D ray) {
-        List<Point2D> intersections = findIntersection(ray);
-        Point2D origin = ray.getOrigin();
-        Point2D pointOnCircleClosestToOriginOfRay = Point2D.findClosestPoint(origin, intersections);
-        return Optional.ofNullable(pointOnCircleClosestToOriginOfRay);
+    public Optional<Point2D> findIntersectionClosestToRayOrigin(Ray2D ray) {
+        Set<Point2D> intersections = findIntersection(ray);
+        return Optional.ofNullable(Point2D.findClosestPoint(ray.getOrigin(), intersections));
     }
 
-    public Point2D findPointOnCircleClosestToGivenPoint(Point2D point) {
-        Line2D linePassingThroughCenterAndPoint = new Line2D(point, center);
-        List<Point2D> intersections = findIntersection(linePassingThroughCenterAndPoint);
-        Point2D closestPointOnCircle = Point2D.findClosestPoint(point, intersections);
-        assert closestPointOnCircle != null;
-        return closestPointOnCircle;
+    public Set<Point2D> findIntersection(LineSegment2D ls) {
+        Set<Point2D> result = new HashSet<>();
+        Line2D line = Line2D.from(ls);
+
+        findIntersection(line).forEach((Point2D intersection) -> {
+            if (ls.isPointOnLineSegment(intersection)) {
+                result.add(intersection);
+            }
+        });
+
+        return result;
     }
 
-    public List<Point2D> findIntersection(LineSegment2D lineSegment) {
-        ArrayList<Point2D> list = new ArrayList<>();
-        Line2D line = Line2D.from(lineSegment);
-
-        findIntersection(line).forEach(
-                (Point2D point) -> {
-                    if (lineSegment.isPointOnLineSegment(point)) {
-                        list.add(point);
-                    }
-                }
-        );
-
-        return list;
-    }
 }

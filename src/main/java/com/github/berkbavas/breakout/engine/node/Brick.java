@@ -1,15 +1,16 @@
 package com.github.berkbavas.breakout.engine.node;
 
 import com.github.berkbavas.breakout.Constants;
-import com.github.berkbavas.breakout.math.Point2D;
-import com.github.berkbavas.breakout.math.Rectangle2D;
+import com.github.berkbavas.breakout.math.LineSegment2D;
+import com.github.berkbavas.breakout.math.Vector2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class Brick extends Rectangle2D implements StaticNode {
+public class Brick extends RectangularNode {
     private final Color color;
+
     @Setter
     private boolean hit;
 
@@ -24,4 +25,8 @@ public class Brick extends Rectangle2D implements StaticNode {
         return Constants.Brick.COLLISION_IMPACT_FACTOR;
     }
 
+    @Override
+    public Vector2D getNormalOf(LineSegment2D edge) {
+        return edge.getNormal(LineSegment2D.NormalOrientation.OUTWARDS);
+    }
 }

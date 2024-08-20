@@ -1,7 +1,6 @@
 package com.github.berkbavas.breakout.engine;
 
-import com.github.berkbavas.breakout.engine.node.StaticNode;
-import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.engine.node.ColliderNode;
 import lombok.Getter;
 
 import java.util.Set;
@@ -11,7 +10,7 @@ public class TickResult {
     private final boolean isCollided;
     private final double timeConsumed;
     private final Set<Collision> collisions;
-    private final StaticNode collider;
+    private final ColliderNode collider;
 
     public TickResult(boolean isCollided, double timeConsumed, Set<Collision> collisions) {
         this.isCollided = isCollided;
@@ -20,7 +19,7 @@ public class TickResult {
         this.collider = findCollider(collisions);
     }
 
-    public static StaticNode findCollider(Set<Collision> collisions) {
+    public static ColliderNode findCollider(Set<Collision> collisions) {
         for (Collision collision : collisions) {
             return collision.getCollider();
         }

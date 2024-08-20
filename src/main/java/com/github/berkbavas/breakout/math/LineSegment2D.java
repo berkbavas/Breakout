@@ -10,12 +10,18 @@ import java.util.Optional;
 public class LineSegment2D {
     private final Point2D P;
     private final Point2D Q;
-    private final Vector2D direction;
     private final double length;
     private final String identifier;
+    private final Vector2D direction;
 
     @Getter(AccessLevel.NONE)
     private final HashMap<NormalOrientation, Vector2D> normals = new HashMap<>();
+
+    // These are the coefficients of the equation of the line passing through this line segment.
+    // We cache these for the sake of fast intersection calculations.
+    private final double A;
+    private final double B;
+    private final double C;
 
     public enum NormalOrientation {
         INWARDS,
@@ -29,9 +35,17 @@ public class LineSegment2D {
     public LineSegment2D(Point2D P, Point2D Q, String identifier) {
         this.P = P;
         this.Q = Q;
-        this.direction = new Vector2D(Q.x - P.x, Q.y - P.y);
         this.length = P.distanceTo(Q);
         this.identifier = identifier;
+
+        Double[] coefficients = Line2D.calculateEquationCoefficients(P, Q);
+
+        this.A = coefficients[0];
+        this.B = coefficients[1];
+        this.C = coefficients[2];
+
+        this.direction = Q.subtract(P);
+
         constructNormals();
     }
 
@@ -40,10 +54,8 @@ public class LineSegment2D {
             return true;
         }
 
-        double distance = point.distanceTo(P) + point.distanceTo(Q);
-
-        return Util.fuzzyCompare(length, distance);
-
+        double totalDistance = point.distanceTo(P) + point.distanceTo(Q);
+        return Util.fuzzyCompare(length, totalDistance);
     }
 
     public Point2D getClosestVertexToPoint(Point2D point) {
@@ -60,52 +72,35 @@ public class LineSegment2D {
     public Optional<Point2D> findIntersection(LineSegment2D other) {
 
         //
-        //         \
-        //          * other.q
+        //
+        //          * Q1
         //           \
-        //            \  \ dir1
+        //            \
         //             \
-        //    <----*---------------------------*------>
-        //         p     \     --->            q
-        //     (origin0)  \       dir0
+        //         *----*----------------------*
+        //         P0    \                    Q0
+        //                \
         //                 \
-        //                  * other.p
-        //                   \    (origin1)
+        //                  *  P1
+        //
         //
 
-        final Point2D origin0 = P;
-        final Point2D origin1 = other.P;
-
-        final Vector2D dir0 = new Vector2D(Q.x - P.x, Q.y - P.y);
-        final Vector2D dir1 = new Vector2D(other.Q.x - other.P.x, other.Q.y - other.P.y);
-
-        final Matrix2x1 lhs = new Matrix2x1(origin1.x - origin0.x, origin1.y - origin0.y);
-        final Matrix2x2 rhs = new Matrix2x2(dir0.x, -dir1.x, dir0.y, -dir1.y);
-
-        final Optional<Matrix2x1> solution = Matrix2x2.solve(lhs, rhs);
-
-        if (solution.isPresent()) {
-            final double t = solution.get().getM00();
-            if (Util.isFuzzyBetween(0.0, t, 1.0)) {
-                return Optional.of(origin0.add(dir0.multiply(t)));
-            }
-        } else {
-            if (isPointOnLineSegment(other.P)) {
-                return Optional.of(other.P);
-            } else if (isPointOnLineSegment(other.Q)) {
-                return Optional.of(other.Q);
-            } else if (other.isPointOnLineSegment(P)) {
-                return Optional.of(other.P);
-            } else if (other.isPointOnLineSegment(Q)) {
-                return Optional.of(other.Q);
-            }
+        if (isPointOnLineSegment(other.P)) {
+            return Optional.of(other.P);
+        } else if (isPointOnLineSegment(other.Q)) {
+            return Optional.of(other.Q);
+        } else if (other.isPointOnLineSegment(P)) {
+            return Optional.of(P);
+        } else if (other.isPointOnLineSegment(Q)) {
+            return Optional.of(Q);
         }
 
-        return Optional.empty();
-    }
-
-    public Optional<Point2D> findIntersection(Ray2D ray) {
-        return ray.findIntersection(this);
+        return Matrix2x2.solve(A, B, C, other.A, other.B, other.C).map((intersection) -> {
+            if (isPointOnLineSegment(intersection) && other.isPointOnLineSegment(intersection)) {
+                return intersection;
+            }
+            return null;
+        });
     }
 
     @Override
@@ -114,8 +109,8 @@ public class LineSegment2D {
     }
 
     private void constructNormals() {
-        final double dx = Q.x - P.x;
-        final double dy = Q.y - P.y;
+        final double dx = Q.getX() - P.getX();
+        final double dy = Q.getY() - P.getY();
 
         normals.put(NormalOrientation.OUTWARDS, new Vector2D(-dy, dx).normalized());
         normals.put(NormalOrientation.INWARDS, new Vector2D(dy, -dx).normalized());
