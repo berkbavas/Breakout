@@ -5,9 +5,11 @@ import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class Ball extends Circle implements Draggable {
+    @Setter
     private Vector2D velocity;
     private final Color color;
 
