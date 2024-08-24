@@ -1,14 +1,14 @@
 package com.github.berkbavas.breakout.physics.handler;
 
 import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.event.Event;
 import com.github.berkbavas.breakout.event.EventListener;
-import com.github.berkbavas.breakout.event.EventType;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
+import com.github.berkbavas.breakout.util.TransformationHelper;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class ThrowEventHandler implements EventListener {
@@ -38,21 +38,23 @@ public class ThrowEventHandler implements EventListener {
     }
 
     @Override
-    public void listen(Event event) {
+    public void listen(MouseEvent event) {
         if (!isDebugMode) {
             return;
         }
 
         if (isPressedOnBall) {
-            cursorPosition = event.getCursor();
+            cursorPosition = TransformationHelper.fromSceneToWorld(event.getX(), event.getY());
         }
 
-        if (event.getType() == EventType.MOUSE_PRESSED) {
-            if (ball.contains(event.getCursor())) {
-                cursorPosition = event.getCursor();
+        if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            Point2D worldPos = TransformationHelper.fromSceneToWorld(event.getX(), event.getY());
+
+            if (ball.contains(worldPos)) {
+                cursorPosition = worldPos;
                 isPressedOnBall = true;
             }
-        } else if (event.getType() == EventType.MOUSE_RELEASED) {
+        } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
             if (isPressedOnBall) {
                 throwBall(cursorPosition);
             }
@@ -60,4 +62,5 @@ public class ThrowEventHandler implements EventListener {
             painter.clear();
         }
     }
+
 }

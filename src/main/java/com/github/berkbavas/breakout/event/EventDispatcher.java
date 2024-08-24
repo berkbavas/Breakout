@@ -1,6 +1,7 @@
 package com.github.berkbavas.breakout.event;
 
-import com.github.berkbavas.breakout.math.Point2D;
+import javafx.event.Event;
+import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 
@@ -8,9 +9,12 @@ public class EventDispatcher {
 
     private final ArrayList<EventListener> listeners = new ArrayList<>();
 
-    public void receiveEvent(EventType type, Point2D position) {
-        Event event = new Event(type, position);
-        dispatch(event);
+    public void receiveEvent(Event event) {
+        if (event instanceof MouseEvent) {
+            dispatch((MouseEvent) event);
+        } else {
+            dispatch(event);
+        }
     }
 
     public void addEventListener(EventListener listener) {
@@ -22,6 +26,10 @@ public class EventDispatcher {
     }
 
     private void dispatch(Event event) {
+        listeners.forEach((listener -> listener.listen(event)));
+    }
+
+    private void dispatch(MouseEvent event) {
         listeners.forEach((listener -> listener.listen(event)));
     }
 

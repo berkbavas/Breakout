@@ -31,12 +31,13 @@ public class PhysicsEngine {
     private final PaintCommandHandler painter;
     private final boolean isDebugMode;
 
-    public PhysicsEngine(GameObjects objects, EventDispatcher eventDispatcher, boolean isDebugMode) {
+    public PhysicsEngine(GameObjects objects, EventDispatcher dispatcher, boolean isDebugMode) {
         this.objects = objects;
         this.tickProcessor = new TickProcessor(objects);
-        this.throwEventHandler = new ThrowEventHandler(objects, isDebugMode);
         this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
         this.isDebugMode = isDebugMode;
+
+        this.throwEventHandler = new ThrowEventHandler(objects, isDebugMode);
 
         if (isDebugMode) {
             dragEventHandler = new DebuggerDragEventHandler(objects);
@@ -44,8 +45,8 @@ public class PhysicsEngine {
             dragEventHandler = new BreakoutDragEventHandler(objects);
         }
 
-        eventDispatcher.addEventListener(throwEventHandler);
-        eventDispatcher.addEventListener(dragEventHandler);
+        dispatcher.addEventListener(throwEventHandler);
+        dispatcher.addEventListener(dragEventHandler);
     }
 
     public void update() {
