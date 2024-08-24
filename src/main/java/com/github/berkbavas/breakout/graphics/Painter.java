@@ -3,10 +3,10 @@ package com.github.berkbavas.breakout.graphics;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler.FillCommand;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler.PaintCommand;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler.StrokeCommand;
-import com.github.berkbavas.breakout.math.*;
-import com.github.berkbavas.breakout.physics.node.Ball;
-import com.github.berkbavas.breakout.physics.node.PolygonalNode;
-import com.github.berkbavas.breakout.physics.node.RectangularNode;
+import com.github.berkbavas.breakout.math.Circle;
+import com.github.berkbavas.breakout.math.LineSegment2D;
+import com.github.berkbavas.breakout.math.Point2D;
+import com.github.berkbavas.breakout.physics.node.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -56,12 +56,41 @@ public class Painter {
         drawLine(ls.getP(), ls.getQ(), color, thickness);
     }
 
+    public void drawLine(LineSegment2D ls, Color color) {
+        drawLine(ls.getP(), ls.getQ(), color, 1.0);
+    }
+
+    public void stroke(DrawableLineSegment ls, Color color, double width) {
+        drawLine(ls.getP(), ls.getQ(), color, width);
+    }
+
+    public void stroke(DrawableLineSegment ls, Color color) {
+        stroke(ls, color, 1.0);
+    }
+
+    public void stroke(DrawableLineSegment ls) {
+        stroke(ls, ls.getColor(), 1.0);
+    }
+
     public void fillCircle(Point2D center, double radius, Color color) {
         gc.setFill(color);
         double left = center.getX() - radius;
         double top = center.getY() - radius;
         gc.fillOval(left, top, 2 * radius, 2 * radius);
     }
+
+    public void fillCircle(Circle circle, Color color) {
+        fillCircle(circle.getCenter(), circle.getRadius(), color);
+    }
+
+    public void fill(DrawableCircle circle, Color color) {
+        fillCircle(circle.getCenter(), circle.getRadius(), color);
+    }
+
+    public void fill(DrawableCircle circle) {
+        fillCircle(circle.getCenter(), circle.getRadius(), circle.getColor());
+    }
+
 
     public void strokeCircle(Point2D center, double radius, Color color, double width) {
         gc.setStroke(color);
@@ -75,43 +104,21 @@ public class Painter {
         strokeCircle(circle.getCenter(), circle.getRadius(), color, width);
     }
 
-    public void strokeCircle(Ball ball, double width) {
-        strokeCircle(ball, ball.getColor(), width);
+    public void stroke(DrawableCircle circle, Color color, double width) {
+        strokeCircle(circle, color, width);
     }
 
-    public void fillCircle(Circle circle, Color color) {
-        fillCircle(circle.getCenter(), circle.getRadius(), color);
+    public void stroke(DrawableCircle circle, Color color) {
+        strokeCircle(circle, color, 1.0);
     }
 
-    public void fillCircle(Ball ball) {
-        fillCircle(ball.getCenter(), ball.getRadius(), ball.getColor());
+    public void stroke(DrawableCircle circle) {
+        strokeCircle(circle, circle.getColor(), 1.0);
     }
 
     public void fillRectangle(double x, double y, double w, double h, Color color) {
         gc.setFill(color);
         gc.fillRect(x, y, w, h);
-    }
-
-    public void fillRectangle(RectangularNode rect) {
-        fillRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), rect.getColor());
-    }
-
-    public void fillRectangle(Rectangle2D rect, Color color) {
-        fillRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
-    }
-
-    public void strokeRectangle(double x, double y, double w, double h, Color color, double width) {
-        gc.setStroke(color);
-        gc.setLineWidth(width);
-        gc.strokeRect(x, y, w, h);
-    }
-
-    public void strokeRectangle(RectangularNode rect, double width) {
-        strokeRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), rect.getColor(), width);
-    }
-
-    public void strokeRectangle(Rectangle2D rect, Color color, double width) {
-        strokeRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color, width);
     }
 
     public void fillRoundRectangle(double x, double y, double width, double height, double arcWidth, double arcHeight, Color color) {
@@ -121,6 +128,12 @@ public class Painter {
 
     public void fillRoundRectangle(RectangularNode rect, double arcWidth, double arcHeight) {
         fillRoundRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), arcWidth, arcHeight, rect.getColor());
+    }
+
+    public void strokeRectangle(double x, double y, double w, double h, Color color, double width) {
+        gc.setStroke(color);
+        gc.setLineWidth(width);
+        gc.strokeRect(x, y, w, h);
     }
 
     public void fillPolygon(List<Point2D> vertices, Color color) {
@@ -138,9 +151,20 @@ public class Painter {
         gc.fill();
     }
 
+    public void fill(PolygonalNode polygon, Color color) {
+        fillPolygon(polygon.getVertices(), color);
+    }
 
-    public void fillPolygon(PolygonalNode polygon) {
+    public void fill(PolygonalNode polygon) {
         fillPolygon(polygon.getVertices(), polygon.getColor());
+    }
+
+    public void fill(RectangularNode rect, Color color) {
+        fillPolygon(rect.getVertices(), color);
+    }
+
+    public void fill(RectangularNode rect) {
+        fillPolygon(rect.getVertices(), rect.getColor());
     }
 
     public void strokePolygon(List<Point2D> vertices, Color color, double width) {
@@ -160,59 +184,44 @@ public class Painter {
         gc.stroke();
     }
 
-    public void strokePolygon(PolygonalNode polygon, double width) {
-        strokePolygon(polygon.getVertices(), polygon.getColor(), width);
+    public void stroke(PolygonalNode polygon, Color color, double width) {
+        strokePolygon(polygon.getVertices(), color, width);
+    }
+
+    public void stroke(PolygonalNode polygon, Color color) {
+        strokePolygon(polygon.getVertices(), color, 1.0);
+    }
+
+    public void stroke(PolygonalNode polygon) {
+        strokePolygon(polygon.getVertices(), polygon.getColor(), 1.0);
+    }
+
+    public void stroke(RectangularNode rect, Color color, double width) {
+        strokePolygon(rect.getVertices(), color, width);
+    }
+
+    public void stroke(RectangularNode rect, Color color) {
+        strokePolygon(rect.getVertices(), color, 1.0);
+    }
+
+    public void stroke(RectangularNode rect) {
+        strokePolygon(rect.getVertices(), rect.getColor(), 1.0);
     }
 
     public void processCommands(PaintCommandHandler handler) {
         List<PaintCommand> commands = handler.getCommands();
 
         for (PaintCommand command : commands) {
-            gc.save();
 
             Color color = command.getColor();
-            Object shape = command.getShape();
+            Drawable shape = command.getShape();
 
             if (command instanceof FillCommand) {
-
-                if (shape instanceof Circle) {
-                    Circle rect = (Circle) shape;
-                    fillCircle(rect, color);
-                } else if (shape instanceof Rectangle2D) {
-                    Rectangle2D rect = (Rectangle2D) shape;
-                    fillRectangle(rect, color);
-                } else if (shape instanceof Polygon2D) {
-                    Polygon2D polygon = (Polygon2D) shape;
-                    fillPolygon(polygon.getVertices(), color);
-                }
-
+                shape.fill(this, color);
             } else if (command instanceof StrokeCommand) {
-                StrokeCommand strokeCommand = (StrokeCommand) command;
-                double width = strokeCommand.getWidth();
-
-                if (shape instanceof LineSegment2D) {
-                    LineSegment2D ls = (LineSegment2D) shape;
-                    drawLine(ls, color, width);
-                } else if (shape instanceof Circle) {
-                    Circle circle = (Circle) shape;
-                    strokeCircle(circle, color, width);
-                } else if (shape instanceof Rectangle2D) {
-                    Rectangle2D rect = (Rectangle2D) shape;
-                    strokeRectangle(rect, color, width);
-                } else if (shape instanceof RectangularNode) {
-                    RectangularNode rect = (RectangularNode) shape;
-                    strokeRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color, width);
-                } else if (shape instanceof Polygon2D) {
-                    Polygon2D polygon = (Polygon2D) shape;
-                    strokePolygon(polygon.getVertices(), color, width);
-                } else if (shape instanceof PolygonalNode) {
-                    PolygonalNode polygon = (PolygonalNode) shape;
-                    strokePolygon(polygon.getVertices(), color, width);
-                }
-
+                shape.stroke(this, color, ((StrokeCommand) command).getWidth());
             }
 
-            gc.restore();
         }
 
     }

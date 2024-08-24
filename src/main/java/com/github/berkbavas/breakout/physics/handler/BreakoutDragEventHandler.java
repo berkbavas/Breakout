@@ -55,7 +55,7 @@ public class BreakoutDragEventHandler extends DragEventHandler {
                 lastEvent = event;
                 delta = new Point2D(0, 0);
 
-                dragLater(paddle, added);
+                translate(paddle, added);
             }
         }
     }

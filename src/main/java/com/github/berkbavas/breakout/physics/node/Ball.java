@@ -7,16 +7,14 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
+@Setter
 @Getter
-public class Ball extends Circle implements Draggable {
-    @Setter
+public class Ball extends DrawableCircle implements Draggable {
     private Vector2D velocity;
-    private final Color color;
 
     public Ball(Point2D center, double radius, Vector2D velocity, Color color) {
-        super(center, radius);
+        super(center, radius, color);
         this.velocity = velocity;
-        this.color = color;
     }
 
     public void move(double deltaTime) {
@@ -49,4 +47,5 @@ public class Ball extends Circle implements Draggable {
     public double getSpeed() {
         return velocity.length();
     }
+
 }

@@ -5,11 +5,11 @@ import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import javafx.scene.paint.Color;
-import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Getter
+@Setter
 public class Obstacle extends PolygonalNode implements Draggable, Collider {
 
     public Obstacle(List<Point2D> vertices, List<String> identifiers, Color color) {
@@ -29,4 +29,5 @@ public class Obstacle extends PolygonalNode implements Draggable, Collider {
     public Vector2D getNormalOf(LineSegment2D edge) {
         return edge.getNormal(LineSegment2D.NormalOrientation.OUTWARDS);
     }
+
 }

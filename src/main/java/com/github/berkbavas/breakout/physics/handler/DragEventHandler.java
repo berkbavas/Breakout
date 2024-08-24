@@ -14,30 +14,25 @@ import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class DragEventHandler implements EventListener {
     protected final GameObjects objects;
-    private final AtomicBoolean dragLater = new AtomicBoolean(false);
 
-    private Draggable target = null;
-    private Point2D delta = null;
+    private final ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<>();
 
     public DragEventHandler(GameObjects objects) {
         this.objects = objects;
     }
 
     public void update() {
-        if (dragLater.get()) {
-            translate(target, delta);
-            dragLater.set(false);
+        if (!queue.isEmpty()) {
+            queue.remove().run();
         }
     }
 
     protected void dragLater(Draggable target, Point2D delta) {
-        this.target = target;
-        this.delta = delta;
-        dragLater.set(true);
+        queue.add(() -> translate(target, delta));
     }
 
     public void translate(Draggable node, Point2D delta) {

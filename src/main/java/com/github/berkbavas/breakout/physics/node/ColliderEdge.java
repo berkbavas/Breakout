@@ -1,6 +1,5 @@
 package com.github.berkbavas.breakout.physics.node;
 
-
 import com.github.berkbavas.breakout.math.*;
 import javafx.util.Pair;
 

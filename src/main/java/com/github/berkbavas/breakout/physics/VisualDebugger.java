@@ -39,11 +39,11 @@ public class VisualDebugger {
 
         if (sinceCollision < COLLISION_INDICATION_TIMEOUT_IN_SEC) {
             sinceCollision = chronometer.getSeconds();
-            painter[0].fillCircle(objects.getBall(), Color.RED);
+            painter[0].fill(objects.getBall(), Color.RED);
         } else if (minimumTimeToCollision < COLLISION_PREDICTION_START_TIME_IN_SEC) {
             double inv = minimumTimeToCollision / COLLISION_PREDICTION_START_TIME_IN_SEC;
             double alpha = 1 - inv * inv;
-            painter[0].fillCircle(objects.getBall(), Color.rgb(255, 0, 0, alpha));
+            painter[0].fill(objects.getBall(), Color.rgb(255, 0, 0, alpha));
         }
     }
 

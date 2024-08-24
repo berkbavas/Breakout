@@ -12,9 +12,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -24,9 +22,8 @@ import java.util.List;
 public class Controller implements EventHandler<Event> {
 
     private final Scene scene;
-    private final Group root;
     private final PhysicsEngine engine;
-    private final GraphicsEngine ig;
+    private final GraphicsEngine gui;
     private final GameObjects objects;
     private final EventDispatcher dispatcher;
     private final boolean isDebugMode;
@@ -40,38 +37,21 @@ public class Controller implements EventHandler<Event> {
 
     public Controller(boolean isDebugMode) {
         this.isDebugMode = isDebugMode;
-
-        root = new Group();
-        scene = new Scene(root, Color.rgb(244, 244, 244));
         objects = GameObjectConstructor.construct(isDebugMode);
+
         World world = objects.getWorld();
         double scaling = determineCanvasScaling(world.getWidth(), world.getHeight());
+        gui = new GraphicsEngine(objects, scaling);
 
-        ig = new GraphicsEngine(root, objects, scaling);
+        OnDemandPaintCommandProcessor.initialize(gui);
+        TransformationHelper.initialize(objects.getWorld().getWidth(), objects.getWorld().getHeight(), gui.getWidth(), gui.getHeight());
 
-        OnDemandPaintCommandProcessor.initialize(ig);
-        TransformationHelper.initialize(world.getWidth(), world.getHeight(), ig.getWidth(), ig.getHeight());
-
+        Group root = gui.getRoot();
+        scene = new Scene(root, Color.BLACK);
         dispatcher = new EventDispatcher();
         engine = new PhysicsEngine(objects, dispatcher, isDebugMode);
 
-        dispatcher.addEventListener(ig);
-
-        root.addEventHandler(Event.ANY, this);
-
-//        Bounds bounds = container.getLayoutBounds();
-//        ChangeListener<Number> resize = (observable, oldValue, newValue) -> {
-//            double scaleX = root.getWidth() / bounds.getWidth();
-//            double scaleY = root.getHeight() / bounds.getHeight();
-//
-//            double scale = Math.min(scaleX, scaleY);
-//
-//            container.setScaleX(scale);
-//            container.setScaleY(scale);
-//        };
-//
-//        root.widthProperty().addListener(resize);
-//        root.heightProperty().addListener(resize);
+        scene.addEventHandler(Event.ANY, this);
     }
 
     public void start(Stage stage) {
@@ -97,7 +77,7 @@ public class Controller implements EventHandler<Event> {
 
     public void update() {
         engine.update();
-        ig.update();
+        gui.update();
     }
 
     public void stop() {

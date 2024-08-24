@@ -1,31 +1,26 @@
 package com.github.berkbavas.breakout.physics.node;
 
 import com.github.berkbavas.breakout.graphics.Painter;
-import com.github.berkbavas.breakout.math.AbstractPolygon2D;
+import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 
-import java.util.List;
 
-public abstract class PolygonalNode extends AbstractPolygon2D<ColliderEdge> implements Drawable {
+public class DrawableLineSegment extends LineSegment2D implements Drawable {
     @Getter
     private final Color color;
+
     private boolean isActiveDrawable = true;
 
-    public PolygonalNode(List<Point2D> vertices, List<String> identifiers, Color color) {
-        super(vertices, identifiers);
+    public DrawableLineSegment(Point2D P, Point2D Q, Color color) {
+        super(P, Q);
         this.color = color;
     }
 
-    public PolygonalNode(List<Point2D> vertices, Color color) {
-        super(vertices);
+    public DrawableLineSegment(Point2D P, Point2D Q, String identifier, Color color) {
+        super(P, Q, identifier);
         this.color = color;
-    }
-
-    @Override
-    protected ColliderEdge createEdge(Point2D P, Point2D Q, String identifier) {
-        return new ColliderEdge(P, Q, identifier);
     }
 
     @Override
@@ -55,11 +50,11 @@ public abstract class PolygonalNode extends AbstractPolygon2D<ColliderEdge> impl
 
     @Override
     public void fill(Painter painter, Color color) {
-        painter.fill(this, color);
+        throw new UnsupportedOperationException("Line cannot be filled!");
     }
 
     @Override
     public void fill(Painter painter) {
-        painter.fill(this);
+        throw new UnsupportedOperationException("Line cannot be filled!");
     }
 }

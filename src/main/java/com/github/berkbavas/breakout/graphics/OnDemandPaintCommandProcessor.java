@@ -1,7 +1,5 @@
 package com.github.berkbavas.breakout.graphics;
 
-import java.util.HashMap;
-
 public final class OnDemandPaintCommandProcessor {
     private static PaintCommandProcessor PROC;
 

@@ -2,19 +2,13 @@ package com.github.berkbavas.breakout.physics;
 
 import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.event.EventDispatcher;
-import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
-import com.github.berkbavas.breakout.math.Point2D;
-import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.handler.BreakoutDragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.DebuggerDragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.DragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.ThrowEventHandler;
-import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Brick;
 import com.github.berkbavas.breakout.physics.node.Collider;
 import com.github.berkbavas.breakout.util.Stopwatch;
-import javafx.scene.paint.Color;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;

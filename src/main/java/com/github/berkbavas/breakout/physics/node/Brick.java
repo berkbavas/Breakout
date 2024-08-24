@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Brick extends RectangularNode implements Collider {
+public class Brick extends RectangularNode implements Collider, Drawable {
     private boolean hit;
 
     public Brick(double x, double y, double width, double height, Color color) {
@@ -19,6 +19,11 @@ public class Brick extends RectangularNode implements Collider {
 
     @Override
     public boolean isActiveCollider() {
+        return !hit;
+    }
+
+    @Override
+    public boolean isActiveDrawable() {
         return !hit;
     }
 

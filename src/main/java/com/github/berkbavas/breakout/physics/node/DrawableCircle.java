@@ -1,31 +1,19 @@
 package com.github.berkbavas.breakout.physics.node;
 
 import com.github.berkbavas.breakout.graphics.Painter;
-import com.github.berkbavas.breakout.math.AbstractPolygon2D;
+import com.github.berkbavas.breakout.math.Circle;
 import com.github.berkbavas.breakout.math.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 
-import java.util.List;
-
-public abstract class PolygonalNode extends AbstractPolygon2D<ColliderEdge> implements Drawable {
+public class DrawableCircle extends Circle implements Drawable {
     @Getter
     private final Color color;
     private boolean isActiveDrawable = true;
 
-    public PolygonalNode(List<Point2D> vertices, List<String> identifiers, Color color) {
-        super(vertices, identifiers);
+    public DrawableCircle(Point2D center, double radius, Color color) {
+        super(center, radius);
         this.color = color;
-    }
-
-    public PolygonalNode(List<Point2D> vertices, Color color) {
-        super(vertices);
-        this.color = color;
-    }
-
-    @Override
-    protected ColliderEdge createEdge(Point2D P, Point2D Q, String identifier) {
-        return new ColliderEdge(P, Q, identifier);
     }
 
     @Override
