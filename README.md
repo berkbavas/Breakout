@@ -1,4 +1,4 @@
-# Continous Collision Detection Between Circle and Line Segment
+# Continuous Collision Detection Between Circle and Line Segment
 
 Work is in progress.
 
