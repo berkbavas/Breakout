@@ -33,7 +33,6 @@ public class GameObjects {
         colliders.add(paddle);
 
         draggables.addAll(obstacles);
-        draggables.add(ball);
         draggables.add(paddle);
     }
 }

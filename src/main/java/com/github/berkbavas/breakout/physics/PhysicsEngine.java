@@ -1,14 +1,15 @@
 package com.github.berkbavas.breakout.physics;
 
 import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.event.Event;
 import com.github.berkbavas.breakout.event.EventDispatcher;
-import com.github.berkbavas.breakout.event.EventListener;
-import com.github.berkbavas.breakout.event.EventType;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.handler.BreakoutDragEventHandler;
+import com.github.berkbavas.breakout.physics.handler.DebuggerDragEventHandler;
+import com.github.berkbavas.breakout.physics.handler.DragEventHandler;
+import com.github.berkbavas.breakout.physics.handler.ThrowEventHandler;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Brick;
 import com.github.berkbavas.breakout.physics.node.Collider;
@@ -18,13 +19,12 @@ import javafx.scene.paint.Color;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class PhysicsEngine implements EventListener {
+public class PhysicsEngine {
     private final static double TICK_IN_SEC = 0.005;  //  Each tick is 0.005 seconds.
 
     private final Stopwatch chronometer = new Stopwatch();
     private final GameObjects objects;
     private final AtomicBoolean paused = new AtomicBoolean(false);
-    private final EventDispatcher eventDispatcher;
     private final TickProcessor tickProcessor;
     private final DragEventHandler dragEventHandler;
     private final ThrowEventHandler throwEventHandler;
@@ -33,14 +33,19 @@ public class PhysicsEngine implements EventListener {
 
     public PhysicsEngine(GameObjects objects, EventDispatcher eventDispatcher, boolean isDebugMode) {
         this.objects = objects;
-        this.eventDispatcher = eventDispatcher;
         this.tickProcessor = new TickProcessor(objects);
-        this.dragEventHandler = new DragEventHandler(objects);
-        this.throwEventHandler = new ThrowEventHandler(objects);
+        this.throwEventHandler = new ThrowEventHandler(objects, isDebugMode);
         this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
         this.isDebugMode = isDebugMode;
 
+        if (isDebugMode) {
+            dragEventHandler = new DebuggerDragEventHandler(objects);
+        } else {
+            dragEventHandler = new BreakoutDragEventHandler(objects);
+        }
+
         eventDispatcher.addEventListener(throwEventHandler);
+        eventDispatcher.addEventListener(dragEventHandler);
     }
 
     public void update() {
@@ -54,12 +59,10 @@ public class PhysicsEngine implements EventListener {
         deltaTime = TICK_IN_SEC; //  Each tick is deltaTime seconds.
 
         throwEventHandler.update();
+        dragEventHandler.update();
 
         // World boundary vs ball position check
         tickProcessor.preTick();
-
-        // Process events
-        eventDispatcher.query(this).ifPresent(this::processEvent);
 
         // Find all potential collisions along the direction of velocity of the ball and process.
         TickResult result = tickProcessor.nextTick(deltaTime);
@@ -71,22 +74,6 @@ public class PhysicsEngine implements EventListener {
         if (isDebugMode) {
             var collisions = tickProcessor.findEarliestCollisions();
             paint(collisions);
-        }
-    }
-
-    private void processEvent(Event event) {
-        if (isDebugMode) {
-            if (event.getTarget() == objects.getBall()) {
-                // Do nothing if the target is ball because
-                // these events will be processed by listen() and update() methods.
-            } else if (event.getType() == EventType.MOUSE_DRAGGED) {
-                dragEventHandler.translate(event.getTarget(), event.getDelta());
-            }
-
-        } else {
-            if (event.getType() == EventType.MOUSE_MOVED) {
-                dragEventHandler.translate(event.getTarget(), event.getDelta());
-            }
         }
     }
 
@@ -141,8 +128,4 @@ public class PhysicsEngine implements EventListener {
         paused.set(false);
     }
 
-    @Override
-    public void listen(Event event) {
-
-    }
 }

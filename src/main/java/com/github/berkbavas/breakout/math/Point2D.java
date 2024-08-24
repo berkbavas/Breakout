@@ -35,6 +35,10 @@ public class Point2D {
         return distanceBetween(this, other);
     }
 
+    public double length() {
+        return Math.sqrt(x * x + y * y);
+    }
+
     public static double distanceBetween(Point2D a, Point2D b) {
         final double dx = (a.x - b.x);
         final double dy = (a.y - b.y);

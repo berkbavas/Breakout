@@ -23,6 +23,10 @@ public class Painter {
         this.height = height;
     }
 
+    public void scale(double scale) {
+        gc.scale(scale, scale);
+    }
+
     public void clear() {
         gc.clearRect(0, 0, width, height);
     }

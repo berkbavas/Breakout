@@ -107,7 +107,7 @@ public class TickProcessor {
         return collisions;
     }
 
-    private static Vector2D calculateCollisionNormal(Set<Collision> collisions, Vector2D velocity) {
+    public static Vector2D calculateCollisionNormal(Set<Collision> collisions, Vector2D velocity) {
         Vector2D collisionNormal = new Vector2D(0, 0);
 
         for (Collision collision : collisions) {
@@ -129,7 +129,7 @@ public class TickProcessor {
         return collisionNormal.normalized();
     }
 
-    private static double findMinimumTimeToCollision(Set<Collision> collisions) {
+    public static double findMinimumTimeToCollision(Set<Collision> collisions) {
         double minTimeToCollision = Double.MAX_VALUE;
 
         for (Collision collision : collisions) {
@@ -140,5 +140,13 @@ public class TickProcessor {
         }
 
         return minTimeToCollision;
+    }
+
+    public static Set<Collision> findEarliestCollisions(Set<Collision> collisions) {
+        final double minimumTimeToCollision = findMinimumTimeToCollision(collisions);
+
+        return collisions.stream()
+                .filter(collision -> collision.getTimeToCollision() <= minimumTimeToCollision)
+                .collect(Collectors.toSet());
     }
 }

@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.physics;
+package com.github.berkbavas.breakout.physics.handler;
 
 import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.event.Event;
@@ -12,21 +12,19 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import javafx.scene.paint.Color;
 
 public class ThrowEventHandler implements EventListener {
-    private final GameObjects objects;
     private final Ball ball;
     private final PaintCommandHandler painter;
-
+    private final boolean isDebugMode;
     private boolean isPressedOnBall = false;
     private Point2D cursorPosition = new Point2D(0, 0);
 
-    public ThrowEventHandler(GameObjects objects) {
-        this.objects = objects;
+    public ThrowEventHandler(GameObjects objects, boolean isDebugMode) {
         this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
         this.ball = objects.getBall();
+        this.isDebugMode = isDebugMode;
     }
 
     public void update() {
-
         if (isPressedOnBall) {
             painter.clear();
             painter.drawLine(ball.getCenter(), cursorPosition, Color.YELLOW, 1);
@@ -41,20 +39,25 @@ public class ThrowEventHandler implements EventListener {
 
     @Override
     public void listen(Event event) {
-        if (event.getTarget() == objects.getBall()) {
-            cursorPosition = event.getPosition();
+        if (!isDebugMode) {
+            return;
+        }
 
-            if (event.getType() == EventType.MOUSE_PRESSED) {
+        if (isPressedOnBall) {
+            cursorPosition = event.getCursor();
+        }
+
+        if (event.getType() == EventType.MOUSE_PRESSED) {
+            if (ball.contains(event.getCursor())) {
+                cursorPosition = event.getCursor();
                 isPressedOnBall = true;
-            } else if (event.getType() == EventType.MOUSE_RELEASED) {
-
-                if (isPressedOnBall) {
-                    throwBall(cursorPosition);
-                }
-
-                isPressedOnBall = false;
-                painter.clear();
             }
+        } else if (event.getType() == EventType.MOUSE_RELEASED) {
+            if (isPressedOnBall) {
+                throwBall(cursorPosition);
+            }
+            isPressedOnBall = false;
+            painter.clear();
         }
     }
 }

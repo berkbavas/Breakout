@@ -10,5 +10,6 @@ module com.github.berkbavas.breakout {
     exports com.github.berkbavas.breakout.event;
     exports com.github.berkbavas.breakout.graphics;
     exports com.github.berkbavas.breakout.util;
+    exports com.github.berkbavas.breakout.physics.handler;
 
 }

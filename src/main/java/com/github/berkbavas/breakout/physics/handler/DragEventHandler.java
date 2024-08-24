@@ -1,9 +1,12 @@
-package com.github.berkbavas.breakout.physics;
+package com.github.berkbavas.breakout.physics.handler;
 
 import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.Collision;
+import com.github.berkbavas.breakout.physics.TickProcessor;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Collider;
 import com.github.berkbavas.breakout.physics.node.Draggable;
@@ -12,12 +15,30 @@ import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class DragEventHandler {
-    private final GameObjects objects;
+public abstract class DragEventHandler implements EventListener {
+    protected final GameObjects objects;
+    private final AtomicBoolean dragLater = new AtomicBoolean(false);
+
+    private Draggable target = null;
+    private Point2D delta = null;
 
     public DragEventHandler(GameObjects objects) {
         this.objects = objects;
+    }
+
+    public void update() {
+        if (dragLater.get()) {
+            translate(target, delta);
+            dragLater.set(false);
+        }
+    }
+
+    protected void dragLater(Draggable target, Point2D delta) {
+        this.target = target;
+        this.delta = delta;
+        dragLater.set(true);
     }
 
     public void translate(Draggable node, Point2D delta) {
@@ -25,15 +46,16 @@ public class DragEventHandler {
 
         // Find the closest contacts on collider and ball.
         Set<Pair<Point2D, Point2D>> contacts = new HashSet<>();
+        Vector2D velocity = delta.multiply(-1);
+        Set<Collision> collisions;
 
         if (node instanceof Collider) {
             // findCollision() method assumes that ball is moving and collider is steady.
             // But here we would like to find collisions between still ball and moving collider.
             // Hence, we set velocity as -delta.
-            Vector2D velocity = delta.multiply(-1);
 
             Collider collider = (Collider) node;
-            Set<Collision> collisions = collider.findCollisions(ball, velocity);
+            collisions = collider.findCollisions(ball, velocity);
             for (Collision collision : collisions) {
                 contacts.add(new Pair<>(collision.getContactPointOnEdge(), collision.getContactPointOnBall()));
             }
@@ -65,6 +87,7 @@ public class DragEventHandler {
             double paddleLeftClamped = Util.clamp(paddleLeftMin, paddleLeftRequested, paddleLeftMax);
             double paddleLeftClampedDelta = paddleLeftClamped - paddleLeftCurrent;
             paddle.translate(paddleLeftClampedDelta, 0);
+
         } else {
             node.translate(allowedTranslation);
         }
@@ -78,9 +101,8 @@ public class DragEventHandler {
         double maxAllowedTranslationDistance = projection.length();
         double requestedTranslationDistance = requestedTranslation.length();
         double allowedTranslationDistance =
-                Util.clamp(0, requestedTranslationDistance, maxAllowedTranslationDistance - 5);
+                Util.clamp(0, requestedTranslationDistance, maxAllowedTranslationDistance - 1);
         Vector2D translationDirection = requestedTranslation.normalized();
         return translationDirection.multiply(allowedTranslationDistance).toPoint2D();
     }
-
 }

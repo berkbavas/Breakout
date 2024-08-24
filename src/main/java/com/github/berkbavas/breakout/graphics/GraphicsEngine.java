@@ -11,6 +11,7 @@ import com.github.berkbavas.breakout.physics.node.Paddle;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -30,11 +31,15 @@ public class GraphicsEngine implements EventListener, PaintCommandProcessor {
     @Getter
     private final double height;
 
-    public GraphicsEngine(GameObjects objects) {
+    @Getter
+    private final double scale;
+
+    public GraphicsEngine(GameObjects objects, double scale) {
         this.objects = objects;
 
-        this.width = objects.getWorld().getWidth();
-        this.height = objects.getWorld().getHeight();
+        this.width = objects.getWorld().getWidth() * scale;
+        this.height = objects.getWorld().getHeight() * scale;
+        this.scale = scale;
 
         canvas = new Canvas(width, height);
         container = new Group();
@@ -54,6 +59,7 @@ public class GraphicsEngine implements EventListener, PaintCommandProcessor {
         // Background
         painter.fillBackground(objects.getWorld().getColor());
 
+        painter.scale(scale);
 
         // Ball
         Ball ball = objects.getBall();
