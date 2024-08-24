@@ -84,7 +84,7 @@ public class PhysicsEngine implements EventListener {
             }
 
         } else {
-            if (event.getType() == EventType.MOUSE_DRAGGED) {
+            if (event.getType() == EventType.MOUSE_MOVED) {
                 dragEventHandler.translate(event.getTarget(), event.getDelta());
             }
         }

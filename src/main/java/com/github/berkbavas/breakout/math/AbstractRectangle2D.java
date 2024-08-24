@@ -57,6 +57,10 @@ public abstract class AbstractRectangle2D<T extends LineSegment2D> extends Abstr
         construct(x + delta.getX(), y + delta.getY(), width, height);
     }
 
+    public void translate(double x, double y) {
+        translate(new Point2D(x, y));
+    }
+
     public boolean collides(AbstractRectangle2D<T> other) {
         for (T edge : edges) {
             for (T otherEdge : other.edges) {

@@ -57,7 +57,14 @@ public class DragEventHandler {
         if (node instanceof Paddle) {
             // Paddle is allowed to move on x-axis only, take care of this case.
             Paddle paddle = (Paddle) node;
-            paddle.translate(new Point2D(allowedTranslation.getX(), 0));
+            double paddleLeftCurrent = paddle.getX();
+            double paddleLeftRequestedDelta = allowedTranslation.getX();
+            double paddleLeftMin = 0;
+            double paddleLeftMax = objects.getWorld().getWidth() - paddle.getWidth();
+            double paddleLeftRequested = paddleLeftCurrent + paddleLeftRequestedDelta;
+            double paddleLeftClamped = Util.clamp(paddleLeftMin, paddleLeftRequested, paddleLeftMax);
+            double paddleLeftClampedDelta = paddleLeftClamped - paddleLeftCurrent;
+            paddle.translate(paddleLeftClampedDelta, 0);
         } else {
             node.translate(allowedTranslation);
         }
