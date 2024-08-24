@@ -8,16 +8,18 @@ import java.util.*;
 public abstract class AbstractPolygon2D<T extends LineSegment2D> {
 
     @Getter(AccessLevel.NONE)
-    protected final List<T> edges;
+    protected List<T> edges;
 
     @Getter(AccessLevel.NONE)
-    protected final List<Point2D> vertices;
+    protected List<Point2D> vertices;
 
     @Getter
     protected final int numberOfVertices;
 
     @Getter
     protected final int numberOfEdges;
+
+    protected final List<String> identifiers;
 
     // Constructs a polygon in 2D Cartesian plane from counter-clockwise oriented vertices.
     public AbstractPolygon2D(List<Point2D> vertices, List<String> identifiers) {
@@ -49,6 +51,7 @@ public abstract class AbstractPolygon2D<T extends LineSegment2D> {
         }
 
         this.numberOfEdges = edges.size();
+        this.identifiers = identifiers;
     }
 
     // Constructs a polygon in 2D Cartesian plane from counter-clockwise oriented vertices.
@@ -96,5 +99,46 @@ public abstract class AbstractPolygon2D<T extends LineSegment2D> {
         }
 
         return intersections;
+    }
+
+    // Reference: https://wrfranklin.org/Research/Short_Notes/pnpoly.html
+    public boolean contains(Point2D test) {
+        boolean contains = false;
+
+        final double testX = test.getX();
+        final double testY = test.getY();
+
+        for (int i = 0, j = numberOfVertices - 1; i < numberOfVertices; j = i++) {
+            final double yi = vertices.get(i).getY();
+            final double xi = vertices.get(i).getX();
+            final double yj = vertices.get(j).getY();
+            final double xj = vertices.get(j).getX();
+
+            if (((yi > testY) != (yj > testY)) && (testX < (xj - xi) * (testY - yi) / (yj - yi) + xi)) {
+                contains = !contains;
+            }
+        }
+
+        return contains;
+    }
+
+    public void translate(Point2D delta) {
+        List<Point2D> newVertices = new ArrayList<>(numberOfVertices);
+        List<T> newEdges = new ArrayList<>(numberOfEdges);
+
+        for (Point2D vertex : vertices) {
+            newVertices.add(vertex.add(delta));
+        }
+
+        for (int i = 0; i < numberOfVertices; ++i) {
+            final String identifier = identifiers.get(i);
+            final Point2D P = newVertices.get(i);
+            final Point2D Q = newVertices.get((i + 1) % numberOfVertices);
+            final T edge = createEdge(P, Q, identifier);
+            newEdges.add(edge);
+        }
+
+        vertices = newVertices;
+        edges = newEdges;
     }
 }

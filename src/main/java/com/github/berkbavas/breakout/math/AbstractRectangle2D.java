@@ -17,16 +17,16 @@ public abstract class AbstractRectangle2D<T extends LineSegment2D> extends Abstr
     //     Left Bottom              Right Bottom
     //                    Bottom
 
-    private final Point2D leftTop;
-    private final Point2D leftBottom;
-    private final Point2D rightTop;
-    private final Point2D rightBottom;
+    private Point2D leftTop;
+    private Point2D leftBottom;
+    private Point2D rightTop;
+    private Point2D rightBottom;
 
-    private final double width;
-    private final double height;
+    private double width;
+    private double height;
 
-    private final double x;
-    private final double y;
+    private double x;
+    private double y;
 
     public AbstractRectangle2D(double x, double y, double width, double height) {
         super(List.of(
@@ -36,6 +36,10 @@ public abstract class AbstractRectangle2D<T extends LineSegment2D> extends Abstr
                         new Point2D(x + width, y)),
                 List.of("[Left]", "[Bottom]", "[Right]", "[Top]"));
 
+        construct(x, y, width, height);
+    }
+
+    private void construct(double x, double y, double width, double height) {
         this.leftTop = new Point2D(x, y);
         this.leftBottom = new Point2D(x, y + height);
         this.rightBottom = new Point2D(x + width, y + height);
@@ -45,6 +49,12 @@ public abstract class AbstractRectangle2D<T extends LineSegment2D> extends Abstr
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public void translate(Point2D delta) {
+        super.translate(delta);
+        construct(x + delta.getX(), y + delta.getY(), width, height);
     }
 
     public boolean collides(AbstractRectangle2D<T> other) {
@@ -69,21 +79,5 @@ public abstract class AbstractRectangle2D<T extends LineSegment2D> extends Abstr
         }
 
         return false;
-    }
-
-    public boolean contains(Point2D point) {
-        Vector2D v0 = point.subtract(leftBottom);
-        Vector2D v1 = point.subtract(rightTop);
-        double dot0 = Vector2D.dot(v0, v1);
-
-        if (!Util.isLessThanOrEqualToZero(dot0)) {
-            return false;
-        }
-
-        Vector2D v2 = point.subtract(leftTop);
-        Vector2D v3 = point.subtract(rightBottom);
-        double dot1 = Vector2D.dot(v2, v3);
-
-        return Util.isLessThanOrEqualToZero(dot1);
     }
 }

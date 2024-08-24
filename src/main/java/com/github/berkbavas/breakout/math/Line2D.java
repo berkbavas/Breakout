@@ -3,7 +3,6 @@ package com.github.berkbavas.breakout.math;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @ToString

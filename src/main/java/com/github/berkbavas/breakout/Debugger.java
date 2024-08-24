@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class Breakout extends Application {
+public class Debugger extends Application {
     static {
         Font.loadFont(Objects.requireNonNull(Breakout.class.getResource("/font/BlackOpsOne-Regular.ttf")).toExternalForm(), 0);
     }
@@ -14,23 +14,23 @@ public class Breakout extends Application {
     private final Controller controller;
 
     public static void main(String[] args) {
-        System.out.println(":::.. Breakout ..:::");
+        System.out.println(":::.. Debugger ..:::");
         launch(args);
     }
 
-    public Breakout() {
-        controller = new Controller(false);
+    public Debugger() {
+        controller = new Controller(true);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("Breakout.start()");
+        System.out.println("Debugger.start()");
         controller.start(primaryStage);
     }
 
     @Override
     public void stop() {
-        System.out.println("Breakout.stop()");
+        System.out.println("Debugger.stop()");
         controller.stop();
     }
 }

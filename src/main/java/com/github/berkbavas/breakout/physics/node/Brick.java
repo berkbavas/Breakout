@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.engine.node;
+package com.github.berkbavas.breakout.physics.node;
 
 import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
@@ -7,17 +7,19 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
+@Setter
 @Getter
-public class Brick extends RectangularNode {
-    private final Color color;
-
-    @Setter
+public class Brick extends RectangularNode implements Collider {
     private boolean hit;
 
     public Brick(double x, double y, double width, double height, Color color) {
-        super(x, y, width, height);
-        this.color = color;
+        super(x, y, width, height, color);
         this.hit = false;
+    }
+
+    @Override
+    public boolean isActiveCollider() {
+        return !hit;
     }
 
     @Override

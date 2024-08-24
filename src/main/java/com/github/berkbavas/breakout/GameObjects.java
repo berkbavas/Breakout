@@ -1,20 +1,39 @@
 package com.github.berkbavas.breakout;
 
-import com.github.berkbavas.breakout.engine.node.*;
-import lombok.AllArgsConstructor;
+import com.github.berkbavas.breakout.physics.node.*;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-@AllArgsConstructor
 @Getter
 public class GameObjects {
     private final World world;
-    private final ArrayList<Brick> bricks;
+    private final Set<Brick> bricks;
+    private final Set<Obstacle> obstacles;
+    private final Ball ball;
+    private final Paddle paddle;
 
-    @Setter
-    private volatile Ball ball;
-    @Setter
-    private volatile Paddle paddle;
+    private final Set<Collider> colliders;
+    private final Set<Draggable> draggables;
+
+    public GameObjects(World world, Set<Brick> bricks, Set<Obstacle> obstacles, Ball ball, Paddle paddle) {
+        this.world = world;
+        this.bricks = bricks;
+        this.obstacles = obstacles;
+        this.ball = ball;
+        this.paddle = paddle;
+
+        colliders = new HashSet<>();
+        draggables = new HashSet<>();
+
+        colliders.add(world);
+        colliders.addAll(bricks);
+        colliders.addAll(obstacles);
+        colliders.add(paddle);
+
+        draggables.addAll(obstacles);
+        draggables.add(ball);
+        draggables.add(paddle);
+    }
 }

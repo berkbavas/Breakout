@@ -1,18 +1,20 @@
 package com.github.berkbavas.breakout.math;
 
-import javafx.util.Pair;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @ToString
 @Getter
 public class Circle {
     public static final Circle UNIT_CIRCLE = new Circle(new Point2D(0, 0), 1);
 
-    private final Point2D center;
-    private final double radius;
+    protected Point2D center;
+    protected double radius;
 
     // A circle C centered at (a,b) with radius r is the set of points (x,y)
     // such that (x-a)^2 + (y-b)^2 = r^2 (Eq. 1),

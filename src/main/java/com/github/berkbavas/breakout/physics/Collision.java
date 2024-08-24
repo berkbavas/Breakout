@@ -1,11 +1,10 @@
-package com.github.berkbavas.breakout.engine;
+package com.github.berkbavas.breakout.physics;
 
-import com.github.berkbavas.breakout.engine.node.ColliderEdge;
-import com.github.berkbavas.breakout.engine.node.ColliderNode;
 import com.github.berkbavas.breakout.math.Point2D;
+import com.github.berkbavas.breakout.physics.node.Collider;
+import com.github.berkbavas.breakout.physics.node.ColliderEdge;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @ToString
@@ -13,7 +12,7 @@ import lombok.ToString;
 @Getter
 public class Collision {
     // Object that will collide with the ball.
-    private ColliderNode collider;
+    private Collider collider;
 
     // Edge of the collider that will take role in this potential collision.
     private ColliderEdge edge;

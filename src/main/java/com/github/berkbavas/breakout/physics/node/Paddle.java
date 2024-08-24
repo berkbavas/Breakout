@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.engine.node;
+package com.github.berkbavas.breakout.physics.node;
 
 import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
@@ -7,12 +7,10 @@ import javafx.scene.paint.Color;
 import lombok.Getter;
 
 @Getter
-public class Paddle extends RectangularNode {
-    private final Color color;
+public class Paddle extends RectangularNode implements Draggable, Collider {
 
     public Paddle(double x, double y, double width, double height, Color color) {
-        super(x, y, width, height);
-        this.color = color;
+        super(x, y, width, height, color);
     }
 
     @Override
@@ -24,5 +22,4 @@ public class Paddle extends RectangularNode {
     public Vector2D getNormalOf(LineSegment2D edge) {
         return edge.getNormal(LineSegment2D.NormalOrientation.OUTWARDS);
     }
-
 }

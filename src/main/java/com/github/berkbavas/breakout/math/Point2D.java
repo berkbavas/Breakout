@@ -3,7 +3,6 @@ package com.github.berkbavas.breakout.math;
 import javafx.util.Pair;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter

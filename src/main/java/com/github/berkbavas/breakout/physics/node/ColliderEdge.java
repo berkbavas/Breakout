@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.engine.node;
+package com.github.berkbavas.breakout.physics.node;
 
 
 import com.github.berkbavas.breakout.math.*;

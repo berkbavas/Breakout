@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import java.util.HashMap;
 
 public final class Constants {
+
     private Constants() {
     }
 
@@ -18,8 +19,8 @@ public final class Constants {
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 2500;
-        public static final double MAX_SPEED = 5900;
+        public static final double MIN_SPEED = 1000;
+        public static final double MAX_SPEED = 1100;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
@@ -32,15 +33,14 @@ public final class Constants {
         public static final double INITIAL_Y = World.HEIGHT - 200;
         public static final Color COLOR = Color.WHITE;
         public static final double ARC_RADIUS = 4;
-        public static final double DO_NOT_MOVE_PADDLE_IF_BALL_TOO_CLOSE_OFFSET = 0.00;
         public static final double COLLISION_IMPACT_FACTOR = 5.0;
     }
 
     public final static class Brick {
         public static final double WIDTH = 80;
         public static final double HEIGHT = 32;
-        public static final double HORIZONTAL_SPACING = 4;
-        public static final double VERTICAL_SPACING = 4;
+        public static final double HORIZONTAL_SPACING = 3;
+        public static final double VERTICAL_SPACING = 3;
         public static final double ARC_RADIUS = 4;
         public static final double COLLISION_IMPACT_FACTOR = 1.0;
         public static final HashMap<Integer, Color> COLORS_PER_ROW = new HashMap<>();
@@ -57,6 +57,10 @@ public final class Constants {
             COLORS_PER_ROW.put(6, Color.rgb(170, 255, 0));
             COLORS_PER_ROW.put(7, Color.rgb(127, 255, 0));
         }
+    }
+
+    public final static class Obstacle {
+        public static final double COLLISION_IMPACT_FACTOR = 1.0;
     }
 
 }
