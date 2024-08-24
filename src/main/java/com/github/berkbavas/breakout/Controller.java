@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class Controller implements EventHandler<Event> {
-
     private final Scene scene;
     private final PhysicsEngine engine;
     private final GraphicsEngine gui;

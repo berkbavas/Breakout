@@ -14,11 +14,11 @@ import java.util.Set;
 
 public class DebuggerDragEventHandler extends DragEventHandler {
     private final Set<Draggable> draggables;
+    private final PaintCommandHandler painter;
 
     private Draggable target = null;
     private MouseEvent lastEvent;
     private Point2D delta;
-    private PaintCommandHandler painter;
 
     public DebuggerDragEventHandler(GameObjects objects) {
         super(objects);
@@ -33,20 +33,23 @@ public class DebuggerDragEventHandler extends DragEventHandler {
             Draggable located = locateDraggable(worldPos);
             if (located != null) {
                 target = located;
-                lastEvent = event;
-                delta = new Point2D(0, 0);
                 acceptIfDrawable(target, true);
                 paintIfDrawable(target);
+
+                lastEvent = event;
+                delta = new Point2D(0, 0);
             }
         } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             if (target != null) {
-                Point2D current = TransformationHelper.fromSceneToWorld(event.getX(), event.getY());
-                Point2D previous = TransformationHelper.fromSceneToWorld(lastEvent.getX(), lastEvent.getY());
+                Point2D current = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
+                Point2D previous = TransformationHelper.fromSceneToWorld(lastEvent.getSceneX(), lastEvent.getSceneY());
                 Point2D added = delta.add(current.subtract(previous));
-                delta = new Point2D(0, 0);
-                lastEvent = event;
+
                 translate(target, added);
                 paintIfDrawable(target);
+
+                lastEvent = event;
+                delta = new Point2D(0, 0);
             }
         } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
             if (target != null) {
@@ -60,7 +63,7 @@ public class DebuggerDragEventHandler extends DragEventHandler {
     private void acceptIfDrawable(Draggable target, boolean accept) {
         if (target instanceof Drawable) {
             Drawable drawable = (Drawable) target;
-            // I will render this node from now on.
+            // I will render this node from now on if accept == true.
             drawable.setIsActiveDrawable(!accept);
             painter.clear();
         }
@@ -69,7 +72,6 @@ public class DebuggerDragEventHandler extends DragEventHandler {
     private void paintIfDrawable(Draggable target) {
         if (target instanceof Drawable) {
             Drawable drawable = (Drawable) target;
-            // I will render this node from now on.
             painter.clear();
             painter.fill(drawable, Color.rgb(255, 255, 255, 0.6));
         }
