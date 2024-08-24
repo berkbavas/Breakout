@@ -19,7 +19,7 @@ public class ThrowEventHandler implements EventListener {
     private Point2D cursorPosition = new Point2D(0, 0);
 
     public ThrowEventHandler(GameObjects objects, boolean isDebugMode) {
-        this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
+        this.painter = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
         this.ball = objects.getBall();
         this.isDebugMode = isDebugMode;
     }

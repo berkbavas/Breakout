@@ -12,17 +12,18 @@ import javafx.scene.paint.Color;
 import java.util.Set;
 
 public class VisualDebugger {
+    private final static double COLLISION_INDICATION_TIMEOUT_IN_SEC = 0.0;
+    private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.25;
+
     private final GameObjects objects;
     private final PaintCommandHandler[] painter = new PaintCommandHandler[2];
     private final Stopwatch chronometer = new Stopwatch();
     private double sinceCollision = Double.MAX_VALUE;
-    private final static double COLLISION_INDICATION_TIMEOUT_IN_SEC = 0.0;
-    private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.25;
 
     public VisualDebugger(GameObjects objects) {
         this.objects = objects;
-        painter[0] = OnDemandPaintCommandProcessor.getPaintCommandHandler(new Object());
-        painter[1] = OnDemandPaintCommandProcessor.getPaintCommandHandler(new Object());
+        painter[0] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
+        painter[1] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
     }
 
     public void paint(TickResult result) {
