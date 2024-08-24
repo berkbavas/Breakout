@@ -18,7 +18,7 @@ public final class Constants {
     }
 
     public final static class Ball {
-        public static final double RADIUS = 14;
+        public static final double RADIUS = 12;
         public static final double MIN_SPEED = 500;
         public static final double MAX_SPEED = 600;
         public static final double INITIAL_X = 0.5f * World.WIDTH;

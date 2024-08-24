@@ -28,13 +28,13 @@ public class PhysicsEngine {
     private final TickProcessor tickProcessor;
     private final DragEventHandler dragEventHandler;
     private final ThrowEventHandler throwEventHandler;
-    private final PaintCommandHandler painter;
     private final boolean isDebugMode;
+    private final VisualDebugger debugger;
 
     public PhysicsEngine(GameObjects objects, EventDispatcher dispatcher, boolean isDebugMode) {
         this.objects = objects;
         this.tickProcessor = new TickProcessor(objects);
-        this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
+        this.debugger = new VisualDebugger(objects);
         this.isDebugMode = isDebugMode;
 
         this.throwEventHandler = new ThrowEventHandler(objects, isDebugMode);
@@ -74,7 +74,8 @@ public class PhysicsEngine {
         // If debug mode is on, paint the output of algorithm for visual debugging.
         if (isDebugMode) {
             var collisions = tickProcessor.findEarliestCollisions();
-            paint(collisions);
+            debugger.paint(collisions);
+            debugger.paint(result);
         }
     }
 
@@ -90,26 +91,6 @@ public class PhysicsEngine {
                 }
             }
         }
-    }
-
-    private void paint(Set<Collision> collisions) {
-        // Line(s) between potential collision contacts
-        painter.clear();
-
-        for (Collision collision : collisions) {
-            Point2D p0 = collision.getContactPointOnBall();
-            Point2D p1 = collision.getContactPointOnEdge();
-            painter.drawLine(p0, p1, Color.RED);
-        }
-
-        // Velocity indicator
-        Ball ball = objects.getBall();
-        Point2D center = ball.getCenter();
-        Vector2D dir = ball.getVelocity().normalized();
-        double speed = ball.getSpeed() / 100;
-        Point2D p0 = center.add(dir.multiply(ball.getRadius()));
-        Point2D p1 = center.add(dir.multiply(speed * ball.getRadius()));
-        painter.drawLine(p0, p1, Color.CYAN);
     }
 
     public void start() {

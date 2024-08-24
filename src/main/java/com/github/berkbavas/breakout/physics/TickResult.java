@@ -20,5 +20,9 @@ public class TickResult {
         }
         return Optional.empty();
     }
+
+    public double getMinimumTimeToCollision() {
+        return TickProcessor.findMinimumTimeToCollision(collisions);
+    }
 }
 

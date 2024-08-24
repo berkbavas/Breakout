@@ -11,6 +11,7 @@ import javafx.animation.AnimationTimer;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -23,6 +24,7 @@ import java.util.List;
 public class Controller implements EventHandler<Event> {
 
     private final Scene scene;
+    private final Group root;
     private final PhysicsEngine engine;
     private final GraphicsEngine ig;
     private final GameObjects objects;
@@ -39,15 +41,13 @@ public class Controller implements EventHandler<Event> {
     public Controller(boolean isDebugMode) {
         this.isDebugMode = isDebugMode;
 
-        StackPane root = new StackPane();
-
+        root = new Group();
         scene = new Scene(root, Color.rgb(244, 244, 244));
         objects = GameObjectConstructor.construct(isDebugMode);
-
         World world = objects.getWorld();
         double scaling = determineCanvasScaling(world.getWidth(), world.getHeight());
 
-        ig = new GraphicsEngine(objects, scaling);
+        ig = new GraphicsEngine(root, objects, scaling);
 
         OnDemandPaintCommandProcessor.initialize(ig);
         TransformationHelper.initialize(world.getWidth(), world.getHeight(), ig.getWidth(), ig.getHeight());
@@ -57,10 +57,7 @@ public class Controller implements EventHandler<Event> {
 
         dispatcher.addEventListener(ig);
 
-        Parent container = ig.getContainer();
-
-        root.getChildren().add(container);
-        container.addEventHandler(Event.ANY, this);
+        root.addEventHandler(Event.ANY, this);
 
 //        Bounds bounds = container.getLayoutBounds();
 //        ChangeListener<Number> resize = (observable, oldValue, newValue) -> {

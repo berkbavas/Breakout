@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class GraphicsEngine implements EventListener, PaintCommandProcessor {
-    @Getter
-    private final Group container;
-    @Getter
     private final Canvas canvas;
     private final GameObjects objects;
     private final Painter painter;
@@ -32,7 +29,7 @@ public class GraphicsEngine implements EventListener, PaintCommandProcessor {
     @Getter
     private final double scale;
 
-    public GraphicsEngine(GameObjects objects, double scale) {
+    public GraphicsEngine(Group parent, GameObjects objects, double scale) {
         this.objects = objects;
 
         this.width = objects.getWorld().getWidth() * scale;
@@ -40,8 +37,7 @@ public class GraphicsEngine implements EventListener, PaintCommandProcessor {
         this.scale = scale;
 
         canvas = new Canvas(width, height);
-        container = new Group();
-        container.getChildren().add(canvas);
+        parent.getChildren().add(canvas);
         canvas.setLayoutX(0);
         canvas.setLayoutY(0);
 
