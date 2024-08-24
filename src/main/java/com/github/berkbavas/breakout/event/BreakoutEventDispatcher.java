@@ -18,8 +18,12 @@ public class BreakoutEventDispatcher extends EventDispatcher {
     @Override
     protected Optional<Draggable> shouldDispatch(EventType type, Point2D position) {
         if (type == EventType.MOUSE_CLICKED) {
-            reset();
             focused = !focused;
+
+            if (!focused) {
+                // We lost the focus, clear previously recorded events in the table.
+                reset();
+            }
         }
 
         return focused ? Optional.of(paddle) : Optional.empty();

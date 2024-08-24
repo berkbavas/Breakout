@@ -35,7 +35,8 @@ public class Ball extends Circle implements Draggable {
 
     @Override
     public boolean contains(Point2D query) {
-        return isPointInsideCircle(query);
+        Circle dummy = new Circle(center, 4 * radius);
+        return dummy.isPointInsideCircle(query);
     }
 
     @Override

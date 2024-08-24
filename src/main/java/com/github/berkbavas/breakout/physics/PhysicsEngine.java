@@ -27,6 +27,7 @@ public class PhysicsEngine implements EventListener {
     private final EventDispatcher eventDispatcher;
     private final TickProcessor tickProcessor;
     private final DragEventHandler dragEventHandler;
+    private final ThrowEventHandler throwEventHandler;
     private final PaintCommandHandler painter;
     private final boolean isDebugMode;
 
@@ -35,8 +36,11 @@ public class PhysicsEngine implements EventListener {
         this.eventDispatcher = eventDispatcher;
         this.tickProcessor = new TickProcessor(objects);
         this.dragEventHandler = new DragEventHandler(objects);
+        this.throwEventHandler = new ThrowEventHandler(objects);
         this.painter = OnDemandPaintCommandProcessor.getPaintCommandHandler(this);
         this.isDebugMode = isDebugMode;
+
+        eventDispatcher.addEventListener(throwEventHandler);
     }
 
     public void update() {
@@ -49,22 +53,13 @@ public class PhysicsEngine implements EventListener {
 
         deltaTime = TICK_IN_SEC; //  Each tick is deltaTime seconds.
 
+        throwEventHandler.update();
+
         // World boundary vs ball position check
         tickProcessor.preTick();
 
         // Process events
-        eventDispatcher.query(this).ifPresent(
-                event -> {
-                    if (isDebugMode) {
-                        if (event.getType() == EventType.MOUSE_DRAGGED) {
-                            dragEventHandler.translate(event.getTarget(), event.getDelta());
-                        }
-                    } else {
-                        dragEventHandler.translate(event.getTarget(), event.getDelta());
-                    }
-
-                }
-        );
+        eventDispatcher.query(this).ifPresent(this::processEvent);
 
         // Find all potential collisions along the direction of velocity of the ball and process.
         TickResult result = tickProcessor.nextTick(deltaTime);
@@ -79,7 +74,23 @@ public class PhysicsEngine implements EventListener {
         }
     }
 
-    public void updateBricks(TickResult result) {
+    private void processEvent(Event event) {
+        if (isDebugMode) {
+            if (event.getTarget() == objects.getBall()) {
+                // Do nothing if the target is ball because
+                // these events will be processed by listen() and update() methods.
+            } else if (event.getType() == EventType.MOUSE_DRAGGED) {
+                dragEventHandler.translate(event.getTarget(), event.getDelta());
+            }
+
+        } else {
+            if (event.getType() == EventType.MOUSE_DRAGGED) {
+                dragEventHandler.translate(event.getTarget(), event.getDelta());
+            }
+        }
+    }
+
+    private void updateBricks(TickResult result) {
         if (result.isCollided()) {
             Set<Collision> collisions = result.getCollisions();
             for (Collision collision : collisions) {
@@ -93,7 +104,7 @@ public class PhysicsEngine implements EventListener {
         }
     }
 
-    public void paint(Set<Collision> collisions) {
+    private void paint(Set<Collision> collisions) {
         // Line(s) between potential collision contacts
         painter.clear();
 
