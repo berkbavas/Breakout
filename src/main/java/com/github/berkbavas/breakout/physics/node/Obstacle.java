@@ -4,6 +4,9 @@ import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.Draggable;
+import com.github.berkbavas.breakout.physics.node.base.PolygonalNode;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 
@@ -21,8 +24,18 @@ public class Obstacle extends PolygonalNode implements Draggable, Collider {
     }
 
     @Override
-    public double getCollisionImpactFactor() {
-        return Constants.Obstacle.COLLISION_IMPACT_FACTOR;
+    public double getImpulsionFactor() {
+        return Constants.Obstacle.IMPULSION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getRestitutionFactor() {
+        return Constants.Obstacle.RESTITUTION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getFrictionCoefficient() {
+        return Constants.Obstacle.FRICTION_COEFFICIENT.getValue();
     }
 
     @Override

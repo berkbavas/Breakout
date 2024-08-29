@@ -6,7 +6,7 @@ import com.github.berkbavas.breakout.graphics.PaintCommandHandler.StrokeCommand;
 import com.github.berkbavas.breakout.math.Circle;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
-import com.github.berkbavas.breakout.physics.node.*;
+import com.github.berkbavas.breakout.physics.node.base.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -90,7 +90,6 @@ public class Painter {
     public void fill(DrawableCircle circle) {
         fillCircle(circle.getCenter(), circle.getRadius(), circle.getColor());
     }
-
 
     public void strokeCircle(Point2D center, double radius, Color color, double width) {
         gc.setStroke(color);
@@ -212,7 +211,6 @@ public class Painter {
         List<PaintCommand> commands = handler.getCommands();
 
         for (PaintCommand command : commands) {
-
             Color color = command.getColor();
             Drawable shape = command.getShape();
 
@@ -221,8 +219,6 @@ public class Painter {
             } else if (command instanceof StrokeCommand) {
                 shape.stroke(this, color, ((StrokeCommand) command).getWidth());
             }
-
         }
-
     }
 }

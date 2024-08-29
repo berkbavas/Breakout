@@ -3,6 +3,9 @@ package com.github.berkbavas.breakout.physics.node;
 import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.Draggable;
+import com.github.berkbavas.breakout.physics.node.base.RectangularNode;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 
@@ -14,8 +17,18 @@ public class Paddle extends RectangularNode implements Draggable, Collider {
     }
 
     @Override
-    public double getCollisionImpactFactor() {
-        return Constants.Paddle.COLLISION_IMPACT_FACTOR;
+    public double getImpulsionFactor() {
+        return Constants.Paddle.IMPULSION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getRestitutionFactor() {
+        return Constants.Paddle.RESTITUTION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getFrictionCoefficient() {
+        return Constants.Paddle.FRICTION_COEFFICIENT.getValue();
     }
 
     @Override

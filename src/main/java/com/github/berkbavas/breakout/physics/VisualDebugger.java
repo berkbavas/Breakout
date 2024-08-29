@@ -6,6 +6,8 @@ import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
+import com.github.berkbavas.breakout.physics.simulator.core.Collision;
+import com.github.berkbavas.breakout.physics.simulator.core.TickResult;
 import com.github.berkbavas.breakout.util.Stopwatch;
 import javafx.scene.paint.Color;
 
@@ -16,7 +18,7 @@ public class VisualDebugger {
     private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.25;
 
     private final GameObjects objects;
-    private final PaintCommandHandler[] painter = new PaintCommandHandler[2];
+    private final PaintCommandHandler[] painter = new PaintCommandHandler[3];
     private final Stopwatch chronometer = new Stopwatch();
     private double sinceCollision = Double.MAX_VALUE;
 
@@ -24,18 +26,21 @@ public class VisualDebugger {
         this.objects = objects;
         painter[0] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
         painter[1] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
+        painter[2] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
     }
 
     public void paint(TickResult result) {
-        final boolean isCollided = result.isCollided();
+        painter[0].clear();
+
+        final TickResult.Status status = result.getStatus();
         final double minimumTimeToCollision = result.getMinimumTimeToCollision();
 
-        if (isCollided) {
+        if (status == TickResult.Status.COLLIDED) {
             chronometer.start();
             sinceCollision = 0;
+        } else if (status == TickResult.Status.STEADY) {
+            painter[0].fill(objects.getBall(), Color.GREEN);
         }
-
-        painter[0].clear();
 
         if (sinceCollision < COLLISION_INDICATION_TIMEOUT_IN_SEC) {
             sinceCollision = chronometer.getSeconds();
@@ -56,15 +61,21 @@ public class VisualDebugger {
             Point2D p1 = collision.getContactPointOnEdge();
             painter[1].drawLine(p0, p1, Color.RED);
         }
+    }
+
+    public void paint(Ball ball) {
+        painter[2].clear();
 
         // Velocity indicator
-        Ball ball = objects.getBall();
         Point2D center = ball.getCenter();
-        Vector2D dir = ball.getVelocity().normalized();
-        double speed = ball.getSpeed() / 100;
-        Point2D p0 = center.add(dir.multiply(ball.getRadius()));
-        Point2D p1 = center.add(dir.multiply(speed * ball.getRadius()));
-        painter[1].drawLine(p0, p1, Color.CYAN);
+        Vector2D velocity = ball.getVelocity();
+        Point2D p0 = center.add(velocity.multiply(1 / 10.0));
+        painter[2].drawLine(center, p0, Color.CYAN, 1);
+
+        // Acceleration indicator
+        Vector2D acceleration = ball.getAcceleration();
+        Point2D q0 = center.add(acceleration.normalized().multiply(100));
+        painter[2].drawLine(center, q0, Color.MAGENTA, 1);
     }
 
 }

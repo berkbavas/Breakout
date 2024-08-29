@@ -75,7 +75,6 @@ public class GraphicsEngine implements PaintCommandProcessor {
             }
         }
 
-
         // Obstacles
         Set<Obstacle> obstacles = objects.getObstacles();
 
@@ -84,7 +83,6 @@ public class GraphicsEngine implements PaintCommandProcessor {
                 painter.fill(obstacle);
             }
         }
-
 
         // Process commands here
         for (PaintCommandHandler handler : handlers) {

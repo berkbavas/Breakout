@@ -3,7 +3,7 @@ package com.github.berkbavas.breakout;
 import com.github.berkbavas.breakout.event.EventDispatcher;
 import com.github.berkbavas.breakout.graphics.GraphicsEngine;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
-import com.github.berkbavas.breakout.physics.PhysicsEngine;
+import com.github.berkbavas.breakout.physics.PhysicsManager;
 import com.github.berkbavas.breakout.physics.node.World;
 import com.github.berkbavas.breakout.util.GameObjectConstructor;
 import com.github.berkbavas.breakout.util.TransformationHelper;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Controller implements EventHandler<Event> {
     private final Scene scene;
-    private final PhysicsEngine engine;
+    private final PhysicsManager engine;
     private final GraphicsEngine gui;
     private final GameObjects objects;
     private final EventDispatcher dispatcher;
@@ -48,7 +48,7 @@ public class Controller implements EventHandler<Event> {
         Group root = gui.getRoot();
         scene = new Scene(root, Color.BLACK);
         dispatcher = new EventDispatcher();
-        engine = new PhysicsEngine(objects, dispatcher, isDebugMode);
+        engine = new PhysicsManager(objects, dispatcher, isDebugMode);
 
         scene.addEventHandler(Event.ANY, this);
     }

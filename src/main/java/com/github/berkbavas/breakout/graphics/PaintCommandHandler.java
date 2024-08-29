@@ -2,8 +2,8 @@ package com.github.berkbavas.breakout.graphics;
 
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
-import com.github.berkbavas.breakout.physics.node.Drawable;
-import com.github.berkbavas.breakout.physics.node.DrawableLineSegment;
+import com.github.berkbavas.breakout.physics.node.base.Drawable;
+import com.github.berkbavas.breakout.physics.node.base.DrawableLineSegment;
 import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

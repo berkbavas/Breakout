@@ -6,32 +6,42 @@ import com.github.berkbavas.breakout.physics.handler.BreakoutDragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.DebuggerDragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.DragEventHandler;
 import com.github.berkbavas.breakout.physics.handler.ThrowEventHandler;
+import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Brick;
-import com.github.berkbavas.breakout.physics.node.Collider;
+import com.github.berkbavas.breakout.physics.node.World;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.simulator.Simulator;
+import com.github.berkbavas.breakout.physics.simulator.core.Collision;
+import com.github.berkbavas.breakout.physics.simulator.core.TickResult;
 import com.github.berkbavas.breakout.util.Stopwatch;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class PhysicsEngine {
+public class PhysicsManager {
     private final static double TICK_IN_SEC = 0.005;  //  Each tick is 0.005 seconds.
 
-    private final Stopwatch chronometer = new Stopwatch();
     private final GameObjects objects;
+    private final Stopwatch chronometer = new Stopwatch();
     private final AtomicBoolean paused = new AtomicBoolean(false);
-    private final TickProcessor tickProcessor;
+    private final Simulator simulator;
     private final DragEventHandler dragEventHandler;
     private final ThrowEventHandler throwEventHandler;
     private final boolean isDebugMode;
     private final VisualDebugger debugger;
 
-    public PhysicsEngine(GameObjects objects, EventDispatcher dispatcher, boolean isDebugMode) {
+    public PhysicsManager(GameObjects objects, EventDispatcher dispatcher, boolean isDebugMode) {
+        final World world = objects.getWorld();
+        final Set<Collider> colliders = objects.getColliders();
+        final Ball ball = objects.getBall();
+
         this.objects = objects;
-        this.tickProcessor = new TickProcessor(objects);
+        this.simulator = new Simulator(world, colliders, ball);
         this.debugger = new VisualDebugger(objects);
         this.isDebugMode = isDebugMode;
 
-        this.throwEventHandler = new ThrowEventHandler(objects, isDebugMode);
+        this.throwEventHandler = new ThrowEventHandler(ball);
+        this.throwEventHandler.setEnabled(isDebugMode);
 
         if (isDebugMode) {
             dragEventHandler = new DebuggerDragEventHandler(objects);
@@ -48,33 +58,28 @@ public class PhysicsEngine {
             return;
         }
 
-        double deltaTime = chronometer.getSeconds();
-        chronometer.restart();
-
-        deltaTime = TICK_IN_SEC; //  Each tick is deltaTime seconds.
-
         throwEventHandler.update();
         dragEventHandler.update();
 
-        // World boundary vs ball position check
-        tickProcessor.preTick();
+        final double deltaTime = TICK_IN_SEC;
 
         // Find all potential collisions along the direction of velocity of the ball and process.
-        TickResult result = tickProcessor.nextTick(deltaTime);
+        TickResult result = simulator.update(deltaTime);
 
         // Check if a brick is hit in this particular tick.
         updateBricks(result);
 
         // If debug mode is on, paint the output of algorithm for visual debugging.
         if (isDebugMode) {
-            var collisions = tickProcessor.findEarliestCollisions();
-            debugger.paint(collisions);
+            var collisions = simulator.findEarliestCollisions(deltaTime);
+            //debugger.paint(collisions);
             debugger.paint(result);
+            debugger.paint(objects.getBall());
         }
     }
 
     private void updateBricks(TickResult result) {
-        if (result.isCollided()) {
+        if (result.getStatus() == TickResult.Status.COLLIDED) {
             Set<Collision> collisions = result.getCollisions();
             for (Collision collision : collisions) {
                 Collider collider = collision.getCollider();

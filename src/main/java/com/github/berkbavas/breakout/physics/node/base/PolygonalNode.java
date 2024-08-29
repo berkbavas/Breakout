@@ -1,19 +1,25 @@
-package com.github.berkbavas.breakout.physics.node;
+package com.github.berkbavas.breakout.physics.node.base;
 
 import com.github.berkbavas.breakout.graphics.Painter;
-import com.github.berkbavas.breakout.math.AbstractRectangle2D;
+import com.github.berkbavas.breakout.math.AbstractPolygon2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 
+import java.util.List;
 
-public abstract class RectangularNode extends AbstractRectangle2D<ColliderEdge> implements Drawable {
+public abstract class PolygonalNode extends AbstractPolygon2D<ColliderEdge> implements Drawable {
     @Getter
     private final Color color;
     private boolean isActiveDrawable = true;
 
-    public RectangularNode(double x, double y, double width, double height, Color color) {
-        super(x, y, width, height);
+    public PolygonalNode(List<Point2D> vertices, List<String> identifiers, Color color) {
+        super(vertices, identifiers);
+        this.color = color;
+    }
+
+    public PolygonalNode(List<Point2D> vertices, Color color) {
+        super(vertices);
         this.color = color;
     }
 

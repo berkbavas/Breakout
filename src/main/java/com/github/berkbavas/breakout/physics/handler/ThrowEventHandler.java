@@ -1,6 +1,5 @@
 package com.github.berkbavas.breakout.physics.handler;
 
-import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
@@ -10,18 +9,23 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.util.TransformationHelper;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ThrowEventHandler implements EventListener {
-    private final Ball ball;
     private final PaintCommandHandler painter;
-    private final boolean isDebugMode;
+    private final Ball ball;
+
     private boolean isPressedOnBall = false;
     private Point2D cursorPosition = new Point2D(0, 0);
 
-    public ThrowEventHandler(GameObjects objects, boolean isDebugMode) {
+    @Setter
+    @Getter
+    private boolean isEnabled = true;
+
+    public ThrowEventHandler(Ball ball) {
         this.painter = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
-        this.ball = objects.getBall();
-        this.isDebugMode = isDebugMode;
+        this.ball = ball;
     }
 
     public void update() {
@@ -33,7 +37,7 @@ public class ThrowEventHandler implements EventListener {
 
     @Override
     public void listen(MouseEvent event) {
-        if (!isDebugMode) {
+        if (!isEnabled) {
             return;
         }
 
@@ -60,8 +64,6 @@ public class ThrowEventHandler implements EventListener {
     private void throwBall(Point2D cursorPosition) {
         Point2D center = ball.getCenter();
         Vector2D velocity = cursorPosition.subtract(center);
-        ball.setVelocity(velocity);
+        ball.setVelocity(velocity.multiply(2));
     }
-
-
 }

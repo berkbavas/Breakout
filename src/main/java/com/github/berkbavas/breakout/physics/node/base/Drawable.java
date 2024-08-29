@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.physics.node;
+package com.github.berkbavas.breakout.physics.node.base;
 
 import com.github.berkbavas.breakout.graphics.Painter;
 import javafx.scene.paint.Color;

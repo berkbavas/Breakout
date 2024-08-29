@@ -1,6 +1,8 @@
 package com.github.berkbavas.breakout;
 
 import com.github.berkbavas.breakout.physics.node.*;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.Draggable;
 import lombok.Getter;
 
 import java.util.HashSet;

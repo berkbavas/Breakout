@@ -3,6 +3,9 @@ package com.github.berkbavas.breakout.physics.node;
 import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.Drawable;
+import com.github.berkbavas.breakout.physics.node.base.RectangularNode;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,12 +31,23 @@ public class Brick extends RectangularNode implements Collider, Drawable {
     }
 
     @Override
-    public double getCollisionImpactFactor() {
-        return Constants.Brick.COLLISION_IMPACT_FACTOR;
+    public double getImpulsionFactor() {
+        return Constants.Brick.IMPULSION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getRestitutionFactor() {
+        return Constants.Brick.RESTITUTION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getFrictionCoefficient() {
+        return Constants.Brick.FRICTION_COEFFICIENT.getValue();
     }
 
     @Override
     public Vector2D getNormalOf(LineSegment2D edge) {
         return edge.getNormal(LineSegment2D.NormalOrientation.OUTWARDS);
     }
+
 }

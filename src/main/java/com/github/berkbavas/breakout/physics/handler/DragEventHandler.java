@@ -5,14 +5,15 @@ import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
-import com.github.berkbavas.breakout.physics.Collision;
 import com.github.berkbavas.breakout.physics.node.Ball;
-import com.github.berkbavas.breakout.physics.node.Collider;
-import com.github.berkbavas.breakout.physics.node.Draggable;
 import com.github.berkbavas.breakout.physics.node.Paddle;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.Draggable;
+import com.github.berkbavas.breakout.physics.node.base.Vertex;
+import com.github.berkbavas.breakout.physics.simulator.core.CollisionEngine;
 import javafx.util.Pair;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -38,24 +39,18 @@ public abstract class DragEventHandler implements EventListener {
     public void translate(Draggable node, Point2D delta) {
         Ball ball = objects.getBall();
 
-        // Find the closest contacts on collider and ball.
-        Set<Pair<Point2D, Point2D>> contacts = new HashSet<>();
-        Vector2D velocity = delta.multiply(-1);
-        Set<Collision> collisions;
-
+        Pair<Point2D, Point2D> closest = null;
+        // Find the closest points on collider and ball, if the draggable is a collider as well.
         if (node instanceof Collider) {
             // findCollision() method assumes that ball is moving and collider is steady.
             // But here we would like to find collisions between still ball and moving collider.
             // Hence, we set velocity as -delta.
-
+            Vector2D velocity = delta.multiply(-1);
             Collider collider = (Collider) node;
-            collisions = collider.findCollisions(ball, velocity);
-            for (Collision collision : collisions) {
-                contacts.add(new Pair<>(collision.getContactPointOnEdge(), collision.getContactPointOnBall()));
-            }
-        }
 
-        Pair<Point2D, Point2D> closest = Point2D.findClosestPair(contacts);
+            Set<Pair<Point2D, Vertex>> pairs = CollisionEngine.findClosestPairsAlongGivenDirection(ball, collider, velocity);
+            closest = Vertex.findClosestPair(new ArrayList<>(pairs));
+        }
 
         Point2D allowedTranslation;
 
@@ -86,7 +81,6 @@ public abstract class DragEventHandler implements EventListener {
             node.translate(allowedTranslation);
         }
     }
-
 
     private Point2D calculateAllowedTranslation(Point2D contactPointOnEdge, Point2D contactPointOnBall, Point2D delta) {
         Vector2D maximumAllowedTranslation = contactPointOnBall.subtract(contactPointOnEdge);

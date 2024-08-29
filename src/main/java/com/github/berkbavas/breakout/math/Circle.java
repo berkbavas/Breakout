@@ -189,4 +189,8 @@ public class Circle {
         return result;
     }
 
+    public Circle constructBiggerCircle(double radiusMargin) {
+        return new Circle(center, radius + radiusMargin);
+    }
+
 }

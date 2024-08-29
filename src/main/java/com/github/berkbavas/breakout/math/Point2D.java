@@ -49,6 +49,22 @@ public class Point2D {
         return distanceBetween(pair.getKey(), pair.getValue());
     }
 
+    public double angleBetween(Point2D other) {
+        return angleBetween(this, other);
+    }
+
+    public static double angleBetween(Point2D a, Point2D b) {
+        double angle = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
+
+        if (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        } else if (angle <= -Math.PI) {
+            angle += 2 * Math.PI;
+        }
+
+        return angle;
+    }
+
     public Vector2D toVector2D() {
         return new Vector2D(x, y);
     }

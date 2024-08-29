@@ -74,11 +74,15 @@ public final class GameObjectConstructor {
 
         obstacles.add(new Obstacle(List.of(new Point2D(100, 300), new Point2D(200, 400), new Point2D(250, 350),
                 new Point2D(220, 200)), Color.WHITE));
+
         Obstacle obstacle = new Obstacle(List.of(new Point2D(600, 300), new Point2D(580, 320), new Point2D(850, 550),
                 new Point2D(900, 500)), Color.WHITE);
 
+
         obstacle.translate(new Point2D(300, 0));
         obstacles.add(obstacle);
+
+        obstacles.add(new Obstacle(List.of(new Point2D(0, 400), new Point2D(0, 800), new Point2D(600, 800)), Color.WHITE));
 
         return obstacles;
     }

@@ -1,9 +1,11 @@
-package com.github.berkbavas.breakout.physics.node;
+package com.github.berkbavas.breakout.physics.node.base;
 
 import com.github.berkbavas.breakout.math.*;
 import javafx.util.Pair;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class ColliderEdge extends LineSegment2D {
     // The line passing through this line segment
@@ -27,7 +29,7 @@ public class ColliderEdge extends LineSegment2D {
     //  Key   = Point on the circle
     //  Value = Point on the line segment
 
-    public Optional<Pair<Point2D, Point2D>> findClosestPairAlongGivenDirection(Circle circle, Vector2D direction) {
+    public Optional<Pair<Point2D, Vertex>> findClosestPairAlongGivenDirection(Circle circle, Vector2D direction) {
         // Case 1:
         // Line passing through the line segment does not intersect the circle.
         //
@@ -69,7 +71,6 @@ public class ColliderEdge extends LineSegment2D {
         //        x  x
         //
 
-        Pair<Point2D, Point2D> result = null;
         Point2D center = circle.getCenter();
         boolean lineIntersectsCircle = circle.doesIntersect(line);
 
@@ -78,7 +79,11 @@ public class ColliderEdge extends LineSegment2D {
             Point2D pointOnCircle = circle.findIntersectionClosestToRayOrigin(new Ray2D(closestVertex, direction.reversed())).orElse(null);
 
             if (pointOnCircle != null) {
-                result = new Pair<>(pointOnCircle, closestVertex);
+                if (isPointOnLineSegment(pointOnCircle)) {
+                    return Optional.of(new Pair<>(pointOnCircle, new Vertex(this, pointOnCircle)));
+                } else {
+                    return Optional.of(new Pair<>(pointOnCircle, new Vertex(this, closestVertex)));
+                }
             }
 
         } else {
@@ -89,17 +94,31 @@ public class ColliderEdge extends LineSegment2D {
 
             if (pointOnLineClosestToCircleAlongDirectionVector != null) {
                 if (isPointOnLineSegment(pointOnLineClosestToCircleAlongDirectionVector)) {
-                    result = new Pair<>(pointOnCircleClosestToLine, pointOnLineClosestToCircleAlongDirectionVector);
+                    Vertex vertex = new Vertex(this, pointOnLineClosestToCircleAlongDirectionVector);
+                    return Optional.of(new Pair<>(pointOnCircleClosestToLine, vertex));
                 } else {
                     Point2D closestVertex = getClosestVertexToPoint(pointOnLineClosestToCircleAlongDirectionVector);
                     Point2D pointOnCircle = circle.findIntersectionClosestToRayOrigin(new Ray2D(closestVertex, direction.reversed())).orElse(null);
                     if (pointOnCircle != null) {
-                        result = new Pair<>(pointOnCircle, closestVertex);
+                        Vertex vertex = new Vertex(this, closestVertex);
+                        return Optional.of(new Pair<>(pointOnCircle, vertex));
                     }
                 }
             }
         }
 
-        return Optional.ofNullable(result);
+        return Optional.empty();
+    }
+
+    public Set<Vertex> findIntersection(Circle circle) {
+        Set<Vertex> intersections = new HashSet<>();
+
+        circle.findIntersection(line).forEach(point -> {
+            if (isPointOnLineSegment(point)) {
+                intersections.add(new Vertex(this, point));
+            }
+        });
+
+        return intersections;
     }
 }

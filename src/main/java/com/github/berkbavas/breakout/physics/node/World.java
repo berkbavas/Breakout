@@ -3,6 +3,8 @@ package com.github.berkbavas.breakout.physics.node;
 import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Vector2D;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
+import com.github.berkbavas.breakout.physics.node.base.RectangularNode;
 import javafx.scene.paint.Color;
 
 public class World extends RectangularNode implements Collider {
@@ -12,8 +14,18 @@ public class World extends RectangularNode implements Collider {
     }
 
     @Override
-    public double getCollisionImpactFactor() {
-        return Constants.World.COLLISION_IMPACT_FACTOR;
+    public double getImpulsionFactor() {
+        return Constants.World.IMPULSION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getRestitutionFactor() {
+        return Constants.World.RESTITUTION_FACTOR.getValue();
+    }
+
+    @Override
+    public double getFrictionCoefficient() {
+        return Constants.World.FRICTION_COEFFICIENT.getValue();
     }
 
     @Override

@@ -1,11 +1,10 @@
-package com.github.berkbavas.breakout.physics.node;
+package com.github.berkbavas.breakout.physics.node.base;
 
 import com.github.berkbavas.breakout.graphics.Painter;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Getter;
-
 
 public class DrawableLineSegment extends LineSegment2D implements Drawable {
     @Getter

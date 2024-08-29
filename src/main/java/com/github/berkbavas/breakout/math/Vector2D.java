@@ -98,6 +98,31 @@ public class Vector2D {
         return other.multiply(dot / l2);
     }
 
+    public Vector2D rejectionOf(Vector2D other) {
+        Vector2D projectionOntoOther = projectOnto(other);
+        return this.subtract(projectionOntoOther); // Rejection
+    }
+
+    public double angleBetween(Vector2D other) {
+        return angleBetween(this, other);
+    }
+
+    public static double angleBetween(Vector2D a, Vector2D b) {
+        double angle = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
+        if (angle < 0) {
+            angle += 2 * Math.PI;
+        }
+
+        return angle;
+    }
+
+    public Vector2D rotate(double degrees) {
+        double radians = Math.toRadians(degrees);
+        double rx = (this.x * Math.cos(radians)) - (this.y * Math.sin(radians));
+        double ry = (this.x * Math.sin(radians)) + (this.y * Math.cos(radians));
+        return new Vector2D(rx, ry);
+    }
+
     @Override
     public String toString() {
         return String.format("Vector2D{x = %.2f, y = %.2f}", x, y);

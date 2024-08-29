@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout;
 
+import com.github.berkbavas.breakout.util.Parameter;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
@@ -13,8 +14,10 @@ public final class Constants {
         public static final double WIDTH = 1200;
         public static final double HEIGHT = 800;
         public static final double TOP_PADDING = 100;
-        public static final double COLLISION_IMPACT_FACTOR = 0.1;
         public static final Color BACKGROUND_COLOR = Color.rgb(0, 0, 0);
+        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
+        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
+        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 
     public final static class Ball {
@@ -24,6 +27,7 @@ public final class Constants {
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
+        public static final Parameter BALL_SHOULD_BE_STEADY_THRESHOLD = new Parameter(0, 5.0, 20.0);
     }
 
     public final static class Paddle {
@@ -33,7 +37,10 @@ public final class Constants {
         public static final double INITIAL_Y = World.HEIGHT - 200;
         public static final Color COLOR = Color.WHITE;
         public static final double ARC_RADIUS = 4;
-        public static final double COLLISION_IMPACT_FACTOR = 5.0;
+        public static final double COLLISION_IMPULSE_FACTOR = 0.0;
+        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
+        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
+        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 
     public final static class Brick {
@@ -42,10 +49,12 @@ public final class Constants {
         public static final double HORIZONTAL_SPACING = 3;
         public static final double VERTICAL_SPACING = 3;
         public static final double ARC_RADIUS = 4;
-        public static final double COLLISION_IMPACT_FACTOR = 0.1;
         public static final HashMap<Integer, Color> COLORS_PER_ROW = new HashMap<>();
         public static final Color INTERPOLATION_START_COLOR = Color.rgb(90, 40, 250);
         public static final Color INTERPOLATION_END_COLOR = Color.rgb(96, 245, 145);
+        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
+        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
+        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
 
         static {
             COLORS_PER_ROW.put(0, Color.rgb(255, 0, 0));
@@ -60,7 +69,8 @@ public final class Constants {
     }
 
     public final static class Obstacle {
-        public static final double COLLISION_IMPACT_FACTOR = 0.1;
+        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
+        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
+        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
-
 }
