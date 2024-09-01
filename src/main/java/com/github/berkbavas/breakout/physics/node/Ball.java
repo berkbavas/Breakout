@@ -1,11 +1,12 @@
 package com.github.berkbavas.breakout.physics.node;
 
-import com.github.berkbavas.breakout.math.Circle;
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.base.Draggable;
 import com.github.berkbavas.breakout.physics.node.base.DrawableCircle;
+import com.github.berkbavas.breakout.physics.node.base.GameObject;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import lombok.ToString;
 @ToString
 @Setter
 @Getter
-public class Ball extends DrawableCircle implements Draggable {
+public class Ball extends DrawableCircle implements Draggable, GameObject {
     private Vector2D velocity;
     private Vector2D acceleration = new Vector2D(0, 0);
 
@@ -24,37 +25,24 @@ public class Ball extends DrawableCircle implements Draggable {
     }
 
     public void move(double deltaTime) {
-        center = getNextCenterPosition(deltaTime);
-        velocity = getNextVelocity(deltaTime);
+        center = center.add(velocity.multiply(deltaTime));
+        velocity = velocity.add(acceleration.multiply(deltaTime));
     }
 
-    public Point2D getNextCenterPosition(double deltaTime) {
-        // v(t) = v + at
-        // x(t) = vt + 0.5at^2
-        //      = x0   + x1
-        Vector2D x0 = velocity.multiply(deltaTime);
-        Vector2D x1 = acceleration.multiply(deltaTime * deltaTime).multiply(0.5);
-        return center.add(x0.add(x1));
+    // Reflects the velocity by ignoring restitution
+    public void collide(Vector2D normal) {
+        velocity = velocity.reflect(normal);
     }
 
-    public Vector2D getAverageVelocity(double deltaTime) {
-        // v(t) = v + at
-        // x(t) = vt + 0.5at^2
-
-        // averageVelocity = (x(0) - x(deltaTime)) / deltaTime
-        //                 = v + 0.5 * a * deltaTime.
-
-        return velocity.add(acceleration.multiply(deltaTime).multiply(0.5));
-    }
-
-    public Vector2D getNextVelocity(double deltaTime) {
-        // v(t) = v + at
-        return velocity.add(acceleration.multiply(deltaTime));
-    }
-
-    public void collide(Vector2D normal, double dampingFactor) {
-        double dampingStrength = Util.clamp(0, -Vector2D.dot(velocity.normalized(), normal), 1);
-        velocity = velocity.multiply(1 - dampingStrength * dampingFactor).reflect(normal);
+    public void collide(Vector2D normal, double restitutionFactor) {
+        Vector2D vertical = velocity.projectOnto(normal); // Vertical component
+        Vector2D horizontal = velocity.rejectionOf(normal);  // Horizontal component
+        Vector2D verticalAfterCollision = vertical.multiply(1 - restitutionFactor).reversed();
+        if (verticalAfterCollision.length() <= Constants.Ball.DO_NOT_REFLECT_VELOCITY_THRESHOLD.getValue()) {
+            velocity = horizontal;
+        } else {
+            velocity = verticalAfterCollision.add(horizontal);
+        }
     }
 
     public void translate(Vector2D direction, double distance) {
@@ -67,8 +55,15 @@ public class Ball extends DrawableCircle implements Draggable {
 
     @Override
     public boolean contains(Point2D query) {
-        Circle dummy = new Circle(center, 4 * radius);
-        return dummy.isPointInsideCircle(query);
+        return isPointInsideCircle(query);
+    }
+
+    public boolean contains(Point2D query, double tolerance) {
+        double dx = center.getX() - query.getX();
+        double dy = center.getY() - query.getY();
+        double distance = dx * dx + dy * dy;
+        double maxDistance = tolerance * tolerance * radius * radius;
+        return Util.isBetween(0.0, distance, maxDistance);
     }
 
     @Override
@@ -88,7 +83,7 @@ public class Ball extends DrawableCircle implements Draggable {
         return Util.isFuzzyZero(getSpeed()) && Util.isFuzzyZero(getScalarAcceleration());
     }
 
-    public Ball deepCopy() {
+    public Ball copy() {
         Ball ball = new Ball(center, radius, velocity, getColor());
         ball.setAcceleration(acceleration);
         return ball;

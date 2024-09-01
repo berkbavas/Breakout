@@ -9,8 +9,8 @@ public class Ray2D {
     private final Point2D origin;
     private final Vector2D direction;
 
-    // These are the coefficients of the equation of the line passing through this ray.
-    // We cache these for the sake of fast intersection calculations.
+    // These are the coefficients of the equation of line passing through this ray.
+    // We cache these for the sake of fast intersection computations.
     private final double A;
     private final double B;
     private final double C;

@@ -17,11 +17,6 @@ public class Paddle extends RectangularNode implements Draggable, Collider {
     }
 
     @Override
-    public double getImpulsionFactor() {
-        return Constants.Paddle.IMPULSION_FACTOR.getValue();
-    }
-
-    @Override
     public double getRestitutionFactor() {
         return Constants.Paddle.RESTITUTION_FACTOR.getValue();
     }

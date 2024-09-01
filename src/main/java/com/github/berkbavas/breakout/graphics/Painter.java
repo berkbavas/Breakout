@@ -166,7 +166,7 @@ public class Painter {
         fillPolygon(rect.getVertices(), rect.getColor());
     }
 
-    public void strokePolygon(List<Point2D> vertices, Color color, double width) {
+    public void strokePath(List<Point2D> vertices, Color color, double width, boolean closePath) {
         gc.setStroke(color);
         gc.setLineWidth(width);
 
@@ -179,32 +179,47 @@ public class Painter {
             gc.lineTo(vertex.getX(), vertex.getY());
         }
 
-        gc.closePath();
+        if (closePath) {
+            gc.closePath();
+        }
+
         gc.stroke();
     }
 
     public void stroke(PolygonalNode polygon, Color color, double width) {
-        strokePolygon(polygon.getVertices(), color, width);
+        strokePath(polygon.getVertices(), color, width, true);
     }
 
     public void stroke(PolygonalNode polygon, Color color) {
-        strokePolygon(polygon.getVertices(), color, 1.0);
+        strokePath(polygon.getVertices(), color, 1.0, true);
     }
 
     public void stroke(PolygonalNode polygon) {
-        strokePolygon(polygon.getVertices(), polygon.getColor(), 1.0);
+        strokePath(polygon.getVertices(), polygon.getColor(), 1.0, true);
     }
 
     public void stroke(RectangularNode rect, Color color, double width) {
-        strokePolygon(rect.getVertices(), color, width);
+        strokePath(rect.getVertices(), color, width, true);
     }
 
     public void stroke(RectangularNode rect, Color color) {
-        strokePolygon(rect.getVertices(), color, 1.0);
+        strokePath(rect.getVertices(), color, 1.0, true);
     }
 
     public void stroke(RectangularNode rect) {
-        strokePolygon(rect.getVertices(), rect.getColor(), 1.0);
+        strokePath(rect.getVertices(), rect.getColor(), 1.0, true);
+    }
+
+    public void stroke(Path path, Color color, double width) {
+        strokePath(path.getVertices(), color, width, false);
+    }
+
+    public void stroke(Path path, Color color) {
+        strokePath(path.getVertices(), color, 1.0, false);
+    }
+
+    public void stroke(Path path) {
+        strokePath(path.getVertices(), path.getColor(), 1.0, false);
     }
 
     public void processCommands(PaintCommandHandler handler) {

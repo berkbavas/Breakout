@@ -14,11 +14,6 @@ public class World extends RectangularNode implements Collider {
     }
 
     @Override
-    public double getImpulsionFactor() {
-        return Constants.World.IMPULSION_FACTOR.getValue();
-    }
-
-    @Override
     public double getRestitutionFactor() {
         return Constants.World.RESTITUTION_FACTOR.getValue();
     }

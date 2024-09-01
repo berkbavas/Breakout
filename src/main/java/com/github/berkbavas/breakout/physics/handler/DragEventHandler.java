@@ -9,12 +9,9 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Paddle;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.node.base.Draggable;
-import com.github.berkbavas.breakout.physics.node.base.Vertex;
-import com.github.berkbavas.breakout.physics.simulator.core.CollisionEngine;
-import javafx.util.Pair;
+import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
+import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointPair;
 
-import java.util.ArrayList;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class DragEventHandler implements EventListener {
@@ -39,7 +36,7 @@ public abstract class DragEventHandler implements EventListener {
     public void translate(Draggable node, Point2D delta) {
         Ball ball = objects.getBall();
 
-        Pair<Point2D, Point2D> closest = null;
+        CriticalPointPair closest = null;
         // Find the closest points on collider and ball, if the draggable is a collider as well.
         if (node instanceof Collider) {
             // findCollision() method assumes that ball is moving and collider is steady.
@@ -47,9 +44,7 @@ public abstract class DragEventHandler implements EventListener {
             // Hence, we set velocity as -delta.
             Vector2D velocity = delta.multiply(-1);
             Collider collider = (Collider) node;
-
-            Set<Pair<Point2D, Vertex>> pairs = CollisionEngine.findClosestPairsAlongGivenDirection(ball, collider, velocity);
-            closest = Vertex.findClosestPair(new ArrayList<>(pairs));
+            closest = CollisionEngine.findMostCriticalPointAlongGivenDirection(ball, collider, velocity).orElse(null);
         }
 
         Point2D allowedTranslation;
@@ -59,8 +54,8 @@ public abstract class DragEventHandler implements EventListener {
             // We are good to translate the node without concerning the ball vs node collision.
             allowedTranslation = delta;
         } else {
-            Point2D contactPointOnEdge = closest.getKey();
-            Point2D contactPointOnBall = closest.getValue();
+            Point2D contactPointOnEdge = closest.getPointOnEdge();
+            Point2D contactPointOnBall = closest.getPointOnCircle();
             allowedTranslation = calculateAllowedTranslation(contactPointOnEdge, contactPointOnBall, delta);
         }
 

@@ -13,6 +13,9 @@ module com.github.berkbavas.breakout {
     exports com.github.berkbavas.breakout.physics.handler;
     exports com.github.berkbavas.breakout.physics.simulator;
     exports com.github.berkbavas.breakout.physics.node.base;
-    exports com.github.berkbavas.breakout.physics.simulator.core;
+    exports com.github.berkbavas.breakout.physics.simulator.processor;
+    exports com.github.berkbavas.breakout.physics.simulator.collision;
+    exports com.github.berkbavas.breakout.physics.simulator.processor.resolver;
+    exports com.github.berkbavas.breakout.physics.simulator.helper;
 
 }

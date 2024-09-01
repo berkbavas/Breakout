@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.math;
 
+import com.github.berkbavas.breakout.util.ReturnValue;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -95,15 +96,11 @@ public class Circle {
     }
 
     public boolean doesIntersect(Line2D line) {
+        var ref = new ReturnValue<>(false);
         List<Point2D> points = findPointsForGivenSlope(line.getSlope());
         Line2D perpendicularLine = new Line2D(points.get(0), points.get(1));
-        Point2D intersection = perpendicularLine.findIntersection(line).orElse(null);
-
-        if (intersection != null) {
-            return isPointInsideCircle(intersection);
-        }
-
-        return false;
+        perpendicularLine.findIntersection(line).ifPresent(intersection -> ref.value = isPointInsideCircle(intersection));
+        return ref.value;
     }
 
     // Assumes the given line does not intersect the circle
@@ -126,36 +123,40 @@ public class Circle {
     public boolean isPointOnCircle(Point2D point) {
         double dx = center.getX() - point.getX();
         double dy = center.getY() - point.getY();
-        return Util.fuzzyCompare(radius * radius, dx * dx + dy * dy);
+        return radius * radius == dx * dx + dy * dy;
     }
 
     public boolean isPointInsideCircle(Point2D point) {
         double dx = center.getX() - point.getX();
         double dy = center.getY() - point.getY();
-        return Util.isFuzzyBetween(0.0, dx * dx + dy * dy, radius * radius);
+        return dx * dx + dy * dy <= radius * radius;
     }
 
-    public Set<Point2D> findIntersection(Line2D line) {
-        Point2D origin = line.getQ();
+    public List<Point2D> findIntersection(Line2D line) {
+        Point2D vertex = line.getQ();
         Vector2D direction = line.getDirection();
-        Vector2D originToCenter = center.subtract(origin);
-        double dot = direction.dot(originToCenter);
-        Point2D closestPointToCenter = origin.add(direction.multiply(dot));
+        Vector2D vertexToCenter = center.subtract(vertex);
+        double dot = direction.dot(vertexToCenter);
+
+        // Point on the line closest to the center of circle
+        Point2D closestPointToCenter = vertex.add(direction.multiply(dot));
 
         if (isPointOnCircle(closestPointToCenter)) {
-            // Line is tangent to the circle at [closestPointToCenter]
-            return Set.of(closestPointToCenter);
+            // Line is tangent to the circle
+            return List.of(closestPointToCenter);
 
         } else if (isPointInsideCircle(closestPointToCenter)) {
+            // Line is secant to the circle
             double distanceToCenter = center.distanceTo(closestPointToCenter);
             double distanceToIntersectionPoint = Math.sqrt(radius * radius - distanceToCenter * distanceToCenter);
             Point2D p0 = closestPointToCenter.add(direction.multiply(distanceToIntersectionPoint));
             Point2D p1 = closestPointToCenter.add(direction.multiply(-distanceToIntersectionPoint));
 
-            return Set.of(p0, p1);
+            return List.of(p0, p1);
         }
 
-        return Set.of();
+        // No intersection
+        return List.of();
     }
 
     public Set<Point2D> findIntersection(Ray2D ray) {
@@ -188,9 +189,4 @@ public class Circle {
 
         return result;
     }
-
-    public Circle constructBiggerCircle(double radiusMargin) {
-        return new Circle(center, radius + radiusMargin);
-    }
-
 }

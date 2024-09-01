@@ -21,24 +21,16 @@ public final class Util {
         return fuzzyCompare(a, 0.0);
     }
 
-    public static <T extends Number> boolean isGreaterThanOrEqualToZero(T a) {
-        return -0.5 * Util.EPSILON < a.doubleValue();
-    }
-
-    public static <T extends Number> boolean isLessThanOrEqualToZero(T a) {
-        return a.doubleValue() < 0.5 * Util.EPSILON;
-    }
-
-    public static <T extends Number> boolean isFuzzyBetween(T lower, T value, T upper) {
+    public static <T extends Number> boolean isBetween(T lower, T value, T upper) {
         final double lw = lower.doubleValue();
         final double up = upper.doubleValue();
 
         if (lw > up) {
-            return isFuzzyBetween(upper, value, lower);
+            return isBetween(upper, value, lower);
         }
 
         final double val = value.doubleValue();
-        return lw - EPSILON < val && val < up + EPSILON;
+        return lw <= val && val <= up;
     }
 
     public static double clamp(double min, double value, double max) {

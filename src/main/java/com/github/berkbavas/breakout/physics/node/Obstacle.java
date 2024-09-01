@@ -23,10 +23,6 @@ public class Obstacle extends PolygonalNode implements Draggable, Collider {
         super(vertices, color);
     }
 
-    @Override
-    public double getImpulsionFactor() {
-        return Constants.Obstacle.IMPULSION_FACTOR.getValue();
-    }
 
     @Override
     public double getRestitutionFactor() {

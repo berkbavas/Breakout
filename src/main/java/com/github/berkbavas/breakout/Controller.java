@@ -63,7 +63,7 @@ public class Controller implements EventHandler<Event> {
             }
         });
 
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setScene(scene);
         stage.setTitle(isDebugMode ? "Debugger" : "Breakout");
         stage.sizeToScene();

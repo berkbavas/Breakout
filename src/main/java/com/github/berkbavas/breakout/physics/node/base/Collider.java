@@ -5,11 +5,9 @@ import com.github.berkbavas.breakout.math.Vector2D;
 
 import java.util.List;
 
-public interface Collider {
+public interface Collider extends GameObject {
 
     List<ColliderEdge> getEdges();
-
-    double getImpulsionFactor();
 
     double getRestitutionFactor();
 

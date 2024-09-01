@@ -28,6 +28,8 @@ public final class Constants {
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
         public static final Parameter BALL_SHOULD_BE_STEADY_THRESHOLD = new Parameter(0, 5.0, 20.0);
+        public static final Parameter MASS = new Parameter(0, 1, 10);
+        public static final Parameter DO_NOT_REFLECT_VELOCITY_THRESHOLD = new Parameter(0, 50, 100);
     }
 
     public final static class Paddle {
