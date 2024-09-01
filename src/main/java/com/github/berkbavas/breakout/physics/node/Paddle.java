@@ -8,9 +8,12 @@ import com.github.berkbavas.breakout.physics.node.base.Draggable;
 import com.github.berkbavas.breakout.physics.node.base.RectangularNode;
 import javafx.scene.paint.Color;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class Paddle extends RectangularNode implements Draggable, Collider {
+    private boolean isActiveCollider = true;
 
     public Paddle(double x, double y, double width, double height, Color color) {
         super(x, y, width, height, color);

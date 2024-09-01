@@ -10,7 +10,6 @@ public final class Constants {
     private Constants() {
     }
 
-
     public final static class World {
         public static final double WIDTH = 1280;
         public static final double HEIGHT = 720;
@@ -22,8 +21,8 @@ public final class Constants {
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 500;
-        public static final double MAX_SPEED = 600;
+        public static final double MIN_SPEED = 1500;
+        public static final double MAX_SPEED = 1600;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
@@ -51,7 +50,6 @@ public final class Constants {
         public static final Color INTERPOLATION_START_COLOR = Color.rgb(90, 40, 250);
         public static final Color INTERPOLATION_END_COLOR = Color.rgb(96, 245, 145);
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
 
         static {

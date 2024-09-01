@@ -25,6 +25,8 @@ public final class GameObjectConstructor {
 
         if (isDebugMode) {
             bricks = Set.of();
+            paddle.setIsActiveDrawable(false);
+            paddle.setActiveCollider(false);
             obstacles = constructObstacles();
         } else {
             bricks = constructBricks(8, 12);
@@ -70,7 +72,7 @@ public final class GameObjectConstructor {
     private static Set<Obstacle> constructObstacles() {
         Set<Obstacle> obstacles = new HashSet<>();
 
-        obstacles.add(new Obstacle(List.of(new Point2D(100, 100), new Point2D(150, 150), new Point2D(200, 100)), Color.WHITE));
+        obstacles.add(new Obstacle(List.of(new Point2D(100, 100), new Point2D(350, 350), new Point2D(550, 100)), Color.WHITE));
 
         obstacles.add(new Obstacle(List.of(new Point2D(100, 300), new Point2D(200, 400), new Point2D(250, 350),
                 new Point2D(220, 200)), Color.WHITE));
