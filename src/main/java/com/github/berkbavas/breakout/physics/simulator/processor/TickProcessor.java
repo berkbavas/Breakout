@@ -17,20 +17,22 @@ public class TickProcessor {
     private final World world;
     private final Set<Collider> colliders;
     private final Ball ball;
+    private final boolean isDebugMode;
 
     private final InevitableCollisionResolver inevitableCollisionResolver;
     private final PresentCollisionResolver presentCollisionResolver;
     private final PotentialCollisionResolver potentialCollisionResolver;
 
-    public TickProcessor(World world, Set<Collider> colliders, Ball ball) {
+    public TickProcessor(World world, Set<Collider> colliders, Ball ball, boolean isDebugMode) {
         this.world = world;
         this.colliders = colliders;
         this.ball = ball;
+        this.isDebugMode = isDebugMode;
 
         collisionEngine = new CollisionEngine(colliders, ball);
-        inevitableCollisionResolver = new InevitableCollisionResolver(ball);
-        presentCollisionResolver = new PresentCollisionResolver(ball);
-        potentialCollisionResolver = new PotentialCollisionResolver(ball);
+        inevitableCollisionResolver = new InevitableCollisionResolver(ball, isDebugMode);
+        presentCollisionResolver = new PresentCollisionResolver(ball, isDebugMode);
+        potentialCollisionResolver = new PotentialCollisionResolver(ball, isDebugMode);
     }
 
     public Tick<? extends Collision> update(double deltaTime) {

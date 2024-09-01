@@ -10,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -26,7 +27,8 @@ public class GraphicsEngine implements PaintCommandProcessor {
     @Getter
     private final double height;
     @Getter
-    private final double scale;
+    @Setter
+    private double scale;
 
     public GraphicsEngine(GameObjects objects, double scale) {
         this.objects = objects;

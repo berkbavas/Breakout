@@ -9,8 +9,8 @@ import java.util.List;
 
 public class PotentialCollisionResolver extends CollisionResolver<PotentialCollision> {
 
-    public PotentialCollisionResolver(Ball ball) {
-        super(ball);
+    public PotentialCollisionResolver(Ball ball, boolean isDebugMode) {
+        super(ball, isDebugMode);
     }
 
     @Override

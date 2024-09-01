@@ -13,8 +13,6 @@ import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import com.github.berkbavas.breakout.util.Stopwatch;
 import javafx.scene.paint.Color;
 
-import java.util.Set;
-
 public class VisualDebugger {
     private final static double COLLISION_INDICATION_TIMEOUT_IN_SEC = 0.0;
     private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.25;

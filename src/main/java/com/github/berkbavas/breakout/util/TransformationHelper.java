@@ -2,6 +2,7 @@ package com.github.berkbavas.breakout.util;
 
 import com.github.berkbavas.breakout.math.Point2D;
 import lombok.Getter;
+import lombok.Setter;
 
 public class TransformationHelper {
     private static TransformationHelperInner IMPL;
@@ -12,6 +13,10 @@ public class TransformationHelper {
 
     static public void initialize(double ww, double wh, double sw, double sh) {
         IMPL = new TransformationHelperInner(ww, wh, sw, sh);
+    }
+
+    static public void setScale(double scale) {
+        IMPL.setScale(scale);
     }
 
     static public Point2D fromWorldToScene(double x, double y) {
@@ -53,6 +58,9 @@ public class TransformationHelper {
         @Getter
         private final Point2D worldCenter;
 
+        @Setter
+        private double scale = 1.0;
+
         TransformationHelperInner(double ww, double wh, double sw, double sh) {
             this.ww = ww;
             this.wh = wh;
@@ -65,7 +73,7 @@ public class TransformationHelper {
         Point2D fromWorldToScene(double x, double y) {
             final double nx = x / ww;
             final double ny = y / wh;
-            return new Point2D(nx * sw, ny * sh);
+            return new Point2D(nx * sw * scale, ny * sh * scale);
         }
 
         Point2D fromWorldToScene(Point2D p) {
@@ -75,7 +83,7 @@ public class TransformationHelper {
         Point2D fromSceneToWorld(double x, double y) {
             final double nx = x / sw;
             final double ny = y / sh;
-            return new Point2D(nx * ww, ny * wh);
+            return new Point2D(nx * ww / scale, ny * wh / scale);
         }
 
         Point2D fromSceneToWorld(Point2D p) {

@@ -36,7 +36,7 @@ public class TrajectoryPlotter {
     }
 
     public void plotTrajectory() {
-        Simulator simulator = new Simulator(world, colliders, ball);
+        Simulator simulator = new Simulator(world, colliders, ball, true);
 
         List<Point2D> vertices = new ArrayList<>(numberOfIterations);
         painter.clear();

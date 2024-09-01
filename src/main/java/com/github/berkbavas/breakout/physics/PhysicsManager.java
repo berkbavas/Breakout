@@ -17,7 +17,6 @@ import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import com.github.berkbavas.breakout.util.Stopwatch;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PhysicsManager {
     private final static double TICK_IN_SEC = 0.005;  //  Each tick is 0.005 seconds.
@@ -37,7 +36,7 @@ public class PhysicsManager {
         final Ball ball = objects.getBall();
 
         this.objects = objects;
-        this.simulator = new Simulator(world, colliders, ball);
+        this.simulator = new Simulator(world, colliders, ball, isDebugMode);
         this.debugger = new VisualDebugger(objects);
         this.isDebugMode = isDebugMode;
 

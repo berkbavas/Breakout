@@ -11,12 +11,14 @@ import java.util.List;
 
 public abstract class CollisionResolver<T extends Collision> {
     protected Ball ball;
+    protected boolean isDebugMode = false;
 
     @Getter
     protected List<T> targets = new ArrayList<>();
 
-    public CollisionResolver(Ball ball) {
+    public CollisionResolver(Ball ball, boolean isDebugMode) {
         this.ball = ball;
+        this.isDebugMode = isDebugMode;
     }
 
     public abstract void load(List<Collision> collisions);
@@ -27,8 +29,7 @@ public abstract class CollisionResolver<T extends Collision> {
 
 
     public static void sortEarliestToLatest(List<? extends ProspectiveCollision> collisions) {
-        collisions.sort((c0, c1) ->
-        {
+        collisions.sort((c0, c1) -> {
             double ttc0 = c0.getTimeToCollision();
             double ttc1 = c1.getTimeToCollision();
 

@@ -12,8 +12,8 @@ import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
 import java.util.List;
 
 public class InevitableCollisionResolver extends CollisionResolver<InevitableCollision> {
-    public InevitableCollisionResolver(Ball ball) {
-        super(ball);
+    public InevitableCollisionResolver(Ball ball, boolean isDebugMode) {
+        super(ball, isDebugMode);
     }
 
     @Override
@@ -41,14 +41,18 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Vector2D velocity = ball.getVelocity();
         Vector2D normal = calculateCollisionNormal(velocity);
 
+
         if (normal.l2norm() == 0) {
             // TODO: Think about a smart solution for this case.
             ball.move(timeToCollision);
-        }
-        else
-        {
+        } else {
             ball.move(timeToCollision);
-            ball.collide(normal, collider.getRestitutionFactor());
+
+            if (isDebugMode) {
+                ball.collide(normal, collider.getRestitutionFactor());
+            } else {
+                ball.collide(normal);
+            }
         }
 
         return new CrashTick<>(targets, normal, timeToCollision);

@@ -49,7 +49,6 @@ public class Controller implements EventHandler<Event> {
         scene = new Scene(root, Color.BLACK);
         dispatcher = new EventDispatcher();
         engine = new PhysicsManager(objects, dispatcher, isDebugMode);
-
         scene.addEventHandler(Event.ANY, this);
     }
 
@@ -63,7 +62,7 @@ public class Controller implements EventHandler<Event> {
             }
         });
 
-        stage.setResizable(true);
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle(isDebugMode ? "Debugger" : "Breakout");
         stage.sizeToScene();

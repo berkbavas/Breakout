@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PresentCollisionResolver extends CollisionResolver<PresentCollision> {
-    private List<PotentialCollision> potentials = new ArrayList<>();
+    private final List<PotentialCollision> potentials = new ArrayList<>();
 
-    public PresentCollisionResolver(Ball ball) {
-        super(ball);
+    public PresentCollisionResolver(Ball ball, boolean isDebugMode) {
+        super(ball, isDebugMode);
     }
 
     @Override
@@ -68,7 +68,11 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
             Vector2D normal = collision.getNormal();
             double restitutionFactor = collision.getCollider().getRestitutionFactor();
 
-            ball.collide(normal, restitutionFactor);
+            if (isDebugMode) {
+                ball.collide(normal, restitutionFactor);
+            } else {
+                ball.collide(normal);
+            }
 
             return new CrashTick<>(subjects, normal, 0);
         }
@@ -76,10 +80,8 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
         double timeCanBeSpent = deltaTime;
 
         if (potentials.isEmpty()) {
-
-
+            // TODO
         } else {
-
             ProspectiveCollision earliest = findEarliestCollision(potentials);
             timeCanBeSpent = Util.clamp(0, earliest.getTimeToCollision(), deltaTime);
         }

@@ -7,7 +7,7 @@ import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
 import com.github.berkbavas.breakout.physics.simulator.collision.PresentCollision;
-import com.github.berkbavas.breakout.physics.simulator.processor.*;
+import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,18 +36,6 @@ public class GravityEngine {
         if (filtered.isEmpty()) {
             ball.setAcceleration(gravity);
         } else if (filtered.size() == 1) {
-
-            // TODO: Take care of acceleration lost due to friction from previous tick if the previous tick is sliding or crash
-            if (result instanceof SlidingTick) {
-
-            } else if (result instanceof CrashTick) {
-
-            } else if (result instanceof FreeTick) {
-
-            } else if (result instanceof SteadyTick) {
-
-            }
-
             Vector2D normal = filtered.get(0).getNormal();
             Vector2D acceleration = gravity.rejectionOf(normal);  // We need rejection, not projection.
             ball.setAcceleration(acceleration);

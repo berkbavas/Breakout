@@ -12,8 +12,8 @@ public final class Constants {
 
 
     public final static class World {
-        public static final double WIDTH = 1200;
-        public static final double HEIGHT = 800;
+        public static final double WIDTH = 1280;
+        public static final double HEIGHT = 720;
         public static final double TOP_PADDING = 100;
         public static final Color BACKGROUND_COLOR = Color.rgb(0, 0, 0);
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
