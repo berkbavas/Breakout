@@ -3,6 +3,7 @@ package com.github.berkbavas.breakout.math;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -105,39 +106,39 @@ public class CircleTest {
 
         Assert.assertEquals(
                 Set.of(),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(10, -10), new Point2D(10, 10))));
-
-        Assert.assertEquals(
-                Set.of(new Point2D(-1, 0), new Point2D(1, 0)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(0, 0), new Point2D(10, 0))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(10, -10), new Point2D(10, 10)))));
 
         Assert.assertEquals(
                 Set.of(new Point2D(1, 0), new Point2D(-1, 0)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-10, 0), new Point2D(10, 0))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(0, 0), new Point2D(10, 0)))));
+
+        Assert.assertEquals(
+                Set.of(new Point2D(1, 0), new Point2D(-1, 0)),
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-10, 0), new Point2D(10, 0)))));
 
         Assert.assertEquals(
                 Set.of(new Point2D(1, 0)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(1, -1), new Point2D(1, 1))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(1, -1), new Point2D(1, 1)))));
 
         Assert.assertEquals(
-                Set.of(new Point2D(-Math.sqrt(1 / 2.0), -Math.sqrt(1 / 2.0)), new Point2D(Math.sqrt(1 / 2.0), Math.sqrt(1 / 2.0))),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-1, -1), new Point2D(1, 1))));
+                Set.of(new Point2D(Math.sqrt(1 / 2.0), Math.sqrt(1 / 2.0)), new Point2D(-Math.sqrt(1 / 2.0), -Math.sqrt(1 / 2.0))),
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-1, -1), new Point2D(1, 1)))));
 
         Assert.assertEquals(
-                Set.of(new Point2D(0, -1), new Point2D(0, 1)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(0, -0.5), new Point2D(0, 0.5))));
+                Set.of(new Point2D(0, 1), new Point2D(0, -1)),
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(0, -0.5), new Point2D(0, 0.5)))));
 
         Assert.assertEquals(
                 Set.of(new Point2D(-1, 0), new Point2D(1, 0)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-0.5, 0), new Point2D(0.5, 0))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(-0.5, 0), new Point2D(0.5, 0)))));
 
         Assert.assertEquals(
                 Set.of(new Point2D(1, 0), new Point2D(0, 1)),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(1, 0), new Point2D(0, 1))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(1, 0), new Point2D(0, 1)))));
 
         Assert.assertEquals(
                 Set.of(),
-                Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(10, 0), new Point2D(0, 10))));
+                new HashSet<>(Circle.UNIT_CIRCLE.findIntersection(new Line2D(new Point2D(10, 0), new Point2D(0, 10)))));
     }
 
     @Test
