@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator;
 
+import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -62,7 +63,7 @@ public class GravityEngine {
         for (var collision : collisions) {
             Vector2D normal = collision.getNormal();
 
-            if (gravity.dot(normal) < 0) {
+            if (gravity.dot(normal) < -Util.EPSILON) {
                 filtered.add(collision);
             }
         }

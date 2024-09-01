@@ -1,11 +1,12 @@
 package com.github.berkbavas.breakout.physics.handler;
 
+import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
-import com.github.berkbavas.breakout.physics.VisualDebugger;
+import com.github.berkbavas.breakout.physics.TrajectoryPlotter;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.util.TransformationHelper;
 import javafx.scene.input.MouseEvent;
@@ -16,8 +17,7 @@ import lombok.Setter;
 public class ThrowEventHandler implements EventListener {
     private final PaintCommandHandler painter;
     private final Ball ball;
-    private final VisualDebugger debugger;
-
+    private final TrajectoryPlotter plotter;
     private boolean isPressedOnBall = false;
     private Point2D cursorPosition = new Point2D(0, 0);
 
@@ -25,19 +25,19 @@ public class ThrowEventHandler implements EventListener {
     @Getter
     private boolean isEnabled = true;
 
-    public ThrowEventHandler(Ball ball, VisualDebugger debugger) {
+    public ThrowEventHandler(GameObjects objects) {
         this.painter = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
-        this.ball = ball;
-        this.debugger = debugger;
+        this.ball = objects.getBall();
+        this.plotter = new TrajectoryPlotter(objects.getWorld(), objects.getColliders(), objects.getBall());
     }
 
     public void update() {
         if (isPressedOnBall) {
+            ball.makeSteady();
             painter.clear();
             painter.drawLine(ball.getCenter(), cursorPosition, Color.YELLOW, 1);
-            Ball copy = ball.copy();
-            copy.setVelocity(calculateVelocity(cursorPosition));
-            debugger.plotTrajectory(copy);
+            Vector2D velocity = calculateVelocity(cursorPosition);
+            plotTrajectory(velocity);
         }
     }
 
@@ -54,23 +54,27 @@ public class ThrowEventHandler implements EventListener {
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
             Point2D worldPos = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
 
-            if (ball.contains(worldPos, 4)) {
+            if (ball.contains(worldPos, 2)) {
                 cursorPosition = worldPos;
                 isPressedOnBall = true;
             }
+
         } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
             if (isPressedOnBall) {
-                Ball copy = ball.copy();
                 Vector2D velocity = calculateVelocity(cursorPosition);
-                copy.setVelocity(velocity);
-
-                debugger.plotTrajectory(copy);
                 throwBall(velocity);
+                plotTrajectory(velocity);
             }
             isPressedOnBall = false;
             painter.clear();
-            //debugger.clearTrajectory();
         }
+    }
+
+    private void plotTrajectory(Vector2D velocity) {
+        Ball copy = ball.copy();
+        copy.setVelocity(velocity);
+        plotter.setBall(copy);
+        plotter.plotTrajectory();
     }
 
     private void throwBall(Vector2D velocity) {

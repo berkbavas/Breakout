@@ -29,7 +29,7 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
         velocity = velocity.add(acceleration.multiply(deltaTime));
     }
 
-    // Reflects the velocity by ignoring restitution
+    // Reflects the velocity without considering restitution
     public void collide(Vector2D normal) {
         velocity = velocity.reflect(normal);
     }
@@ -87,6 +87,11 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
         Ball ball = new Ball(center, radius, velocity, getColor());
         ball.setAcceleration(acceleration);
         return ball;
+    }
+
+    public void makeSteady() {
+        velocity = new Vector2D(0, 0);
+        acceleration = new Vector2D(0, 0);
     }
 
 }

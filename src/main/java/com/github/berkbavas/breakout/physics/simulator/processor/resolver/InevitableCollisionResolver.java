@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
+import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -41,11 +42,14 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Vector2D normal = calculateCollisionNormal(velocity);
 
         if (normal.l2norm() == 0) {
-            throw new RuntimeException("Normal vector cannot be zero!");
+            // TODO: Think about a smart solution for this case.
+            ball.move(timeToCollision);
         }
-
-        ball.move(timeToCollision);
-        ball.collide(normal, collider.getRestitutionFactor());
+        else
+        {
+            ball.move(timeToCollision);
+            ball.collide(normal, collider.getRestitutionFactor());
+        }
 
         return new CrashTick<>(targets, normal, timeToCollision);
     }
@@ -63,7 +67,7 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
 
             // We only consider normals whose dot product with the velocity vector is negative.
             // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
-            if (normal.dot(velocity) < 0.0) {
+            if (normal.dot(velocity) < -Util.EPSILON) {
                 result = result.add(normal);
             }
         }

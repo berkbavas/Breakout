@@ -10,13 +10,13 @@ public final class Constants {
     private Constants() {
     }
 
+
     public final static class World {
         public static final double WIDTH = 1200;
         public static final double HEIGHT = 800;
         public static final double TOP_PADDING = 100;
         public static final Color BACKGROUND_COLOR = Color.rgb(0, 0, 0);
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 
@@ -27,8 +27,6 @@ public final class Constants {
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
-        public static final Parameter BALL_SHOULD_BE_STEADY_THRESHOLD = new Parameter(0, 5.0, 20.0);
-        public static final Parameter MASS = new Parameter(0, 1, 10);
         public static final Parameter DO_NOT_REFLECT_VELOCITY_THRESHOLD = new Parameter(0, 50, 100);
     }
 
@@ -39,9 +37,7 @@ public final class Constants {
         public static final double INITIAL_Y = World.HEIGHT - 200;
         public static final Color COLOR = Color.WHITE;
         public static final double ARC_RADIUS = 4;
-        public static final double COLLISION_IMPULSE_FACTOR = 0.0;
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 
@@ -72,7 +68,6 @@ public final class Constants {
 
     public final static class Obstacle {
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter IMPULSION_FACTOR = new Parameter(0, 0.5, 0);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 }
