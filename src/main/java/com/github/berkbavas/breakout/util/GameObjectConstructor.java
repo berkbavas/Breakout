@@ -27,6 +27,7 @@ public final class GameObjectConstructor {
             bricks = Set.of();
             paddle.setIsActiveDrawable(false);
             paddle.setActiveCollider(false);
+            paddle.setActiveDraggable(false);
             obstacles = constructObstacles();
         } else {
             bricks = constructBricks(8, 12);

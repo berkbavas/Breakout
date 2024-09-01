@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 public class Paddle extends RectangularNode implements Draggable, Collider {
     private boolean isActiveCollider = true;
+    private boolean isActiveDraggable = true;
 
     public Paddle(double x, double y, double width, double height, Color color) {
         super(x, y, width, height, color);

@@ -79,6 +79,10 @@ public class DebuggerDragEventHandler extends DragEventHandler {
 
     private Draggable locateDraggable(Point2D query) {
         for (Draggable draggable : draggables) {
+            if (!draggable.isActiveDraggable()) {
+                continue;
+            }
+
             if (draggable.contains(query)) {
                 return draggable;
             }
