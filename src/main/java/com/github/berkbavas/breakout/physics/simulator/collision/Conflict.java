@@ -4,11 +4,9 @@ import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.node.base.ColliderEdge;
 import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointPair;
 import lombok.Getter;
-import lombok.ToString;
 
-@ToString
 @Getter
-public class PresentCollision extends Conflict {
+public class Conflict extends Collision {
 
     // This class represents two cases below.
     //
@@ -34,7 +32,10 @@ public class PresentCollision extends Conflict {
     // in other words, Conflict is velocity ignorant while PresentCollision concerns the direction of velocity and
     // the normal of the collider.
 
-    public PresentCollision(Collider collider, ColliderEdge edge, CriticalPointPair contact) {
-        super(collider, edge, contact);
+    private final CriticalPointPair contact;
+
+    public Conflict(Collider collider, ColliderEdge edge, CriticalPointPair contact) {
+        super(collider, edge);
+        this.contact = contact;
     }
 }

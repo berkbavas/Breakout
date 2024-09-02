@@ -6,7 +6,7 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
-import com.github.berkbavas.breakout.physics.simulator.collision.PresentCollision;
+import com.github.berkbavas.breakout.physics.simulator.collision.Conflict;
 import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class GravityEngine {
     }
 
     public void update(Tick<? extends Collision> result) {
-        var collisions = CollisionEngine.findPresentCollisions(colliders, ball);
+        var collisions = CollisionEngine.findConflicts(colliders, ball);
         var filtered = filterPresentCollisions(collisions);
 
         if (filtered.isEmpty()) {
@@ -38,14 +38,13 @@ public class GravityEngine {
             Vector2D normal = filtered.get(0).getNormal();
             Vector2D acceleration = gravity.rejectionOf(normal);  // We need rejection, not projection.
             ball.setAcceleration(acceleration);
-
         } else {
             ball.setAcceleration(new Vector2D(0, 0));
         }
     }
 
-    private List<PresentCollision> filterPresentCollisions(List<PresentCollision> collisions) {
-        List<PresentCollision> filtered = new ArrayList<>();
+    private List<Conflict> filterPresentCollisions(List<Conflict> collisions) {
+        List<Conflict> filtered = new ArrayList<>();
 
         for (var collision : collisions) {
             Vector2D normal = collision.getNormal();

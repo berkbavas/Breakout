@@ -9,7 +9,6 @@ import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.node.base.ColliderEdge;
 import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointFinder;
 import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointPair;
-import com.github.berkbavas.breakout.physics.simulator.helper.SeparateCriticalPointPair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +28,8 @@ public class CollisionEngine {
         return findCollisions(colliders, ball, ball.getVelocity(), deltaTime);
     }
 
-    public List<PresentCollision> findPresentCollisions() {
-        return findPresentCollisions(colliders, ball);
-    }
-
-    public static List<PresentCollision> findPresentCollisions(Set<Collider> colliders, Circle circle) {
-        List<PresentCollision> collisions = new ArrayList<>();
+    public static List<Conflict> findConflicts(Set<Collider> colliders, Circle circle) {
+        List<Conflict> collisions = new ArrayList<>();
 
         for (Collider collider : colliders) {
             if (!collider.isActiveCollider()) {
@@ -44,7 +39,8 @@ public class CollisionEngine {
             List<ColliderEdge> edges = collider.getEdges();
 
             for (ColliderEdge edge : edges) {
-                CriticalPointFinder.findConflictingCriticalPoints(circle, edge).ifPresent(critical -> collisions.add(new PresentCollision(collider, edge, critical)));
+                CriticalPointFinder.findConflictingCriticalPoints(circle, edge)
+                        .ifPresent(critical -> collisions.add(new Conflict(collider, edge, critical)));
             }
         }
 
@@ -52,8 +48,7 @@ public class CollisionEngine {
     }
 
     public static List<Collision> findCollisions(Set<Collider> colliders, Circle circle, Vector2D velocity, double deltaTime) {
-        final double speed = velocity.length();
-        final Point2D center = circle.getCenter();
+        CollisionConstructor ctor = new CollisionConstructor(circle, velocity, deltaTime);
         List<Collision> collisions = new ArrayList<>();
 
         for (Collider collider : colliders) {
@@ -63,32 +58,9 @@ public class CollisionEngine {
 
             List<ColliderEdge> edges = collider.getEdges();
             for (ColliderEdge edge : edges) {
-                CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, velocity).ifPresent(critical -> {
-
-                    if (critical instanceof SeparateCriticalPointPair) {
-                        SeparateCriticalPointPair separate = (SeparateCriticalPointPair) critical;
-                        Point2D pointOnCircle = separate.getPointOnCircle();
-                        Point2D pointOnEdge = separate.getPointOnEdge();
-
-                        if (isPointWithinCollisionTrajectory(center, velocity, pointOnEdge)) {
-                            double distance = Point2D.distanceBetween(pointOnEdge, pointOnCircle);
-                            double timeToCollision = distance / speed;
-                            boolean isInevitableCollision = timeToCollision <= deltaTime;
-
-                            if (isInevitableCollision) {
-                                collisions.add(new InevitableCollision(collider, edge, separate, timeToCollision));
-                            } else {
-                                collisions.add(new PotentialCollision(collider, edge, separate, timeToCollision));
-                            }
-                        }
-
-                    } else {
-                        collisions.add(new PresentCollision(collider, edge, critical));
-                    }
-
-
-                });
-
+                CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, velocity)
+                        .flatMap(critical -> ctor.constructIfPossible(collider, edge, critical))
+                        .ifPresent(collisions::add);
             }
         }
 
@@ -115,14 +87,12 @@ public class CollisionEngine {
 
     public static List<CriticalPointPair> findCriticalPointsAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
         List<CriticalPointPair> result = new ArrayList<>();
-
         List<ColliderEdge> edges = collider.getEdges();
         Point2D center = circle.getCenter();
 
         for (ColliderEdge edge : edges) {
             CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, direction).ifPresent(critical -> {
-
-                if (isPointWithinCollisionTrajectory(center, direction, critical.getPointOnEdge())) {
+                if (CollisionConstructor.isPointWithinCollisionTrajectory(center, critical.getPointOnEdge(), direction)) {
                     result.add(critical);
                 }
             });
@@ -132,22 +102,73 @@ public class CollisionEngine {
     }
 
     public static Optional<CriticalPointPair> findMostCriticalPointAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
-        CriticalPointPair result = null;
         var criticalPoints = findCriticalPointsAlongGivenDirection(circle, collider, direction);
-        double minDistance = Double.MAX_VALUE;
-        for (var criticalPoint : criticalPoints) {
-            double distance = criticalPoint.getDistance();
-            if (distance < minDistance) {
-                minDistance = distance;
-                result = criticalPoint;
-            }
-        }
-        return Optional.ofNullable(result);
+
+        // Sort closest to farthest
+        criticalPoints.sort((p0, p1) -> {
+            double d0 = p0.getDistance();
+            double d1 = p1.getDistance();
+
+            return Double.compare(d0, d1);
+        });
+
+        return criticalPoints.isEmpty() ? Optional.empty() : Optional.of(criticalPoints.get(0));
     }
 
-    private static boolean isPointWithinCollisionTrajectory(Point2D pointOnMovingObject, Vector2D velocity, Point2D point) {
-        Vector2D movingObjectToPoint = point.subtract(pointOnMovingObject);
-        double dot = Vector2D.dot(movingObjectToPoint, velocity);
-        return dot > Util.EPSILON;
+    public static void sortEarliestToLatest(List<? extends ProspectiveCollision> collisions) {
+        collisions.sort((c0, c1) -> {
+            double ttc0 = c0.getTimeToCollision();
+            double ttc1 = c1.getTimeToCollision();
+
+            return Double.compare(ttc0, ttc1);
+        });
+    }
+
+    public static void sortMostEffectiveToLeastEffective(List<PresentCollision> collisions) {
+        collisions.sort((c0, c1) -> {
+            double cor0 = c0.getCollider().getRestitutionFactor();
+            double cor1 = c1.getCollider().getRestitutionFactor();
+            return Double.compare(cor0, cor1);
+        });
+    }
+
+    public static ProspectiveCollision findEarliestCollision(List<? extends ProspectiveCollision> collisions) {
+        if (collisions.isEmpty()) {
+            throw new IllegalArgumentException("collisions is empty!");
+        }
+
+        List<? extends ProspectiveCollision> copy = new ArrayList<>(collisions);
+        sortEarliestToLatest(copy);
+        return copy.get(0);
+    }
+
+    public static PresentCollision findMostEffectiveCollision(List<PresentCollision> collisions) {
+        if (collisions.isEmpty()) {
+            throw new IllegalArgumentException("collisions is empty!");
+        }
+
+        List<PresentCollision> copy = new ArrayList<>(collisions);
+        sortMostEffectiveToLeastEffective(copy);
+        return copy.get(0);
+    }
+
+    public static Vector2D calculateCollectiveCollisionNormal(List<? extends ProspectiveCollision> collisions, Vector2D velocity) {
+        if (velocity.l2norm() == 0) {
+            throw new IllegalArgumentException("velocity must be non-zero vector!");
+        }
+
+        Vector2D result = new Vector2D(0, 0);
+
+        for (ProspectiveCollision collision : collisions) {
+            Vector2D normal = collision.getNormal();
+
+            // We only consider normals whose dot product with the velocity vector is negative.
+            // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
+            if (normal.dot(velocity) < -Util.EPSILON) {
+                result = result.add(normal);
+            }
+        }
+
+        return result.normalized();
     }
 }
