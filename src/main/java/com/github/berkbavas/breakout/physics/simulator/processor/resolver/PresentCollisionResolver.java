@@ -3,8 +3,9 @@ package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
-import com.github.berkbavas.breakout.physics.simulator.collision.PotentialCollision;
+import com.github.berkbavas.breakout.physics.simulator.collision.InevitableCollision;
 import com.github.berkbavas.breakout.physics.simulator.collision.PresentCollision;
 import com.github.berkbavas.breakout.physics.simulator.collision.ProspectiveCollision;
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
@@ -16,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PresentCollisionResolver extends CollisionResolver<PresentCollision> {
-    private final List<PotentialCollision> potentials = new ArrayList<>();
+    private final List<InevitableCollision> inevitables = new ArrayList<>();
+    private List<Collision> collisions;
 
     public PresentCollisionResolver(Ball ball, boolean isDebugMode) {
         super(ball, isDebugMode);
@@ -24,8 +26,9 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
 
     @Override
     public void load(List<Collision> collisions) {
+        this.collisions = collisions;
         targets.clear();
-        potentials.clear();
+        inevitables.clear();
 
         for (Collision collision : collisions) {
             if (collision instanceof PresentCollision) {
@@ -33,9 +36,9 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
                 targets.add(target);
             }
 
-            if (collision instanceof PotentialCollision) {
-                PotentialCollision target = (PotentialCollision) collision;
-                potentials.add(target);
+            if (collision instanceof InevitableCollision) {
+                InevitableCollision target = (InevitableCollision) collision;
+                inevitables.add(target);
             }
         }
     }
@@ -48,7 +51,7 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
     @Override
     public Tick<? extends Collision> resolve(double deltaTime) {
         if (ball.isSteady()) {
-            return new SteadyTick(targets, deltaTime);
+            return new SteadyTick<>(targets, deltaTime);
         }
 
         Vector2D velocity = ball.getVelocity();
@@ -57,7 +60,7 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
             // Ball is still.
             // Call move() in order to update the velocity.
             ball.move(deltaTime);
-            return new SteadyTick(targets, deltaTime);
+            return new SteadyTick<>(targets, deltaTime);
         }
 
         boolean shouldCollide = shouldCollide(velocity);
@@ -77,17 +80,19 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
             return new CrashTick<>(subjects, normal, 0);
         }
 
-        double timeCanBeSpent = deltaTime;
 
-        if (potentials.isEmpty()) {
-            // TODO
-        } else {
-            ProspectiveCollision earliest = findEarliestCollision(potentials);
-            timeCanBeSpent = Util.clamp(0, earliest.getTimeToCollision(), deltaTime);
+        if (!inevitables.isEmpty()) {
+            ProspectiveCollision earliest = findEarliestCollision(inevitables);
+            double timeCanBeSpent = Util.clamp(0, earliest.getTimeToCollision(), deltaTime);
+            Collider collider = earliest.getCollider();
+            Vector2D normal = earliest.getNormal();
+            ball.move(timeCanBeSpent);
+            ball.collide(normal, collider.getRestitutionFactor());
+            return new CrashTick<>(inevitables, normal, timeCanBeSpent);
         }
 
-        ball.move(timeCanBeSpent);
-        return new FreeTick(potentials, timeCanBeSpent);
+        ball.move(deltaTime);
+        return new FreeTick<>(collisions, deltaTime);
     }
 
     public boolean shouldCollide(Vector2D velocity) {

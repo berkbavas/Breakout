@@ -1,12 +1,12 @@
 package com.github.berkbavas.breakout.physics.simulator.processor;
 
-import com.github.berkbavas.breakout.physics.simulator.collision.PotentialCollision;
+import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 
 import java.util.List;
 
-public class FreeTick extends Tick<PotentialCollision> {
+public class FreeTick<T extends Collision> extends Tick<T> {
 
-    public FreeTick(List<PotentialCollision> collisions, double timeSpent) {
+    public FreeTick(List<T> collisions, double timeSpent) {
         super(collisions, timeSpent);
     }
 }

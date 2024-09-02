@@ -1,5 +1,7 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
+import com.github.berkbavas.breakout.math.Util;
+import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.collision.ProspectiveCollision;
@@ -42,4 +44,23 @@ public abstract class CollisionResolver<T extends Collision> {
         return copy.get(0);
     }
 
+    public static Vector2D calculateCollisionNormal(List<? extends ProspectiveCollision> collisions, Vector2D velocity) {
+        if (velocity.l2norm() == 0) {
+            throw new IllegalArgumentException("Velocity must be non-zero vector!");
+        }
+
+        Vector2D result = new Vector2D(0, 0);
+
+        for (ProspectiveCollision collision : collisions) {
+            Vector2D normal = collision.getNormal();
+
+            // We only consider normals whose dot product with the velocity vector is negative.
+            // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
+            if (normal.dot(velocity) < -Util.EPSILON) {
+                result = result.add(normal);
+            }
+        }
+
+        return result.normalized();
+    }
 }

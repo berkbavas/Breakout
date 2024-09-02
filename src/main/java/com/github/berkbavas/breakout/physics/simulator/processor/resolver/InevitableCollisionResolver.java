@@ -39,7 +39,7 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Collider collider = earliest.getCollider();
         double timeToCollision = earliest.getTimeToCollision();
         Vector2D velocity = ball.getVelocity();
-        Vector2D normal = calculateCollisionNormal(velocity);
+        Vector2D normal = CollisionResolver.calculateCollisionNormal(targets, velocity);
 
         if (normal.l2norm() == 0) {
             // TODO: Think about a smart solution for this case.
@@ -57,24 +57,4 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         return new CrashTick<>(targets, normal, timeToCollision);
     }
 
-
-    public Vector2D calculateCollisionNormal(Vector2D velocity) {
-        if (velocity.l2norm() == 0) {
-            throw new IllegalArgumentException("Velocity must be non-zero vector!");
-        }
-
-        Vector2D result = new Vector2D(0, 0);
-
-        for (InevitableCollision collision : targets) {
-            Vector2D normal = collision.getNormal();
-
-            // We only consider normals whose dot product with the velocity vector is negative.
-            // Otherwise, reflection of the velocity vector w.r.t. collision normal does not make any sense.
-            if (normal.dot(velocity) < -Util.EPSILON) {
-                result = result.add(normal);
-            }
-        }
-
-        return result.normalized();
-    }
 }
