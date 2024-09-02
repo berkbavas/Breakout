@@ -32,12 +32,10 @@ public class PotentialCollisionResolver extends CollisionResolver<PotentialColli
 
     @Override
     public FreeTick resolve(double deltaTime) {
-
         // Ball is free, there is no interactions with the colliders, i.e.,
         // no present collisions in this tick and no inevitable collisions until deltaTime.
 
         // Just move the ball.
-        // Do not touch the acceleration. It will be resolved in next tick if there is any interactions.
 
         ball.move(deltaTime);
         return new FreeTick(targets, deltaTime);

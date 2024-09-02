@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.physics;
 
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
@@ -24,9 +25,9 @@ public class TrajectoryPlotter {
     private World world;
     private Set<Collider> colliders;
     private Ball ball;
-    private int numberOfIterations = 1000;
-    private double deltaTime = 0.005;
-    private int maximumCollisionCount = 10;
+    private double deltaTime = Constants.Physics.TICK_IN_SEC;
+    private int maximumNumberOfIterations = 500;
+    private int maximumNumberOfCollisions = 8;
 
     public TrajectoryPlotter(World world, Set<Collider> colliders, Ball ball) {
         this.world = world;
@@ -38,24 +39,33 @@ public class TrajectoryPlotter {
     public void plotTrajectory() {
         Simulator simulator = new Simulator(world, colliders, ball, true);
 
-        List<Point2D> vertices = new ArrayList<>(numberOfIterations);
+        List<Point2D> vertices = new ArrayList<>(maximumNumberOfIterations);
         painter.clear();
 
-        int numberOfCollisions = 0;
+        painter.stroke(ball.copy(), Color.WHITE, 2);
 
-        for (int i = 0; i < numberOfIterations; ++i) {
+        int numberOfCollisions = 0;
+        int numberOfIterations = 0;
+
+
+        while (numberOfIterations < maximumNumberOfIterations) {
             vertices.add(ball.getCenter());
             var result = simulator.update(deltaTime);
 
+
             if (result instanceof CrashTick) {
-                if (++numberOfCollisions >= maximumCollisionCount) {
+                numberOfCollisions++;
+                painter.stroke(ball.copy(), Color.LAWNGREEN, 2);
+
+                if (numberOfCollisions >= maximumNumberOfCollisions) {
                     break;
                 }
-                painter.stroke(ball.copy(), Color.LAWNGREEN);
             }
+
+            numberOfIterations++;
         }
 
-        painter.stroke(new Path(vertices, Color.RED));
+        painter.stroke(new Path(vertices, Color.RED), 2);
     }
 
     public void clearTrajectory() {

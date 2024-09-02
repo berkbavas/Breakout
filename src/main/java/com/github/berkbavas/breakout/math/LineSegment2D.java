@@ -39,7 +39,6 @@ public class LineSegment2D {
         this.identifier = identifier;
 
         Double[] coefficients = Line2D.calculateEquationCoefficients(P, Q);
-
         this.A = coefficients[0];
         this.B = coefficients[1];
         this.C = coefficients[2];

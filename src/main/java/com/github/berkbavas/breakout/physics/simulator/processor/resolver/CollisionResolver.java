@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class CollisionResolver<T extends Collision> {
     protected Ball ball;
-    protected boolean isDebugMode = false;
+    protected boolean isDebugMode;
 
     @Getter
     protected List<T> targets = new ArrayList<>();
@@ -27,7 +27,6 @@ public abstract class CollisionResolver<T extends Collision> {
 
     public abstract Tick<? extends Collision> resolve(double deltaTime);
 
-
     public static void sortEarliestToLatest(List<? extends ProspectiveCollision> collisions) {
         collisions.sort((c0, c1) -> {
             double ttc0 = c0.getTimeToCollision();
@@ -42,6 +41,5 @@ public abstract class CollisionResolver<T extends Collision> {
         sortEarliestToLatest(copy);
         return copy.get(0);
     }
-
 
 }

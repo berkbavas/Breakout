@@ -56,6 +56,10 @@ public class PaintCommandHandler {
         commands.add(new StrokeCommand(drawable, drawable.getColor(), 1.0));
     }
 
+    public void stroke(Drawable drawable, double width) {
+        commands.add(new StrokeCommand(drawable, drawable.getColor(), width));
+    }
+
     public void fill(Drawable drawable, Color color) {
         commands.add(new FillCommand(drawable, color));
     }

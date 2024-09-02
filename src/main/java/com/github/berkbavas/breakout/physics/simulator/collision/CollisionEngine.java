@@ -109,12 +109,8 @@ public class CollisionEngine {
     // Finds the set of pairs closest each other among all points on the collider and circle along the given direction.
     // The result is a set rather than a single element because there may be two points on the collider,
     // such as the common vertex of two edges, closest to circle.
-    // Two dots, one on the circle the other on the rectangle, in the image above are the closest pair along the direction vector.
-    // In fact this is an edge case where the dot on the rectangle is the common vertex of two edges of the rectangle,
-    // so we return a set in this ase {(pointOnCircle, pointOnEdge0), (pointOnCircle, pointOnEdge1)},
-    // where pointOnEdge0 and pointOnEdge1 represent the same point in the plane, but they belong to different edges.
-    // The owner of a vertex is crucial because we need to know which edges take part in a collision in order to
-    // calculate the 'collective' collision normal.
+    // Two dots, one on the circle the other on the rectangle,
+    // in the image above are the closest pair along the direction vector.
 
     public static List<CriticalPointPair> findCriticalPointsAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
         List<CriticalPointPair> result = new ArrayList<>();

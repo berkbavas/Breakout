@@ -17,6 +17,7 @@ public abstract class Tick<T extends Collision> {
 
     public double getMinimumTimeToCollision() {
         double minimum = Double.MAX_VALUE;
+
         for (var collision : collisions) {
             if (collision instanceof ProspectiveCollision) {
                 double timeToCollision = ((ProspectiveCollision) collision).getTimeToCollision();
@@ -25,6 +26,7 @@ public abstract class Tick<T extends Collision> {
                 }
             }
         }
+
         return minimum;
     }
 }

@@ -11,7 +11,6 @@ import java.util.List;
 public class CuttingCriticalPointPair extends CriticalPointPair {
     private final List<Point2D> points;
 
-
     @Override
     public Point2D getPointOnCircle() {
         return points.get(0);

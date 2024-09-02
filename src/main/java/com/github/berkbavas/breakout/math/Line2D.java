@@ -26,15 +26,13 @@ public class Line2D {
     // B = x0 - x1,                              B = Px - Qx
     // C = -A * x0 - B * y0                      C = -A*Px - B*Py
 
-    // Slope is (y1 - y0) / (x1 - x0) if x0 != x1
-    // and undefined when x0 == x1.
+    // Slope is (y1 - y0) / (x1 - x0) if x0 != x1 and undefined if x0 == x1.
 
     public Line2D(Point2D P, Point2D Q) {
         this.P = P;
         this.Q = Q;
 
         Double[] coefficients = calculateEquationCoefficients(P, Q);
-
         this.A = coefficients[0];
         this.B = coefficients[1];
         this.C = coefficients[2];
@@ -104,7 +102,7 @@ public class Line2D {
     }
 
     public boolean isPointOnLine(Point2D point) {
-        // Check that point = (x,y) satisfy the equation Ax + By + C = 0.
+        // Check that point = (x,y) satisfies the equation Ax + By + C = 0.
         return Util.isFuzzyZero(A * point.getX() + B * point.getY() + C);
     }
 

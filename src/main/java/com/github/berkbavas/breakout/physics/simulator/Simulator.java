@@ -17,7 +17,6 @@ public class Simulator {
     private final boolean isDebugMode;
     private double simulationTime = 0.0;
 
-
     public Simulator(World world, Set<Collider> colliders, Ball ball, boolean isDebugMode) {
         this.processor = new TickProcessor(world, colliders, ball, isDebugMode);
         this.gravityEngine = new GravityEngine(colliders, ball);

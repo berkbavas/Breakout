@@ -14,15 +14,15 @@ public final class Constants {
         public static final double WIDTH = 1280;
         public static final double HEIGHT = 720;
         public static final double TOP_PADDING = 100;
-        public static final Color BACKGROUND_COLOR = Color.rgb(0, 0, 0);
+        public static final Color BACKGROUND_COLOR = Color.rgb(32, 32, 32);
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
     }
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 1500;
-        public static final double MAX_SPEED = 1600;
+        public static final double MIN_SPEED = 250;
+        public static final double MAX_SPEED = 500;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
@@ -67,5 +67,9 @@ public final class Constants {
     public final static class Obstacle {
         public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
         public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
+    }
+
+    public final static class Physics {
+        public final static double TICK_IN_SEC = 0.01;  //  Each tick is 10 ms
     }
 }

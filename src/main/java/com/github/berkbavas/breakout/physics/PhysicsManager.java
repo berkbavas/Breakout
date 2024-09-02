@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.physics;
 
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.GameObjects;
 import com.github.berkbavas.breakout.event.EventDispatcher;
 import com.github.berkbavas.breakout.physics.handler.BreakoutDragEventHandler;
@@ -19,8 +20,6 @@ import com.github.berkbavas.breakout.util.Stopwatch;
 import java.util.Set;
 
 public class PhysicsManager {
-    private final static double TICK_IN_SEC = 0.005;  //  Each tick is 0.005 seconds.
-
     private final GameObjects objects;
     private final Stopwatch chronometer = new Stopwatch();
     private final Simulator simulator;
@@ -61,9 +60,8 @@ public class PhysicsManager {
         throwEventHandler.update();
         dragEventHandler.update();
 
-        final double deltaTime = TICK_IN_SEC;
+        final double deltaTime = Constants.Physics.TICK_IN_SEC;
 
-        // Find all potential collisions along the direction of velocity of the ball and process.
         var result = simulator.update(deltaTime);
 
         // Check if a brick is hit in this particular tick.

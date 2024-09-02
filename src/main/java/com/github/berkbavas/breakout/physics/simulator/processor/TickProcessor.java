@@ -38,8 +38,8 @@ public class TickProcessor {
     public Tick<? extends Collision> update(double deltaTime) {
         List<Collision> collisions = collisionEngine.findCollisions(deltaTime);
 
-        inevitableCollisionResolver.load(collisions);
         presentCollisionResolver.load(collisions);
+        inevitableCollisionResolver.load(collisions);
         potentialCollisionResolver.load(collisions);
 
         if (presentCollisionResolver.isApplicable()) {

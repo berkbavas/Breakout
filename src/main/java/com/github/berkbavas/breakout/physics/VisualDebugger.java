@@ -15,10 +15,10 @@ import javafx.scene.paint.Color;
 
 public class VisualDebugger {
     private final static double COLLISION_INDICATION_TIMEOUT_IN_SEC = 0.0;
-    private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.25;
+    private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.35;
 
     private final GameObjects objects;
-    private final PaintCommandHandler[] painter = new PaintCommandHandler[4];
+    private final PaintCommandHandler[] painter = new PaintCommandHandler[3];
     private final Stopwatch chronometer = new Stopwatch();
     private double sinceCollision = Double.MAX_VALUE;
 
@@ -57,12 +57,12 @@ public class VisualDebugger {
         Point2D center = ball.getCenter();
         Vector2D velocity = ball.getVelocity();
         Point2D p0 = center.add(velocity.multiply(1 / 10.0));
-        painter[2].drawLine(center, p0, Color.CYAN, 1);
+        painter[2].drawLine(center, p0, Color.CYAN, 2);
 
         // Acceleration indicator
         Vector2D acceleration = ball.getAcceleration();
         Point2D q0 = center.add(acceleration.normalized().multiply(100));
-        painter[2].drawLine(center, q0, Color.MAGENTA, 1);
+        painter[2].drawLine(center, q0, Color.MAGENTA, 2);
     }
 
 

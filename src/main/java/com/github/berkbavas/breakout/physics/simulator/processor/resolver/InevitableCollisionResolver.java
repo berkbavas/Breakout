@@ -41,7 +41,6 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Vector2D velocity = ball.getVelocity();
         Vector2D normal = calculateCollisionNormal(velocity);
 
-
         if (normal.l2norm() == 0) {
             // TODO: Think about a smart solution for this case.
             ball.move(timeToCollision);

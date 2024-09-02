@@ -21,7 +21,7 @@ public class GravityEngine {
     private final Ball ball;
 
     @Setter
-    private Vector2D gravity = new Vector2D(0, 4000);
+    private Vector2D gravity = new Vector2D(0, 2000);
 
     public GravityEngine(Set<Collider> colliders, Ball ball) {
         this.colliders = colliders;
@@ -31,7 +31,6 @@ public class GravityEngine {
     public void update(Tick<? extends Collision> result) {
         var collisions = CollisionEngine.findPresentCollisions(colliders, ball);
         var filtered = filterPresentCollisions(collisions);
-
 
         if (filtered.isEmpty()) {
             ball.setAcceleration(gravity);

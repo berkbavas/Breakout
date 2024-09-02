@@ -4,7 +4,7 @@ import com.github.berkbavas.breakout.math.Point2D;
 
 public interface Draggable {
 
-    default boolean isActiveDraggable(){
+    default boolean isActiveDraggable() {
         return true;
     }
 

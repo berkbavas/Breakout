@@ -10,29 +10,22 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Set;
 
+@Getter
 public class GraphicsEngine implements PaintCommandProcessor {
-    @Getter
     private final Group root;
     private final GameObjects objects;
     private final Painter painter;
     private final ArrayList<PaintCommandHandler> handlers = new ArrayList<>();
-
-    @Getter
     private final double width;
-    @Getter
     private final double height;
-    @Getter
-    @Setter
-    private double scale;
+    private final double scale;
 
     public GraphicsEngine(GameObjects objects, double scale) {
         this.objects = objects;
-
         this.width = objects.getWorld().getWidth() * scale;
         this.height = objects.getWorld().getHeight() * scale;
         this.scale = scale;
