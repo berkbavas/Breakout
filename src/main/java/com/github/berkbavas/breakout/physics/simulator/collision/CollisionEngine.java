@@ -2,6 +2,7 @@ package com.github.berkbavas.breakout.physics.simulator.collision;
 
 import com.github.berkbavas.breakout.math.Circle;
 import com.github.berkbavas.breakout.math.Point2D;
+import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -147,6 +148,6 @@ public class CollisionEngine {
     private static boolean isPointWithinCollisionTrajectory(Point2D pointOnMovingObject, Vector2D velocity, Point2D point) {
         Vector2D movingObjectToPoint = point.subtract(pointOnMovingObject);
         double dot = Vector2D.dot(movingObjectToPoint, velocity);
-        return dot > 0;
+        return dot > Util.EPSILON;
     }
 }
