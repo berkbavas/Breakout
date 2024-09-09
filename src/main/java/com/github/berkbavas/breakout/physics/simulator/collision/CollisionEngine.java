@@ -57,6 +57,7 @@ public class CollisionEngine {
             }
 
             List<ColliderEdge> edges = collider.getEdges();
+
             for (ColliderEdge edge : edges) {
                 CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, velocity)
                         .flatMap(critical -> ctor.constructIfPossible(collider, edge, critical))

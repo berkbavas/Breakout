@@ -1,5 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator;
 
+import com.github.berkbavas.breakout.Constants;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
@@ -21,7 +22,7 @@ public class GravityEngine {
     private final Ball ball;
 
     @Setter
-    private Vector2D gravity = new Vector2D(0, 2000);
+    private Vector2D gravity = Constants.Physics.GRAVITY;
 
     public GravityEngine(Set<Collider> colliders, Ball ball) {
         this.colliders = colliders;
@@ -29,7 +30,7 @@ public class GravityEngine {
     }
 
     public void update(Tick<? extends Collision> result) {
-        var collisions = CollisionEngine.findConflicts(colliders, ball);
+        var collisions = CollisionEngine.findConflicts(colliders, ball.enlarge(0.05));
         var filtered = filterPresentCollisions(collisions);
 
         if (filtered.isEmpty()) {

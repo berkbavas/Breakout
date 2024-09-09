@@ -15,13 +15,11 @@ import com.github.berkbavas.breakout.physics.simulator.Simulator;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
 import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
-import com.github.berkbavas.breakout.util.Stopwatch;
 
 import java.util.Set;
 
 public class PhysicsManager {
     private final GameObjects objects;
-    private final Stopwatch chronometer = new Stopwatch();
     private final Simulator simulator;
     private final DragEventHandler dragEventHandler;
     private final ThrowEventHandler throwEventHandler;
@@ -101,7 +99,6 @@ public class PhysicsManager {
     }
 
     public void resume() {
-        chronometer.start();
         paused = false;
     }
 

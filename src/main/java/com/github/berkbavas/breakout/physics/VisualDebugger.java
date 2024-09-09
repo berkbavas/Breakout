@@ -65,5 +65,4 @@ public class VisualDebugger {
         painter[2].drawLine(center, q0, Color.MAGENTA, 2);
     }
 
-
 }

@@ -1,7 +1,9 @@
 package com.github.berkbavas.breakout;
 
+import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.util.Parameter;
 import javafx.scene.paint.Color;
+import lombok.Setter;
 
 import java.util.HashMap;
 
@@ -21,12 +23,13 @@ public final class Constants {
 
     public final static class Ball {
         public static final double RADIUS = 12;
-        public static final double MIN_SPEED = 250;
-        public static final double MAX_SPEED = 500;
+        public static final double MIN_SPEED = 500;
+        public static final double MAX_SPEED = 700;
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
         public static final Parameter DO_NOT_REFLECT_VELOCITY_THRESHOLD = new Parameter(0, 50, 100);
+        public static final Parameter BALL_SHOULD_BE_STEADY_THRESHOLD = new Parameter(0, 10, 100);
     }
 
     public final static class Paddle {
@@ -71,5 +74,6 @@ public final class Constants {
 
     public final static class Physics {
         public final static double TICK_IN_SEC = 0.01;  //  Each tick is 10 ms
+        public final static Vector2D GRAVITY = new Vector2D(0, 1500);
     }
 }

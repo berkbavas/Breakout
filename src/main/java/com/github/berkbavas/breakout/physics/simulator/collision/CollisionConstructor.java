@@ -31,6 +31,7 @@ public class CollisionConstructor {
             SeparateCriticalPointPair separate = (SeparateCriticalPointPair) pair;
             Point2D pointOnCircle = separate.getPointOnCircle();
             Point2D pointOnEdge = separate.getPointOnEdge();
+
             if (isPointWithinCollisionTrajectory(center, pointOnEdge, velocity)) {
                 double distance = Point2D.distanceBetween(pointOnEdge, pointOnCircle);
                 double timeToCollision = distance / speed;

@@ -54,7 +54,6 @@ public class GraphicsEngine implements PaintCommandProcessor {
         Ball ball = objects.getBall();
         painter.fill(ball);
 
-
         // Paddle
         Paddle paddle = objects.getPaddle();
         if (paddle.isActiveDrawable()) {

@@ -44,14 +44,14 @@ public final class CriticalPointFinder {
     // If the edge is secant to the circle, then the secant points are called cutting critical points.
     // Note that there may be two or one cutting critical points depending on the edge.
     //
-    //            * Q
-    //            │
-    //        x  x│
-    //     x      │ x
-    //    x       │  x
-    //    x       │  x
-    //     x      │ x
-    //        x  x│
+    //            * Q                        * Q
+    //            │                          │
+    //        x  x│                      x  x│
+    //     x      │ x                 x      │ x
+    //    x       │  x      or       x       │  x
+    //    x       │  x               x     P *  x
+    //     x      │ x                 x        x
+    //        x  x│                      x  x
     //            │
     //            * P
 

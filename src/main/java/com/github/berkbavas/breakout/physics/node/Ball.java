@@ -37,11 +37,20 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
     public void collide(Vector2D normal, double restitutionFactor) {
         Vector2D vertical = velocity.projectOnto(normal); // Vertical component
         Vector2D horizontal = velocity.rejectionOf(normal);  // Horizontal component
-        Vector2D verticalAfterCollision = vertical.multiply(1 - restitutionFactor).reversed();
-        if (verticalAfterCollision.length() <= Constants.Ball.DO_NOT_REFLECT_VELOCITY_THRESHOLD.getValue()) {
-            velocity = horizontal;
+        Vector2D verticalReduced = vertical.multiply(1 - restitutionFactor);
+
+        Vector2D newVelocity;
+
+        if (verticalReduced.length() <= Constants.Ball.DO_NOT_REFLECT_VELOCITY_THRESHOLD.getValue()) {
+            newVelocity = horizontal;
         } else {
-            velocity = verticalAfterCollision.add(horizontal);
+            newVelocity = verticalReduced.reversed().add(horizontal);
+        }
+
+        if (newVelocity.length() <= Constants.Ball.BALL_SHOULD_BE_STEADY_THRESHOLD.getValue()) {
+            velocity = new Vector2D(0, 0);
+        } else {
+            velocity = newVelocity;
         }
     }
 
@@ -92,6 +101,12 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
     public void makeSteady() {
         velocity = new Vector2D(0, 0);
         acceleration = new Vector2D(0, 0);
+    }
+
+    public Ball enlarge(double factor) {
+        Ball ball = new Ball(center, (1 + factor) * radius, velocity, getColor());
+        ball.setAcceleration(acceleration);
+        return ball;
     }
 
 }

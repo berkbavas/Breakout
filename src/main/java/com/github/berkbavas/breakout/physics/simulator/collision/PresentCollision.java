@@ -30,7 +30,7 @@ public class PresentCollision extends Conflict {
     //         x   x
     //
 
-    // PresentCollision is special case of a Conflict where the dot of velocity and collider normal is negative,
+    // PresentCollision is special case of a Conflict where the dot product of velocity and collider normal is negative,
     // in other words, Conflict is velocity ignorant while PresentCollision concerns the direction of velocity and
     // the normal of the collider.
 

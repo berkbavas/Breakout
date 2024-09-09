@@ -40,18 +40,16 @@ public class TrajectoryPlotter {
         Simulator simulator = new Simulator(world, colliders, ball, true);
 
         List<Point2D> vertices = new ArrayList<>(maximumNumberOfIterations);
-        painter.clear();
 
+        painter.clear();
         painter.stroke(ball.copy(), Color.WHITE, 2);
 
         int numberOfCollisions = 0;
         int numberOfIterations = 0;
 
-
         while (numberOfIterations < maximumNumberOfIterations) {
             vertices.add(ball.getCenter());
             var result = simulator.update(deltaTime);
-
 
             if (result instanceof CrashTick) {
                 numberOfCollisions++;

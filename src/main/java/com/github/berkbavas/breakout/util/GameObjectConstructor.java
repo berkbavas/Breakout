@@ -81,7 +81,6 @@ public final class GameObjectConstructor {
         Obstacle obstacle = new Obstacle(List.of(new Point2D(600, 300), new Point2D(580, 320), new Point2D(850, 550),
                 new Point2D(900, 500)), Color.WHITE);
 
-
         obstacle.translate(new Point2D(300, 0));
         obstacles.add(obstacle);
 
