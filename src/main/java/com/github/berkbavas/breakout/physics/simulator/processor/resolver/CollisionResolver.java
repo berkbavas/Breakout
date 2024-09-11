@@ -1,6 +1,7 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
 import com.github.berkbavas.breakout.physics.node.Ball;
+import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.collision.InevitableCollision;
 import com.github.berkbavas.breakout.physics.simulator.collision.PotentialCollision;
@@ -9,17 +10,22 @@ import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class CollisionResolver<T extends Collision> {
-    protected Ball ball;
-    protected boolean isDebugMode;
-    protected List<PresentCollision> presents = new ArrayList<>();
-    protected List<InevitableCollision> inevitables = new ArrayList<>();
-    protected List<PotentialCollision> potentials = new ArrayList<>();
+    protected final Set<Collider> colliders;
+    protected final Ball ball;
+    protected final boolean isDebugMode;
+    protected final List<PresentCollision> presents = new ArrayList<>();
+    protected final List<InevitableCollision> inevitables = new ArrayList<>();
+    protected final List<PotentialCollision> potentials = new ArrayList<>();
+    protected final NetForceCalculator netForceCalculator;
 
-    public CollisionResolver(Ball ball, boolean isDebugMode) {
+    public CollisionResolver(Set<Collider> colliders, Ball ball, boolean isDebugMode) {
+        this.colliders = colliders;
         this.ball = ball;
         this.isDebugMode = isDebugMode;
+        this.netForceCalculator = new NetForceCalculator(colliders);
     }
 
     public final void load(List<Collision> collisions) {

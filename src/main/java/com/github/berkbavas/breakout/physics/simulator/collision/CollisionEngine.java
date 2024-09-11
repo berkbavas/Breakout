@@ -125,14 +125,6 @@ public class CollisionEngine {
         });
     }
 
-    public static void sortMostEffectiveToLeastEffective(List<PresentCollision> collisions) {
-        collisions.sort((c0, c1) -> {
-            double cor0 = c0.getCollider().getRestitutionFactor();
-            double cor1 = c1.getCollider().getRestitutionFactor();
-            return Double.compare(cor0, cor1);
-        });
-    }
-
     public static ProspectiveCollision findEarliestCollision(List<? extends ProspectiveCollision> collisions) {
         if (collisions.isEmpty()) {
             throw new IllegalArgumentException("collisions is empty!");
@@ -140,16 +132,6 @@ public class CollisionEngine {
 
         List<? extends ProspectiveCollision> copy = new ArrayList<>(collisions);
         sortEarliestToLatest(copy);
-        return copy.get(0);
-    }
-
-    public static PresentCollision findMostEffectiveCollision(List<PresentCollision> collisions) {
-        if (collisions.isEmpty()) {
-            throw new IllegalArgumentException("collisions is empty!");
-        }
-
-        List<PresentCollision> copy = new ArrayList<>(collisions);
-        sortMostEffectiveToLeastEffective(copy);
         return copy.get(0);
     }
 

@@ -6,9 +6,9 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Brick;
 import com.github.berkbavas.breakout.physics.node.Obstacle;
 import com.github.berkbavas.breakout.physics.node.Paddle;
-import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -16,22 +16,21 @@ import java.util.Set;
 
 @Getter
 public class GraphicsEngine implements PaintCommandProcessor {
-    private final Group root;
+    private final StackPane root;
+    private final Canvas canvas;
     private final GameObjects objects;
     private final Painter painter;
     private final ArrayList<PaintCommandHandler> handlers = new ArrayList<>();
     private final double width;
     private final double height;
-    private final double scale;
 
-    public GraphicsEngine(GameObjects objects, double scale) {
+    public GraphicsEngine(GameObjects objects) {
         this.objects = objects;
-        this.width = objects.getWorld().getWidth() * scale;
-        this.height = objects.getWorld().getHeight() * scale;
-        this.scale = scale;
+        this.width = objects.getWorld().getWidth();
+        this.height = objects.getWorld().getHeight();
 
-        Canvas canvas = new Canvas(width, height);
-        root = new Group();
+        canvas = new Canvas(width, height);
+        root = new StackPane();
         root.getChildren().add(canvas);
         canvas.setLayoutX(0);
         canvas.setLayoutY(0);
@@ -47,8 +46,6 @@ public class GraphicsEngine implements PaintCommandProcessor {
 
         // Background
         painter.fillBackground(objects.getWorld().getColor());
-
-        painter.scale(scale);
 
         // Ball
         Ball ball = objects.getBall();

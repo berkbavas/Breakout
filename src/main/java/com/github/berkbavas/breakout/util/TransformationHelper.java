@@ -1,42 +1,37 @@
 package com.github.berkbavas.breakout.util;
 
 import com.github.berkbavas.breakout.math.Point2D;
-import lombok.Getter;
-import lombok.Setter;
+import com.github.berkbavas.breakout.physics.node.World;
+import javafx.scene.Node;
 
 public class TransformationHelper {
     private static TransformationHelperInner IMPL;
 
     private TransformationHelper() {
-
     }
 
-    static public void initialize(double ww, double wh, double sw, double sh) {
-        IMPL = new TransformationHelperInner(ww, wh, sw, sh);
+    static public void initialize(World world, Node node) {
+        IMPL = new TransformationHelperInner(world, node);
     }
 
-    static public void setScale(double scale) {
-        IMPL.setScale(scale);
+    static public Point2D fromWorldToCanvas(double x, double y) {
+        return IMPL.fromWorldToCanvas(x, y);
     }
 
-    static public Point2D fromWorldToScene(double x, double y) {
-        return IMPL.fromWorldToScene(x, y);
+    static public Point2D fromWorldToCanvas(Point2D p) {
+        return IMPL.fromWorldToCanvas(p);
     }
 
-    static public Point2D fromWorldToScene(Point2D p) {
-        return IMPL.fromWorldToScene(p);
+    static public Point2D fromCanvasToWorld(double x, double y) {
+        return IMPL.fromCanvasToWorld(x, y);
     }
 
-    static public Point2D fromSceneToWorld(double x, double y) {
-        return IMPL.fromSceneToWorld(x, y);
+    static public Point2D fromCanvasToWorld(Point2D p) {
+        return IMPL.fromCanvasToWorld(p);
     }
 
-    static public Point2D fromSceneToWorld(Point2D p) {
-        return IMPL.fromSceneToWorld(p);
-    }
-
-    static public Point2D getSceneCenter() {
-        return IMPL.getSceneCenter();
+    static public Point2D getCanvasCenter() {
+        return IMPL.getCanvasCenter();
     }
 
     static public Point2D getWorldCenter(Point2D p) {
@@ -44,52 +39,59 @@ public class TransformationHelper {
     }
 
     private static class TransformationHelperInner {
-        // World size width x height
-        private final double ww;
-        private final double wh;
+        private final World world;
+        private final Node node;
 
-        // Scene size width x height
-        private final double sw;
-        private final double sh;
-
-        @Getter
-        private final Point2D sceneCenter;
-
-        @Getter
-        private final Point2D worldCenter;
-
-        @Setter
-        private double scale = 1.0;
-
-        TransformationHelperInner(double ww, double wh, double sw, double sh) {
-            this.ww = ww;
-            this.wh = wh;
-            this.sw = sw;
-            this.sh = sh;
-            this.sceneCenter = new Point2D(0.5 * sw, 0.5 * sh);
-            this.worldCenter = new Point2D(0.5 * ww, 0.5 * wh);
+        TransformationHelperInner(World world, Node node) {
+            this.world = world;
+            this.node = node;
         }
 
-        Point2D fromWorldToScene(double x, double y) {
-            final double nx = x / ww;
-            final double ny = y / wh;
-            return new Point2D(nx * sw * scale, ny * sh * scale);
+        Point2D fromWorldToCanvas(double x, double y) {
+            double ww = world.getWidth();
+            double wh = world.getHeight();
+            double gw = node.getLayoutBounds().getWidth();
+            double gh = node.getLayoutBounds().getHeight();
+
+            double nx = x / ww; // [0, 1]
+            double ny = y / wh; // [0, 1]
+
+            return new Point2D(nx * gw, ny * gh);
         }
 
-        Point2D fromWorldToScene(Point2D p) {
-            return fromWorldToScene(p.getX(), p.getY());
+        Point2D fromWorldToCanvas(Point2D p) {
+            return fromWorldToCanvas(p.getX(), p.getY());
         }
 
-        Point2D fromSceneToWorld(double x, double y) {
-            final double nx = x / sw;
-            final double ny = y / sh;
-            return new Point2D(nx * ww / scale, ny * wh / scale);
+        Point2D fromCanvasToWorld(double x, double y) {
+            double ww = world.getWidth();
+            double wh = world.getHeight();
+            double gw = node.getLayoutBounds().getWidth();
+            double gh = node.getLayoutBounds().getHeight();
+
+            double nx = x / gw; // [0, 1]
+            double ny = y / gh; // [0, 1]
+
+            return new Point2D(nx * ww, ny * wh);
         }
 
-        Point2D fromSceneToWorld(Point2D p) {
-            return fromSceneToWorld(p.getX(), p.getY());
+        Point2D fromCanvasToWorld(Point2D p) {
+            return fromCanvasToWorld(p.getX(), p.getY());
         }
 
+        public Point2D getWorldCenter() {
+            double ww = world.getWidth();
+            double wh = world.getHeight();
+
+            return new Point2D(0.5 * ww, 0.5 * wh);
+        }
+
+        public Point2D getCanvasCenter() {
+            double gw = node.getLayoutBounds().getWidth();
+            double gh = node.getLayoutBounds().getHeight();
+
+            return new Point2D(0.5 * gw, 0.5 * gh);
+        }
     }
 
 }

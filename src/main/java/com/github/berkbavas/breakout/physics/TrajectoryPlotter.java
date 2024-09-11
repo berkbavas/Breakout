@@ -37,7 +37,7 @@ public class TrajectoryPlotter {
     }
 
     public void plotTrajectory() {
-        Simulator simulator = new Simulator(world, colliders, ball, true);
+        Simulator simulator = new Simulator(colliders, ball, true);
 
         List<Point2D> vertices = new ArrayList<>(maximumNumberOfIterations);
 
@@ -49,7 +49,7 @@ public class TrajectoryPlotter {
 
         while (numberOfIterations < maximumNumberOfIterations) {
             vertices.add(ball.getCenter());
-            var result = simulator.update(deltaTime);
+            var result = simulator.process(deltaTime);
 
             if (result instanceof CrashTick) {
                 numberOfCollisions++;

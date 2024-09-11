@@ -39,7 +39,7 @@ public abstract class DragEventHandler implements EventListener {
         CriticalPointPair closest = null;
         // Find the closest points on collider and ball, if the draggable is a collider as well.
         if (node instanceof Collider) {
-            // findCollision() method assumes that ball is moving and collider is steady.
+            // findMostCriticalPointAlongGivenDirection() method assumes that ball is moving and collider is steady.
             // But here we would like to find collisions between still ball and moving collider.
             // Hence, we set velocity as -delta.
             Vector2D velocity = delta.multiply(-1);

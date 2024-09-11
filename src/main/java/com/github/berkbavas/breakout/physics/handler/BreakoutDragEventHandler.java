@@ -44,8 +44,8 @@ public class BreakoutDragEventHandler extends DragEventHandler {
 
         } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED || event.getEventType() == MouseEvent.MOUSE_MOVED) {
             if (focused) {
-                Point2D current = TransformationHelper.fromSceneToWorld(event.getX(), event.getY());
-                Point2D previous = TransformationHelper.fromSceneToWorld(lastEvent.getX(), lastEvent.getY());
+                Point2D current = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
+                Point2D previous = TransformationHelper.fromCanvasToWorld(lastEvent.getX(), lastEvent.getY());
                 Point2D added = delta.add(current.subtract(previous));
 
                 // Move cursor to the previous position
@@ -72,7 +72,7 @@ public class BreakoutDragEventHandler extends DragEventHandler {
         EventTarget target = event.getTarget();
         if (target instanceof Node) {
             Node node = (Node) target;
-            Point2D sceneCenter = TransformationHelper.getSceneCenter();
+            Point2D sceneCenter = TransformationHelper.getCanvasCenter();
             javafx.geometry.Point2D screen = node.localToScreen(new javafx.geometry.Point2D(sceneCenter.getX(), sceneCenter.getY()));
 
             if (screen != null) {

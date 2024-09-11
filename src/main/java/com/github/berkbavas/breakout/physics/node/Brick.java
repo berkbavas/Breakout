@@ -31,13 +31,8 @@ public class Brick extends RectangularNode implements Collider, Drawable {
     }
 
     @Override
-    public double getRestitutionFactor() {
-        return Constants.Brick.RESTITUTION_FACTOR.getValue();
-    }
-
-    @Override
     public double getFrictionCoefficient() {
-        return Constants.Brick.FRICTION_COEFFICIENT.getValue();
+        return Constants.Brick.FRICTION_COEFFICIENT;
     }
 
     @Override

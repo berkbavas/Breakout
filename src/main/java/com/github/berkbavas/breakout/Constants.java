@@ -1,9 +1,7 @@
 package com.github.berkbavas.breakout;
 
 import com.github.berkbavas.breakout.math.Vector2D;
-import com.github.berkbavas.breakout.util.Parameter;
 import javafx.scene.paint.Color;
-import lombok.Setter;
 
 import java.util.HashMap;
 
@@ -17,8 +15,7 @@ public final class Constants {
         public static final double HEIGHT = 720;
         public static final double TOP_PADDING = 100;
         public static final Color BACKGROUND_COLOR = Color.rgb(32, 32, 32);
-        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
+        public static final double FRICTION_COEFFICIENT = 0.05;
     }
 
     public final static class Ball {
@@ -28,8 +25,9 @@ public final class Constants {
         public static final double INITIAL_X = 0.5f * World.WIDTH;
         public static final double INITIAL_Y = 0.5f * World.HEIGHT;
         public static final Color COLOR = Color.WHITE;
-        public static final Parameter DO_NOT_REFLECT_VELOCITY_THRESHOLD = new Parameter(0, 50, 100);
-        public static final Parameter BALL_SHOULD_BE_STEADY_THRESHOLD = new Parameter(0, 10, 100);
+        public static double RESTITUTION_FACTOR = 0.6;
+        public static double DO_NOT_BOUNCE_SPEED_THRESHOLD = 8; // Should be a function of gravity
+        public static double DO_NOT_REFLECT_ANGLE_THRESHOLD = 8;
     }
 
     public final static class Paddle {
@@ -39,8 +37,7 @@ public final class Constants {
         public static final double INITIAL_Y = World.HEIGHT - 200;
         public static final Color COLOR = Color.WHITE;
         public static final double ARC_RADIUS = 4;
-        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
+        public static double FRICTION_COEFFICIENT = 0;
     }
 
     public final static class Brick {
@@ -52,8 +49,7 @@ public final class Constants {
         public static final HashMap<Integer, Color> COLORS_PER_ROW = new HashMap<>();
         public static final Color INTERPOLATION_START_COLOR = Color.rgb(90, 40, 250);
         public static final Color INTERPOLATION_END_COLOR = Color.rgb(96, 245, 145);
-        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
+        public static double FRICTION_COEFFICIENT = 0;
 
         static {
             COLORS_PER_ROW.put(0, Color.rgb(255, 0, 0));
@@ -68,12 +64,11 @@ public final class Constants {
     }
 
     public final static class Obstacle {
-        public static final Parameter RESTITUTION_FACTOR = new Parameter(0.5);
-        public static final Parameter FRICTION_COEFFICIENT = new Parameter(0, 0, 0);
+        public static double FRICTION_COEFFICIENT = 0.05;
     }
 
     public final static class Physics {
-        public final static double TICK_IN_SEC = 0.01;  //  Each tick is 10 ms
-        public final static Vector2D GRAVITY = new Vector2D(0, 1500);
+        public static final double TICK_IN_SEC = 0.001;  //  Each tick is 10 ms
+        public static Vector2D GRAVITY = new Vector2D(0, 2000);
     }
 }

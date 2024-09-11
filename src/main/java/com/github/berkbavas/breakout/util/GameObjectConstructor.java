@@ -73,18 +73,16 @@ public final class GameObjectConstructor {
     private static Set<Obstacle> constructObstacles() {
         Set<Obstacle> obstacles = new HashSet<>();
 
-        obstacles.add(new Obstacle(List.of(new Point2D(100, 100), new Point2D(350, 350), new Point2D(550, 100)), Color.WHITE));
+        obstacles.add(new Obstacle(
+                List.of(new Point2D(0, 720), new Point2D(640, 720), new Point2D(0, 500)), Color.WHITE));
 
-        obstacles.add(new Obstacle(List.of(new Point2D(100, 300), new Point2D(200, 400), new Point2D(250, 350),
-                new Point2D(220, 200)), Color.WHITE));
+        obstacles.add(new Obstacle(
+                List.of(new Point2D(640, 720), new Point2D(1280, 720), new Point2D(1280, 500)), Color.WHITE));
 
-        Obstacle obstacle = new Obstacle(List.of(new Point2D(600, 300), new Point2D(580, 320), new Point2D(850, 550),
-                new Point2D(900, 500)), Color.WHITE);
+        obstacles.add(new Obstacle(200, 250, 100, 100, Color.WHITE));
 
-        obstacle.translate(new Point2D(300, 0));
-        obstacles.add(obstacle);
+        obstacles.add(new Obstacle(980, 250, 100, 100, Color.WHITE));
 
-        obstacles.add(new Obstacle(List.of(new Point2D(0, 400), new Point2D(0, 800), new Point2D(600, 800)), Color.WHITE));
 
         return obstacles;
     }

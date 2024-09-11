@@ -12,9 +12,11 @@ public final class CriticalPointFinder {
 
     // There are 3 types of critical points between an edge and circle along the given direction vector.
     //
-    // SEPARATE:
-    // Separate critical points are two distinct points, one is on the edge and the other one is on the circle,
-    // which are closest to each other among all their siblings.
+    //
+    // Separate Critical Point Pair:
+    // Separate critical point pair is a critical point pair along a direction vector is a pair of two points,
+    // one is on the edge and the other one is on the circle,
+    // which are the closest among all other pairs along the given direction vector.
     //
     //                     * Q
     //                     │
@@ -28,8 +30,8 @@ public final class CriticalPointFinder {
     //        x  x
     //
     //
-    // TANGENTIAL:
-    // If the edge is tangent to the circle, then this tangency is called tangential critical point.
+    // Tangential Critical Point:
+    // If the edge is tangent to the circle, then this tangency point is called tangential critical point.
     //
     //                 * Q
     //        x  x     │
@@ -40,7 +42,7 @@ public final class CriticalPointFinder {
     //        x  x     * P
     //
     //
-    // CUTTING:
+    // Cutting Critical Point Pair:
     // If the edge is secant to the circle, then the secant points are called cutting critical points.
     // Note that there may be two or one cutting critical points depending on the edge.
     //

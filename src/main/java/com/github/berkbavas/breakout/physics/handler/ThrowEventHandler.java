@@ -33,7 +33,7 @@ public class ThrowEventHandler implements EventListener {
 
     public void update() {
         if (isPressedOnBall) {
-            ball.makeSteady();
+            ball.setVelocity(Vector2D.ZERO);
             painter.clear();
             painter.drawLine(ball.getCenter(), cursorPosition, Color.YELLOW, 2);
             Vector2D velocity = calculateVelocity(cursorPosition);
@@ -48,11 +48,11 @@ public class ThrowEventHandler implements EventListener {
         }
 
         if (isPressedOnBall) {
-            cursorPosition = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
+            cursorPosition = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
         }
 
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
-            Point2D worldPos = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
+            Point2D worldPos = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
 
             if (ball.contains(worldPos, 3)) {
                 cursorPosition = worldPos;

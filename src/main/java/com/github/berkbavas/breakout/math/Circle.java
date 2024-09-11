@@ -189,4 +189,8 @@ public class Circle {
 
         return result;
     }
+
+    public Circle enlarge(double factor) {
+        return new Circle(center, (1 + factor) * radius);
+    }
 }

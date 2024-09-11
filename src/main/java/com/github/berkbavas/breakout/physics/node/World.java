@@ -14,13 +14,8 @@ public class World extends RectangularNode implements Collider {
     }
 
     @Override
-    public double getRestitutionFactor() {
-        return Constants.World.RESTITUTION_FACTOR.getValue();
-    }
-
-    @Override
     public double getFrictionCoefficient() {
-        return Constants.World.FRICTION_COEFFICIENT.getValue();
+        return Constants.World.FRICTION_COEFFICIENT;
     }
 
     @Override

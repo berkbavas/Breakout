@@ -9,8 +9,6 @@ public interface Collider extends GameObject {
 
     List<ColliderEdge> getEdges();
 
-    double getRestitutionFactor();
-
     double getFrictionCoefficient();
 
     Vector2D getNormalOf(LineSegment2D edge);

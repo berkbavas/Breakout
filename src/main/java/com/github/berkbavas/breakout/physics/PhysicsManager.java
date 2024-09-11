@@ -33,7 +33,7 @@ public class PhysicsManager {
         final Ball ball = objects.getBall();
 
         this.objects = objects;
-        this.simulator = new Simulator(world, colliders, ball, isDebugMode);
+        this.simulator = new Simulator(colliders, ball, isDebugMode);
         this.debugger = new VisualDebugger(objects);
         this.isDebugMode = isDebugMode;
 
@@ -60,7 +60,7 @@ public class PhysicsManager {
 
         final double deltaTime = Constants.Physics.TICK_IN_SEC;
 
-        var result = simulator.update(deltaTime);
+        var result = simulator.process(deltaTime);
 
         // Check if a brick is hit in this particular tick.
         updateBricks(result);

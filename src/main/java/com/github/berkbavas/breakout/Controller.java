@@ -4,15 +4,17 @@ import com.github.berkbavas.breakout.event.EventDispatcher;
 import com.github.berkbavas.breakout.graphics.GraphicsEngine;
 import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.physics.PhysicsManager;
-import com.github.berkbavas.breakout.physics.node.World;
 import com.github.berkbavas.breakout.util.GameObjectConstructor;
 import com.github.berkbavas.breakout.util.TransformationHelper;
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -38,18 +40,30 @@ public class Controller implements EventHandler<Event> {
         this.isDebugMode = isDebugMode;
         objects = GameObjectConstructor.construct(isDebugMode);
 
-        World world = objects.getWorld();
-        double scaling = determineCanvasScaling(world.getWidth(), world.getHeight());
-        gui = new GraphicsEngine(objects, scaling);
+        gui = new GraphicsEngine(objects);
 
         OnDemandPaintCommandProcessor.initialize(gui);
-        TransformationHelper.initialize(objects.getWorld().getWidth(), objects.getWorld().getHeight(), gui.getWidth(), gui.getHeight());
+        TransformationHelper.initialize(objects.getWorld(), gui.getCanvas());
 
-        Group root = gui.getRoot();
+        StackPane root = gui.getRoot();
+        Canvas canvas = gui.getCanvas();
+        canvas.addEventHandler(Event.ANY, this);
+
         scene = new Scene(root, Color.BLACK);
         dispatcher = new EventDispatcher();
         engine = new PhysicsManager(objects, dispatcher, isDebugMode);
-        scene.addEventHandler(Event.ANY, this);
+
+        // Resizing
+        Bounds bounds = canvas.getLayoutBounds();
+        ChangeListener<Number> resize = (observable, oldValue, newValue) -> {
+            double scale = Math.min(root.getWidth() / bounds.getWidth(), root.getHeight() / bounds.getHeight());
+            canvas.setScaleX(scale);
+            canvas.setScaleY(scale);
+
+        };
+
+        root.widthProperty().addListener(resize);
+        root.heightProperty().addListener(resize);
     }
 
     public void start(Stage stage) {
@@ -62,10 +76,10 @@ public class Controller implements EventHandler<Event> {
             }
         });
 
-        stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle(isDebugMode ? "Debugger" : "Breakout");
-        stage.sizeToScene();
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.centerOnScreen();
         stage.show();
 

@@ -8,7 +8,7 @@ import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
-import com.github.berkbavas.breakout.physics.simulator.processor.SteadyTick;
+import com.github.berkbavas.breakout.physics.simulator.processor.StationaryTick;
 import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import com.github.berkbavas.breakout.util.Stopwatch;
 import javafx.scene.paint.Color;
@@ -37,7 +37,7 @@ public class VisualDebugger {
         if (result instanceof CrashTick) {
             chronometer.start();
             sinceCollision = 0;
-        } else if (result instanceof SteadyTick) {
+        } else if (result instanceof StationaryTick) {
             painter[0].fill(objects.getBall(), Color.LAWNGREEN);
         }
 
@@ -55,14 +55,27 @@ public class VisualDebugger {
         painter[2].clear();
         // Velocity indicator
         Point2D center = ball.getCenter();
-        Vector2D velocity = ball.getVelocity();
-        Point2D p0 = center.add(velocity.multiply(1 / 10.0));
-        painter[2].drawLine(center, p0, Color.CYAN, 2);
+
+        if (ball.getSpeed() != 0) {
+            Vector2D velocity = ball.getVelocity();
+            Point2D p0 = center.add(velocity.multiply(1 / 10.0));
+            painter[2].drawLine(center, p0, Color.CYAN, 2);
+        }
 
         // Acceleration indicator
-        Vector2D acceleration = ball.getAcceleration();
-        Point2D q0 = center.add(acceleration.normalized().multiply(100));
-        painter[2].drawLine(center, q0, Color.MAGENTA, 2);
+        Vector2D pull = ball.getPull();
+
+        if (pull.length() != 0) {
+            Point2D q0 = center.add(pull.multiply(0.01));
+            painter[2].drawLine(center, q0, Color.MAGENTA, 2);
+        }
+
+        Vector2D resistance = ball.getResistance();
+
+        if (resistance.length() != 0) {
+            Point2D r0 = center.add(resistance.multiply(0.01));
+            painter[2].drawLine(center, r0, Color.RED, 2);
+        }
     }
 
 }

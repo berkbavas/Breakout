@@ -29,7 +29,7 @@ public class DebuggerDragEventHandler extends DragEventHandler {
     @Override
     public void listen(MouseEvent event) {
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
-            Point2D worldPos = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
+            Point2D worldPos = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
             Draggable located = locateDraggable(worldPos);
             if (located != null) {
                 target = located;
@@ -41,8 +41,8 @@ public class DebuggerDragEventHandler extends DragEventHandler {
             }
         } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             if (target != null) {
-                Point2D current = TransformationHelper.fromSceneToWorld(event.getSceneX(), event.getSceneY());
-                Point2D previous = TransformationHelper.fromSceneToWorld(lastEvent.getSceneX(), lastEvent.getSceneY());
+                Point2D current = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
+                Point2D previous = TransformationHelper.fromCanvasToWorld(lastEvent.getX(), lastEvent.getY());
                 Point2D added = delta.add(current.subtract(previous));
 
                 translate(target, added);

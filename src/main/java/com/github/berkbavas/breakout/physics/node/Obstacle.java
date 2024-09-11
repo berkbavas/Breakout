@@ -23,14 +23,17 @@ public class Obstacle extends PolygonalNode implements Draggable, Collider {
         super(vertices, color);
     }
 
-    @Override
-    public double getRestitutionFactor() {
-        return Constants.Obstacle.RESTITUTION_FACTOR.getValue();
+    public Obstacle(double x, double y, double width, double height, Color color) {
+        this(List.of(
+                new Point2D(x, y),
+                new Point2D(x, y + height),
+                new Point2D(x + width, y + height),
+                new Point2D(x + width, y)), color);
     }
 
     @Override
     public double getFrictionCoefficient() {
-        return Constants.Obstacle.FRICTION_COEFFICIENT.getValue();
+        return Constants.Obstacle.FRICTION_COEFFICIENT;
     }
 
     @Override

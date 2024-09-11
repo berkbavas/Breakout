@@ -1,7 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator.processor;
 
 import com.github.berkbavas.breakout.physics.node.Ball;
-import com.github.berkbavas.breakout.physics.node.World;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
@@ -14,28 +13,19 @@ import java.util.Set;
 
 public class TickProcessor {
     private final CollisionEngine collisionEngine;
-    private final World world;
-    private final Set<Collider> colliders;
-    private final Ball ball;
-    private final boolean isDebugMode;
 
     private final InevitableCollisionResolver inevitableCollisionResolver;
     private final PresentCollisionResolver presentCollisionResolver;
     private final PotentialCollisionResolver potentialCollisionResolver;
 
-    public TickProcessor(World world, Set<Collider> colliders, Ball ball, boolean isDebugMode) {
-        this.world = world;
-        this.colliders = colliders;
-        this.ball = ball;
-        this.isDebugMode = isDebugMode;
-
+    public TickProcessor(Set<Collider> colliders, Ball ball, boolean isDebugMode) {
         collisionEngine = new CollisionEngine(colliders, ball);
-        inevitableCollisionResolver = new InevitableCollisionResolver(ball, isDebugMode);
-        presentCollisionResolver = new PresentCollisionResolver(ball, isDebugMode);
-        potentialCollisionResolver = new PotentialCollisionResolver(ball, isDebugMode);
+        inevitableCollisionResolver = new InevitableCollisionResolver(colliders, ball, isDebugMode);
+        presentCollisionResolver = new PresentCollisionResolver(colliders, ball, isDebugMode);
+        potentialCollisionResolver = new PotentialCollisionResolver(colliders, ball, isDebugMode);
     }
 
-    public Tick<? extends Collision> update(double deltaTime) {
+    public Tick<? extends Collision> process(double deltaTime) {
         List<Collision> collisions = collisionEngine.findCollisions(deltaTime);
 
         presentCollisionResolver.load(collisions);

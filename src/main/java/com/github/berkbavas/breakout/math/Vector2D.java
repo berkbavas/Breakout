@@ -4,6 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class Vector2D {
+    public static final Vector2D ZERO = new Vector2D(0, 0);
+
     private final double x;
     private final double y;
 
@@ -108,12 +110,17 @@ public class Vector2D {
     }
 
     public static double angleBetween(Vector2D a, Vector2D b) {
-        double angle = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
-        if (angle < 0) {
-            angle += 2 * Math.PI;
+        final double radians = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
+        double degrees = Math.toDegrees(radians);
+        if (degrees < -180) {
+            degrees += 360;
         }
 
-        return angle;
+        if (180 < degrees) {
+            degrees -= 360;
+        }
+
+        return degrees;
     }
 
     public Vector2D rotate(double degrees) {
