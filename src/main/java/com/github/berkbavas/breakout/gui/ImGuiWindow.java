@@ -3,6 +3,7 @@ package com.github.berkbavas.breakout.gui;
 import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.core.PhysicsManager;
+import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.handler.ThrowEventHandler;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
@@ -76,6 +77,12 @@ public class ImGuiWindow extends Application {
             }
 
             if (!ImGui.collapsingHeader("Ball")) {
+                float[] velocity = {(float) ball.getVelocity().getX(), (float) ball.getVelocity().getY()};
+
+                if (ImGui.sliderFloat2("Velocity", velocity, -1000, 1000)) {
+                    ball.setVelocity(new Vector2D(velocity[0], velocity[1]));
+                }
+
                 ImGui.sliderFloat("Restitution", Constants.Ball.RESTITUTION_FACTOR, 0.0f, 1.0f);
                 ImGui.sliderFloat("Bounce Speed Threshold", Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD, 0.0f, 50.0f);
                 ImGui.sliderFloat("Reflect Angle Threshold", Constants.Ball.DO_NOT_REFLECT_ANGLE_THRESHOLD, 0.0f, 30.0f);
