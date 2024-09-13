@@ -4,8 +4,6 @@ import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.node.base.ColliderEdge;
 import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointPair;
-import com.github.berkbavas.breakout.physics.simulator.helper.SeparateCriticalPointPair;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
