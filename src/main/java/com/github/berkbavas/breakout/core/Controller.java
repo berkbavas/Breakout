@@ -23,10 +23,10 @@ public class Controller implements EventHandler<Event> {
     private final Scene scene;
     private final PhysicsManager engine;
     private final GraphicsEngine graphics;
+    private final ImGuiWindow gui;
     private final EventDispatcher dispatcher;
     private final EventProcessor eventProcessor;
     private final boolean isDebugMode;
-    private final ImGuiWindow gui;
 
     private final AnimationTimer timer = new AnimationTimer() {
         @Override
@@ -36,6 +36,8 @@ public class Controller implements EventHandler<Event> {
     };
 
     public Controller(boolean isDebugMode) {
+        Locale.setDefault(Locale.US);
+
         GameObjects objects = GameObjectConstructor.construct(isDebugMode);
 
         graphics = new GraphicsEngine(objects, isDebugMode);
@@ -55,9 +57,7 @@ public class Controller implements EventHandler<Event> {
 
         setupResizing();
 
-        Locale.setDefault(Locale.US);
         this.isDebugMode = isDebugMode;
-
     }
 
     public void start(Stage stage) {

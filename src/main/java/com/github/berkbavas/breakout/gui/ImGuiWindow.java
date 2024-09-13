@@ -15,9 +15,9 @@ import imgui.flag.ImGuiCond;
 
 public class ImGuiWindow extends Application {
     private final Ball ball;
+    private final PhysicsManager manager;
     private volatile boolean close = false;
     private Tick<? extends Collision> tickResult;
-    private final PhysicsManager manager;
 
     public ImGuiWindow(GameObjects objects, PhysicsManager manager) {
         this.ball = objects.getBall();

@@ -4,9 +4,9 @@ import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.gui.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.gui.PaintCommandHandler;
+import com.github.berkbavas.breakout.gui.TrajectoryPlotter;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
-import com.github.berkbavas.breakout.gui.TrajectoryPlotter;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.util.TransformationHelper;
@@ -71,7 +71,7 @@ public class ThrowEventHandler implements EventListener {
         }
     }
 
-    private void updateCursorPositionIfApplicable(MouseEvent event){
+    private void updateCursorPositionIfApplicable(MouseEvent event) {
         if (ball.isFreeze()) {
             cursorPosition = TransformationHelper.fromCanvasToWorld(event.getX(), event.getY());
             event.consume();

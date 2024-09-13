@@ -28,6 +28,7 @@ public class PhysicsManager extends Manager {
             next.set(false);
             return updatePrivate();
         }
+
         if (isPaused()) {
             return result;
         }

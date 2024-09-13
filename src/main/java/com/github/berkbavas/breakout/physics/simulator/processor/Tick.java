@@ -42,7 +42,7 @@ public abstract class Tick<T extends Collision> {
     protected abstract String getChildName();
 
     public String toString() {
-         return String.format("%s%n" +
+        return String.format("%s%n" +
                         "    # of Collisions           : %d%n" +
                         "    Minimum Time to Collision : %s%n" +
                         "    Time Spent                : %.6f%n" +

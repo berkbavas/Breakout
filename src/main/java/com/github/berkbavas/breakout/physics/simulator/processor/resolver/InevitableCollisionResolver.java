@@ -10,7 +10,6 @@ import com.github.berkbavas.breakout.physics.simulator.collision.ProspectiveColl
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
