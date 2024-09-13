@@ -32,10 +32,8 @@ public class Conflict extends Collision {
     // in other words, Conflict is velocity ignorant while PresentCollision concerns the direction of velocity and
     // the normal of the collider.
 
-    private final CriticalPointPair contact;
-
     public Conflict(Collider collider, ColliderEdge edge, CriticalPointPair contact) {
-        super(collider, edge);
-        this.contact = contact;
+        super(collider, edge, contact);
     }
+
 }

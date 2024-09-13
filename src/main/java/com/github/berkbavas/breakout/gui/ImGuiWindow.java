@@ -106,7 +106,7 @@ public class ImGuiWindow extends Application {
                     if (ImGui.button("> Resume")) {
                         manager.resume();
                     }
-
+                    ImGui.sameLine();
                     if (ImGui.button("Next Step")) {
                         manager.next();
                     }

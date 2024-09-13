@@ -9,13 +9,15 @@ import lombok.ToString;
 @Getter
 @ToString
 public abstract class ProspectiveCollision extends Collision {
-    private final SeparateCriticalPointPair contact;
     private final double timeToCollision;
 
     public ProspectiveCollision(Collider collider, ColliderEdge edge, SeparateCriticalPointPair contact, double timeToCollision) {
-        super(collider, edge);
-        this.contact = contact;
+        super(collider, edge, contact);
         this.timeToCollision = timeToCollision;
     }
 
+    @Override
+    public SeparateCriticalPointPair getContact() {
+        return (SeparateCriticalPointPair) super.getContact();
+    }
 }
