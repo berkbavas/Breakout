@@ -1,8 +1,5 @@
-package com.github.berkbavas.breakout.physics;
+package com.github.berkbavas.breakout.gui;
 
-import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
@@ -17,64 +14,62 @@ public class VisualDebugger {
     private final static double COLLISION_INDICATION_TIMEOUT_IN_SEC = 0.0;
     private final static double COLLISION_PREDICTION_START_TIME_IN_SEC = 0.35;
 
-    private final GameObjects objects;
-    private final PaintCommandHandler[] painter = new PaintCommandHandler[3];
+    private final Ball ball;
+    private final PaintCommandHandler handler;
     private final Stopwatch chronometer = new Stopwatch();
     private double sinceCollision = Double.MAX_VALUE;
 
-    public VisualDebugger(GameObjects objects) {
-        this.objects = objects;
-        painter[0] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
-        painter[1] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
-        painter[2] = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
+    public VisualDebugger(Ball ball, PaintCommandHandler handler) {
+        this.ball = ball;
+        this.handler = handler;
+    }
+
+    public void clear() {
+        handler.clear();
     }
 
     public void paint(Tick<? extends Collision> result) {
-        painter[0].clear();
-
         final double minimumTimeToCollision = result.getMinimumTimeToCollision();
 
         if (result instanceof CrashTick) {
             chronometer.start();
             sinceCollision = 0;
         } else if (result instanceof StationaryTick) {
-            painter[0].fill(objects.getBall(), Color.LAWNGREEN);
+            handler.fill(ball, Color.LAWNGREEN);
         }
 
         if (sinceCollision < COLLISION_INDICATION_TIMEOUT_IN_SEC) {
             sinceCollision = chronometer.getSeconds();
-            painter[0].fill(objects.getBall(), Color.RED);
+            handler.fill(ball, Color.RED);
         } else if (minimumTimeToCollision < COLLISION_PREDICTION_START_TIME_IN_SEC) {
             double inv = minimumTimeToCollision / COLLISION_PREDICTION_START_TIME_IN_SEC;
             double alpha = 1 - inv * inv;
-            painter[0].fill(objects.getBall(), Color.rgb(255, 0, 0, alpha));
+            handler.fill(ball, Color.rgb(255, 0, 0, alpha));
         }
     }
 
-    public void paint(Ball ball) {
-        painter[2].clear();
+    public void paint() {
+
         // Velocity indicator
         Point2D center = ball.getCenter();
-
         if (ball.getSpeed() != 0) {
             Vector2D velocity = ball.getVelocity();
-            Point2D p0 = center.add(velocity.multiply(1 / 10.0));
-            painter[2].drawLine(center, p0, Color.CYAN, 2);
+            Point2D p0 = center.add(velocity.multiply(0.1));
+            handler.drawLine(center, p0, Color.CYAN, 2);
         }
 
         // Acceleration indicator
         Vector2D pull = ball.getPull();
-
         if (pull.length() != 0) {
-            Point2D q0 = center.add(pull.multiply(0.01));
-            painter[2].drawLine(center, q0, Color.MAGENTA, 2);
+            Point2D q0 = center.add(pull.multiply(0.1));
+            handler.drawLine(center, q0, Color.MAGENTA, 2);
         }
 
+        // Resistance indicator
         Vector2D resistance = ball.getResistance();
-
         if (resistance.length() != 0) {
-            Point2D r0 = center.add(resistance.multiply(0.01));
-            painter[2].drawLine(center, r0, Color.RED, 2);
+            Point2D r0 = center.add(resistance.multiply(1));
+            handler.drawLine(center, r0, Color.RED, 2);
         }
     }
 

@@ -4,14 +4,14 @@ import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 
 import java.util.ArrayList;
 
-public class FreeTick<T extends Collision> extends Tick<T> {
+public class PausedTick extends Tick<Collision> {
 
-    public FreeTick(ArrayList<T> collisions, double timeSpent) {
-        super(collisions, timeSpent);
+    public PausedTick() {
+        super(new ArrayList<>(), 0.0);
     }
 
     @Override
     protected String getChildName() {
-        return "Free Tick";
+        return "Paused Tick";
     }
 }

@@ -21,9 +21,10 @@ public class Simulator {
     }
 
     public Tick<? extends Collision> process(double deltaTime) {
-        var tick = processor.process(deltaTime);
-        simulationTime += tick.getTimeSpent();
-        return tick;
+        var result = processor.process(deltaTime);
+        simulationTime += result.getTimeSpent();
+        result.setSimulationTime(simulationTime);
+        return result;
     }
 
 }

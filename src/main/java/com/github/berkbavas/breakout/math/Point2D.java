@@ -15,30 +15,6 @@ public class Point2D {
         this.y = y;
     }
 
-    public Point2D add(Point2D other) {
-        return new Point2D(x + other.x, y + other.y);
-    }
-
-    public Point2D add(Vector2D other) {
-        return new Point2D(x + other.getX(), y + other.getY());
-    }
-
-    public Vector2D subtract(Point2D other) {
-        return new Vector2D(x - other.x, y - other.y);
-    }
-
-    public Vector2D multiply(double scalar) {
-        return new Vector2D(scalar * x, scalar * y);
-    }
-
-    public double distanceTo(Point2D other) {
-        return distanceBetween(this, other);
-    }
-
-    public double length() {
-        return Math.sqrt(x * x + y * y);
-    }
-
     public static double distanceBetween(Point2D a, Point2D b) {
         final double dx = (a.x - b.x);
         final double dy = (a.y - b.y);
@@ -47,10 +23,6 @@ public class Point2D {
 
     public static double distanceBetween(Pair<Point2D, Point2D> pair) {
         return distanceBetween(pair.getKey(), pair.getValue());
-    }
-
-    public double angleBetween(Point2D other) {
-        return angleBetween(this, other);
     }
 
     public static double angleBetween(Point2D a, Point2D b) {
@@ -63,25 +35,6 @@ public class Point2D {
         }
 
         return angle;
-    }
-
-    public Vector2D toVector2D() {
-        return new Vector2D(x, y);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Point2D{x = %.2f y = %.2f}", x, y);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof Point2D) {
-            Point2D other = (Point2D) object;
-            return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
-        } else {
-            return false;
-        }
     }
 
     public static Point2D findClosestPoint(Point2D subject, Set<Point2D> points) {
@@ -130,6 +83,53 @@ public class Point2D {
         }
 
         return closestPair;
+    }
+
+    public Point2D add(Point2D other) {
+        return new Point2D(x + other.x, y + other.y);
+    }
+
+    public Point2D add(Vector2D other) {
+        return new Point2D(x + other.getX(), y + other.getY());
+    }
+
+    public Vector2D subtract(Point2D other) {
+        return new Vector2D(x - other.x, y - other.y);
+    }
+
+    public Vector2D multiply(double scalar) {
+        return new Vector2D(scalar * x, scalar * y);
+    }
+
+    public double distanceTo(Point2D other) {
+        return distanceBetween(this, other);
+    }
+
+    public double length() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public double angleBetween(Point2D other) {
+        return angleBetween(this, other);
+    }
+
+    public Vector2D toVector2D() {
+        return new Vector2D(x, y);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Point2D{x = %.2f y = %.2f}", x, y);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Point2D) {
+            Point2D other = (Point2D) object;
+            return Util.fuzzyCompare(x, other.x) && Util.fuzzyCompare(y, other.y);
+        } else {
+            return false;
+        }
     }
 
 }

@@ -1,8 +1,8 @@
-package com.github.berkbavas.breakout.graphics;
+package com.github.berkbavas.breakout.gui;
 
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler.FillCommand;
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler.PaintCommand;
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler.StrokeCommand;
+import com.github.berkbavas.breakout.gui.PaintCommandHandler.FillCommand;
+import com.github.berkbavas.breakout.gui.PaintCommandHandler.PaintCommand;
+import com.github.berkbavas.breakout.gui.PaintCommandHandler.StrokeCommand;
 import com.github.berkbavas.breakout.math.Circle;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
@@ -223,7 +223,7 @@ public class Painter {
     }
 
     public void processCommands(PaintCommandHandler handler) {
-        List<PaintCommand> commands = handler.getCommands();
+        List<PaintCommand> commands = handler.copyCommands();
 
         for (PaintCommand command : commands) {
             Color color = command.getColor();

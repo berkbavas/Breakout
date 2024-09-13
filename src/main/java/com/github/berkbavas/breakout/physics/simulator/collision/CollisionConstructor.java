@@ -24,6 +24,12 @@ public class CollisionConstructor {
         this.center = circle.getCenter();
     }
 
+    public static boolean isPointWithinCollisionTrajectory(Point2D pointOnCircle, Point2D test, Vector2D velocity) {
+        Vector2D circleToTestPoint = test.subtract(pointOnCircle);
+        double dot = Vector2D.dot(circleToTestPoint, velocity);
+        return dot > 0;
+    }
+
     public Optional<Collision> constructIfPossible(Collider collider, ColliderEdge edge, CriticalPointPair pair) {
         final boolean isProspectiveCollision = pair instanceof SeparateCriticalPointPair;
 
@@ -56,11 +62,5 @@ public class CollisionConstructor {
         }
 
         return Optional.empty();
-    }
-
-    public static boolean isPointWithinCollisionTrajectory(Point2D pointOnCircle, Point2D test, Vector2D velocity) {
-        Vector2D circleToTestPoint = test.subtract(pointOnCircle);
-        double dot = Vector2D.dot(circleToTestPoint, velocity);
-        return dot > 0;
     }
 }

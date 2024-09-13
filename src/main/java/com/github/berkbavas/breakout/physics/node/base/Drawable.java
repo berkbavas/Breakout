@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.node.base;
 
-import com.github.berkbavas.breakout.graphics.Painter;
+import com.github.berkbavas.breakout.gui.Painter;
 import javafx.scene.paint.Color;
 
 public interface Drawable {

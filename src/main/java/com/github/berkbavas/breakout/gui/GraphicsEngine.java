@@ -1,11 +1,14 @@
-package com.github.berkbavas.breakout.graphics;
+package com.github.berkbavas.breakout.gui;
 
-import com.github.berkbavas.breakout.Constants;
-import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.core.Constants;
+import com.github.berkbavas.breakout.core.GameObjects;
+import com.github.berkbavas.breakout.core.Manager;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.Brick;
 import com.github.berkbavas.breakout.physics.node.Obstacle;
 import com.github.berkbavas.breakout.physics.node.Paddle;
+import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
+import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -15,19 +18,24 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @Getter
-public class GraphicsEngine implements PaintCommandProcessor {
+public class GraphicsEngine extends Manager implements PaintCommandProcessor {
     private final StackPane root;
     private final Canvas canvas;
     private final GameObjects objects;
+    private final Ball ball;
     private final Painter painter;
+    private final VisualDebugger visualDebugger;
     private final ArrayList<PaintCommandHandler> handlers = new ArrayList<>();
     private final double width;
     private final double height;
+    private final boolean isDebugMode;
 
-    public GraphicsEngine(GameObjects objects) {
+    public GraphicsEngine(GameObjects objects, boolean isDebugMode) {
         this.objects = objects;
+        this.ball = objects.getBall();
         this.width = objects.getWorld().getWidth();
         this.height = objects.getWorld().getHeight();
+        this.isDebugMode = isDebugMode;
 
         canvas = new Canvas(width, height);
         root = new StackPane();
@@ -37,9 +45,22 @@ public class GraphicsEngine implements PaintCommandProcessor {
 
         GraphicsContext context = canvas.getGraphicsContext2D();
         painter = new Painter(context, width, height);
+
+        visualDebugger = new VisualDebugger(ball, createHandler());
     }
 
-    public void update() {
+    public void update(Tick<? extends Collision> result) {
+        if (isPaused()) {
+            return;
+        }
+
+        // If debug mode is on, paint the output of algorithm for visual debugging.
+        if (isDebugMode) {
+            visualDebugger.clear();
+            visualDebugger.paint(result);
+            visualDebugger.paint();
+        }
+
         painter.save();
 
         painter.clear();
@@ -81,6 +102,7 @@ public class GraphicsEngine implements PaintCommandProcessor {
         }
 
         painter.restore();
+
     }
 
     @Override

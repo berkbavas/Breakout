@@ -1,8 +1,8 @@
 package com.github.berkbavas.breakout.physics.handler;
 
-import com.github.berkbavas.breakout.GameObjects;
-import com.github.berkbavas.breakout.graphics.OnDemandPaintCommandProcessor;
-import com.github.berkbavas.breakout.graphics.PaintCommandHandler;
+import com.github.berkbavas.breakout.core.GameObjects;
+import com.github.berkbavas.breakout.gui.OnDemandPaintCommandProcessor;
+import com.github.berkbavas.breakout.gui.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.physics.node.base.Draggable;
 import com.github.berkbavas.breakout.physics.node.base.Drawable;

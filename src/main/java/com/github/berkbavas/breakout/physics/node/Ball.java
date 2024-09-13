@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.node;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.Circle;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;
@@ -20,23 +20,27 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
     private Vector2D velocity;
     private Vector2D pull = Vector2D.ZERO;
     private Vector2D resistance = Vector2D.ZERO;
+    private boolean freeze = false;
 
     public Ball(Point2D center, double radius, Vector2D velocity, Color color) {
         super(center, radius, color);
         this.velocity = velocity;
-
     }
 
     public void move(double deltaTime) {
+        if (freeze) {
+            return;
+        }
+
         var deltaPosition = velocity.multiply(deltaTime);
         center = center.add(deltaPosition);
     }
 
-    public void applyPull(Vector2D push, double deltaTime) {
-        velocity = velocity.add(push.multiply(deltaTime));
-    }
-
     public void slide(double deltaTime, Vector2D pull, Vector2D resistance) {
+        if (freeze) {
+            return;
+        }
+
         Vector2D net = pull.add(resistance);
         double speed = velocity.length();
         double dot = net.dot(velocity);
@@ -60,6 +64,10 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
     }
 
     public void move(double deltaTime, Vector2D acceleration) {
+        if (freeze) {
+            return;
+        }
+
         // c = c + v*t + 0.5*a*t^2
         center = center.add(velocity.multiply(deltaTime)).add(acceleration.multiply(0.5 * deltaTime * deltaTime));
         velocity = velocity.add(acceleration.multiply(deltaTime));
@@ -67,10 +75,18 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
 
     // Reflects the velocity without considering restitution
     public void collide(Vector2D normal) {
+        if (freeze) {
+            return;
+        }
+
         velocity = velocity.reflect(normal);
     }
 
     public void collide(Vector2D normal, double restitution, double friction) {
+        if (freeze) {
+            return;
+        }
+
         double angle = Vector2D.angleBetween(normal, velocity);
         double normalizedAngle = Math.abs(angle) - 90;
 
@@ -82,9 +98,9 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
 
         Vector2D calculated = verticalReduced.reversed().add(horizontalReduced);
 
-        if (normalizedAngle < Constants.Ball.DO_NOT_REFLECT_ANGLE_THRESHOLD) {
+        if (normalizedAngle < Constants.Ball.DO_NOT_REFLECT_ANGLE_THRESHOLD[0]) {
             velocity = horizontalReduced;
-        } else if (calculated.length() > Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD) {
+        } else if (calculated.length() > Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD[0]) {
             velocity = calculated;
         } else {
             velocity = Vector2D.ZERO;

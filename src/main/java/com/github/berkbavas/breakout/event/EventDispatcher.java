@@ -30,7 +30,11 @@ public class EventDispatcher {
     }
 
     private void dispatch(MouseEvent event) {
-        listeners.forEach((listener -> listener.listen(event)));
+        listeners.forEach(listener -> {
+            if (!event.isConsumed()) {
+                listener.listen(event);
+            }
+        });
     }
 
 }

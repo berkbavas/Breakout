@@ -20,6 +20,26 @@ public class Matrix2x2 {
         this.m11 = m11;
     }
 
+    // For given 2x2 matrix A and 2x1 matrix B, finds the solution for A*S = B
+    // and returns S if such solution exists.
+    public static Optional<Matrix2x1> solve(Matrix2x2 A, Matrix2x1 B) {
+        // Find A^-1 if it exists
+        // S = A^-1 * B
+        return A.inverted().map(inverse -> inverse.multiply(B));
+    }
+
+    // Solves [A0,B0;A1,B1] * [x;y] + [C0;C1] = [0;0] for (x, y).
+    public static Optional<Point2D> solve(double A0, double B0, double C0, double A1, double B1, double C1) {
+        Matrix2x2 lhs = new Matrix2x2(A0, B0, A1, B1);
+        Matrix2x1 rhs = new Matrix2x1(-C0, -C1);
+
+        return Matrix2x2.solve(lhs, rhs).map((solution) -> new Point2D(solution.getM00(), solution.getM10()));
+    }
+
+    public static Optional<Point2D> solve(Line2D l0, Line2D l1) {
+        return solve(l0.getA(), l0.getB(), l0.getC(), l1.getA(), l1.getB(), l1.getC());
+    }
+
     public double determinant() {
         return m00 * m11 - m01 * m10;
     }
@@ -44,26 +64,6 @@ public class Matrix2x2 {
         final double n11 = m00 / det;
 
         return Optional.of(new Matrix2x2(n00, -n01, -n10, n11));
-    }
-
-    // For given 2x2 matrix A and 2x1 matrix B, finds the solution for A*S = B
-    // and returns S if such solution exists.
-    public static Optional<Matrix2x1> solve(Matrix2x2 A, Matrix2x1 B) {
-        // Find A^-1 if it exists
-        // S = A^-1 * B
-        return A.inverted().map(inverse -> inverse.multiply(B));
-    }
-
-    // Solves [A0,B0;A1,B1] * [x;y] + [C0;C1] = [0;0] for (x, y).
-    public static Optional<Point2D> solve(double A0, double B0, double C0, double A1, double B1, double C1) {
-        Matrix2x2 lhs = new Matrix2x2(A0, B0, A1, B1);
-        Matrix2x1 rhs = new Matrix2x1(-C0, -C1);
-
-        return Matrix2x2.solve(lhs, rhs).map((solution) -> new Point2D(solution.getM00(), solution.getM10()));
-    }
-
-    public static Optional<Point2D> solve(Line2D l0, Line2D l1) {
-        return solve(l0.getA(), l0.getB(), l0.getC(), l1.getA(), l1.getB(), l1.getC());
     }
 
     @Override

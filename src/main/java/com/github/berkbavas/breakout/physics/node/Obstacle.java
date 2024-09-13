@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.node;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
@@ -33,7 +33,7 @@ public class Obstacle extends PolygonalNode implements Draggable, Collider {
 
     @Override
     public double getFrictionCoefficient() {
-        return Constants.Obstacle.FRICTION_COEFFICIENT;
+        return Constants.Obstacle.FRICTION_COEFFICIENT[0];
     }
 
     @Override

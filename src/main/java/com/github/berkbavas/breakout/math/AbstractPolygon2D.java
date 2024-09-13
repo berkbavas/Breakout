@@ -7,19 +7,15 @@ import java.util.*;
 
 public abstract class AbstractPolygon2D<T extends LineSegment2D> {
 
-    @Getter(AccessLevel.NONE)
-    protected List<T> edges;
-
-    @Getter(AccessLevel.NONE)
-    protected List<Point2D> vertices;
-
     @Getter
     protected final int numberOfVertices;
-
     @Getter
     protected final int numberOfEdges;
-
     protected final List<String> identifiers;
+    @Getter(AccessLevel.NONE)
+    protected List<T> edges;
+    @Getter(AccessLevel.NONE)
+    protected List<Point2D> vertices;
 
     // Constructs a polygon in 2D Cartesian plane from counter-clockwise oriented vertices.
     public AbstractPolygon2D(List<Point2D> vertices, List<String> identifiers) {

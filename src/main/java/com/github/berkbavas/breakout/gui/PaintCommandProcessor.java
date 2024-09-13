@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.graphics;
+package com.github.berkbavas.breakout.gui;
 
 public interface PaintCommandProcessor {
 

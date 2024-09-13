@@ -1,7 +1,7 @@
 package com.github.berkbavas.breakout.util;
 
-import com.github.berkbavas.breakout.Constants;
-import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.core.Constants;
+import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.*;
@@ -17,7 +17,7 @@ public final class GameObjectConstructor {
     }
 
     public static GameObjects construct(boolean isDebugMode) {
-        World world = constructWorld(Constants.World.WIDTH, Constants.World.HEIGHT);
+        World world = constructWorld(Constants.World.WIDTH, Constants.World.HEIGHT, isDebugMode);
         Ball ball = constructBall(Constants.Ball.INITIAL_X, Constants.Ball.INITIAL_Y, Constants.Ball.RADIUS, Constants.Ball.MIN_SPEED, Constants.Ball.MAX_SPEED);
         Paddle paddle = constructPaddle(Constants.Paddle.INITIAL_X, Constants.Paddle.INITIAL_Y, Constants.Paddle.WIDTH, Constants.Paddle.HEIGHT, Constants.Paddle.COLOR);
         Set<Brick> bricks;
@@ -48,8 +48,8 @@ public final class GameObjectConstructor {
         return new Ball(center, radius, velocity, Constants.Ball.COLOR);
     }
 
-    private static World constructWorld(double width, double height) {
-        return new World(0, 0, width, height, Constants.World.BACKGROUND_COLOR);
+    private static World constructWorld(double width, double height, boolean isDebugMode) {
+        return new World(0, 0, width, height, isDebugMode ? Constants.World.BACKGROUND_COLOR : Constants.World.BACKGROUND_COLOR);
     }
 
     private static Set<Brick> constructBricks(int rows, int columns) {

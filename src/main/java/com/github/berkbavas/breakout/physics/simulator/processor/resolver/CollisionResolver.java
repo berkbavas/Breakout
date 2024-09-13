@@ -16,9 +16,9 @@ public abstract class CollisionResolver<T extends Collision> {
     protected final Set<Collider> colliders;
     protected final Ball ball;
     protected final boolean isDebugMode;
-    protected final List<PresentCollision> presents = new ArrayList<>();
-    protected final List<InevitableCollision> inevitables = new ArrayList<>();
-    protected final List<PotentialCollision> potentials = new ArrayList<>();
+    protected final ArrayList<PresentCollision> presents = new ArrayList<>();
+    protected final ArrayList<InevitableCollision> inevitables = new ArrayList<>();
+    protected final ArrayList<PotentialCollision> potentials = new ArrayList<>();
     protected final NetForceCalculator netForceCalculator;
 
     public CollisionResolver(Set<Collider> colliders, Ball ball, boolean isDebugMode) {

@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout;
+package com.github.berkbavas.breakout.core;
 
 import com.github.berkbavas.breakout.physics.node.*;
 import com.github.berkbavas.breakout.physics.node.base.Collider;

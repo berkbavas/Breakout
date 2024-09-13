@@ -14,6 +14,24 @@ public class Vector2D {
         this.y = y;
     }
 
+    public static double dot(Vector2D a, Vector2D b) {
+        return a.x * b.x + a.y * b.y;
+    }
+
+    public static double angleBetween(Vector2D a, Vector2D b) {
+        final double radians = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
+        double degrees = Math.toDegrees(radians);
+        if (degrees < -180) {
+            degrees += 360;
+        }
+
+        if (180 < degrees) {
+            degrees -= 360;
+        }
+
+        return degrees;
+    }
+
     public Vector2D add(Vector2D other) {
         return new Vector2D(x + other.x, y + other.y);
     }
@@ -55,10 +73,6 @@ public class Vector2D {
 
     public double dot(Vector2D other) {
         return dot(this, other);
-    }
-
-    public static double dot(Vector2D a, Vector2D b) {
-        return a.x * b.x + a.y * b.y;
     }
 
     public boolean isCollinear(Vector2D other) {
@@ -107,20 +121,6 @@ public class Vector2D {
 
     public double angleBetween(Vector2D other) {
         return angleBetween(this, other);
-    }
-
-    public static double angleBetween(Vector2D a, Vector2D b) {
-        final double radians = Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x);
-        double degrees = Math.toDegrees(radians);
-        if (degrees < -180) {
-            degrees += 360;
-        }
-
-        if (180 < degrees) {
-            degrees -= 360;
-        }
-
-        return degrees;
     }
 
     public Vector2D rotate(double degrees) {

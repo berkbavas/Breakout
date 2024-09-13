@@ -101,6 +101,14 @@ public class Line2D {
         }
     }
 
+    public static Line2D from(Ray2D ray) {
+        return new Line2D(ray.getOrigin(), ray.calculate(1.00));
+    }
+
+    public static Line2D from(LineSegment2D ls) {
+        return new Line2D(ls.getP(), ls.getQ());
+    }
+
     public boolean isPointOnLine(Point2D point) {
         // Check that point = (x,y) satisfies the equation Ax + By + C = 0.
         return Util.isFuzzyZero(A * point.getX() + B * point.getY() + C);
@@ -109,6 +117,18 @@ public class Line2D {
     public boolean isParallelTo(Line2D other) {
         return Util.fuzzyCompare(slope, other.slope);
     }
+
+    //
+    //             x  x
+    //          x        x
+    //         x    .     x
+    //         x  Circle  x
+    //          x        x
+    //             x  x
+    //     P                  Q
+    //     *------------------*---►
+    //   Origin            Direction
+    //
 
     public Optional<Point2D> findIntersection(Line2D other) {
         // If two lines intersect at point (x,y) then we must have
@@ -128,7 +148,6 @@ public class Line2D {
         return Matrix2x2.solve(this, other);
     }
 
-
     // Reference: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     public double calculateDistanceToPoint(Point2D point) {
         final double x0 = point.getX();
@@ -146,18 +165,6 @@ public class Line2D {
         return numerator / denominator;
     }
 
-    //
-    //             x  x
-    //          x        x
-    //         x    .     x
-    //         x  Circle  x
-    //          x        x
-    //             x  x
-    //     P                  Q
-    //     *------------------*---►
-    //   Origin            Direction
-    //
-
     public Point2D findClosestPointToCircleCenter(Circle circle) {
         Point2D center = circle.getCenter();
         Vector2D originToCenter = center.subtract(P);
@@ -173,14 +180,6 @@ public class Line2D {
         } else {
             return false;
         }
-    }
-
-    public static Line2D from(Ray2D ray) {
-        return new Line2D(ray.getOrigin(), ray.calculate(1.00));
-    }
-
-    public static Line2D from(LineSegment2D ls) {
-        return new Line2D(ls.getP(), ls.getQ());
     }
 }
 

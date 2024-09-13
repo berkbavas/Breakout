@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.handler;
 
-import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.physics.node.Paddle;
 import com.github.berkbavas.breakout.util.TransformationHelper;
@@ -12,11 +12,10 @@ import javafx.scene.robot.Robot;
 
 public class BreakoutDragEventHandler extends DragEventHandler {
     private final Paddle paddle;
+    private final Robot robot = new Robot();
     private MouseEvent lastEvent;
     private Point2D delta;
     private boolean focused = false;
-
-    private final Robot robot = new Robot();
     private boolean ignoreMouseMove = false;
 
     public BreakoutDragEventHandler(GameObjects objects) {

@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.node;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -22,7 +22,7 @@ public class Paddle extends RectangularNode implements Draggable, Collider {
 
     @Override
     public double getFrictionCoefficient() {
-        return Constants.Paddle.FRICTION_COEFFICIENT;
+        return Constants.Paddle.FRICTION_COEFFICIENT[0];
     }
 
     @Override

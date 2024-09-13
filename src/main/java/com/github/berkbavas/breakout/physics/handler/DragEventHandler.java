@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.handler;
 
-import com.github.berkbavas.breakout.GameObjects;
+import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.event.EventListener;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.math.Util;

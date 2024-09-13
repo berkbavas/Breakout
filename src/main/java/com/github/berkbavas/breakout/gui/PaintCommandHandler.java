@@ -1,4 +1,4 @@
-package com.github.berkbavas.breakout.graphics;
+package com.github.berkbavas.breakout.gui;
 
 import com.github.berkbavas.breakout.math.LineSegment2D;
 import com.github.berkbavas.breakout.math.Point2D;
@@ -68,8 +68,13 @@ public class PaintCommandHandler {
         commands.add(new FillCommand(drawable, drawable.getColor()));
     }
 
-    public List<PaintCommand> getCommands() {
+    public List<PaintCommand> copyCommands() {
         return new ArrayList<>(commands);
+    }
+
+    public void setCommands(List<PaintCommand> commands) {
+        this.commands.clear();
+        this.commands.addAll(commands);
     }
 
     @Getter

@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -34,7 +34,7 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
         Vector2D normal = target.getNormal();
 
         if (isDebugMode) {
-            ball.collide(normal, Constants.Ball.RESTITUTION_FACTOR, target.getCollider().getFrictionCoefficient());
+            ball.collide(normal, Constants.Ball.RESTITUTION_FACTOR[0], target.getCollider().getFrictionCoefficient());
         } else {
             ball.collide(normal);
         }

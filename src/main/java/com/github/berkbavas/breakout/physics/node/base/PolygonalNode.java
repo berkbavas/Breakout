@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.node.base;
 
-import com.github.berkbavas.breakout.graphics.Painter;
+import com.github.berkbavas.breakout.gui.Painter;
 import com.github.berkbavas.breakout.math.AbstractPolygon2D;
 import com.github.berkbavas.breakout.math.Point2D;
 import javafx.scene.paint.Color;

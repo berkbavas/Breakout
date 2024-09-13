@@ -24,10 +24,6 @@ public class CollisionEngine {
         this.ball = ball;
     }
 
-    public List<Collision> findCollisions(double deltaTime) {
-        return findCollisions(colliders, ball, ball.getVelocity(), deltaTime);
-    }
-
     public static List<Conflict> findConflicts(Set<Collider> colliders, Circle circle) {
         List<Conflict> collisions = new ArrayList<>();
 
@@ -68,6 +64,22 @@ public class CollisionEngine {
         return collisions;
     }
 
+    public static List<CriticalPointPair> findCriticalPointsAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
+        List<CriticalPointPair> result = new ArrayList<>();
+        List<ColliderEdge> edges = collider.getEdges();
+        Point2D center = circle.getCenter();
+
+        for (ColliderEdge edge : edges) {
+            CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, direction).ifPresent(critical -> {
+                if (CollisionConstructor.isPointWithinCollisionTrajectory(center, critical.getPointOnEdge(), direction)) {
+                    result.add(critical);
+                }
+            });
+        }
+
+        return result;
+    }
+
 
     //
     //        x  x -----Direction----->
@@ -85,22 +97,6 @@ public class CollisionEngine {
     // such as the common vertex of two edges, closest to circle.
     // Two dots, one on the circle the other on the rectangle,
     // in the image above are the closest pair along the direction vector.
-
-    public static List<CriticalPointPair> findCriticalPointsAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
-        List<CriticalPointPair> result = new ArrayList<>();
-        List<ColliderEdge> edges = collider.getEdges();
-        Point2D center = circle.getCenter();
-
-        for (ColliderEdge edge : edges) {
-            CriticalPointFinder.findCriticalPointsAlongGivenDirection(circle, edge, direction).ifPresent(critical -> {
-                if (CollisionConstructor.isPointWithinCollisionTrajectory(center, critical.getPointOnEdge(), direction)) {
-                    result.add(critical);
-                }
-            });
-        }
-
-        return result;
-    }
 
     public static Optional<CriticalPointPair> findMostCriticalPointAlongGivenDirection(Circle circle, Collider collider, Vector2D direction) {
         var criticalPoints = findCriticalPointsAlongGivenDirection(circle, collider, direction);
@@ -153,5 +149,9 @@ public class CollisionEngine {
         }
 
         return result.normalized();
+    }
+
+    public List<Collision> findCollisions(double deltaTime) {
+        return findCollisions(colliders, ball, ball.getVelocity(), deltaTime);
     }
 }

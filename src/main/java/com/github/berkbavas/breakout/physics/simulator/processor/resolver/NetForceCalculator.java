@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
@@ -15,26 +15,9 @@ import java.util.stream.Collectors;
 
 public class NetForceCalculator {
     private final Set<Collider> colliders;
-    private final Vector2D gravity = Constants.Physics.GRAVITY;
-    private double tolerance = 0;
 
     public NetForceCalculator(Set<Collider> colliders) {
         this.colliders = colliders;
-    }
-
-    public enum ResultType {
-        NET_ZERO,
-        SLIDE,
-        FREE
-    }
-
-    @ToString
-    @Getter
-    @AllArgsConstructor
-    public static class Result {
-        private final ResultType type;
-        private final Vector2D pull;
-        private final Vector2D resistance;
     }
 
     public static void process(Result result, Ball ball, double deltaTime) {
@@ -56,6 +39,9 @@ public class NetForceCalculator {
     }
 
     public Result calculate(Ball ball) {
+        final Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
+        final double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
+
         Vector2D velocity = ball.getVelocity();
 
         var conflicts = CollisionEngine.findConflicts(colliders, ball.enlarge(tolerance));
@@ -103,6 +89,21 @@ public class NetForceCalculator {
             // In other words, they are "holding" the ball against gravity.
             return new Result(ResultType.NET_ZERO, Vector2D.ZERO, Vector2D.ZERO);
         }
+    }
+
+    public enum ResultType {
+        NET_ZERO,
+        SLIDE,
+        FREE
+    }
+
+    @ToString
+    @Getter
+    @AllArgsConstructor
+    public static class Result {
+        private final ResultType type;
+        private final Vector2D pull;
+        private final Vector2D resistance;
     }
 
 }

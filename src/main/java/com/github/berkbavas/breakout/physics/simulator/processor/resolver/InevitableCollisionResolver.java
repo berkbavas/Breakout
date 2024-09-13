@@ -1,6 +1,6 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
-import com.github.berkbavas.breakout.Constants;
+import com.github.berkbavas.breakout.core.Constants;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
@@ -9,6 +9,8 @@ import com.github.berkbavas.breakout.physics.simulator.collision.InevitableColli
 import com.github.berkbavas.breakout.physics.simulator.collision.ProspectiveCollision;
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,7 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Collider collider = earliest.getCollider();
         var filtered = inevitables.stream()
                 .filter(collision -> collision.getCollider() == collider)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
         double ttc = earliest.getTimeToCollision();
         Vector2D velocity = ball.getVelocity();
@@ -44,7 +46,7 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
 
             if (isDebugMode) {
                 netForceCalculator.process(ball, ttc);
-                ball.collide(normal, Constants.Ball.RESTITUTION_FACTOR, collider.getFrictionCoefficient());
+                ball.collide(normal, Constants.Ball.RESTITUTION_FACTOR[0], collider.getFrictionCoefficient());
             } else {
                 ball.move(deltaTime);
                 ball.collide(normal);

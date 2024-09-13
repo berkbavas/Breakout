@@ -23,11 +23,6 @@ public class LineSegment2D {
     private final double B;
     private final double C;
 
-    public enum NormalOrientation {
-        INWARDS,
-        OUTWARDS
-    }
-
     public LineSegment2D(Point2D P, Point2D Q) {
         this(P, Q, "");
     }
@@ -113,5 +108,10 @@ public class LineSegment2D {
 
         normals.put(NormalOrientation.OUTWARDS, new Vector2D(-dy, dx).normalized());
         normals.put(NormalOrientation.INWARDS, new Vector2D(dy, -dx).normalized());
+    }
+
+    public enum NormalOrientation {
+        INWARDS,
+        OUTWARDS
     }
 }
