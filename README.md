@@ -1,12 +1,14 @@
 # Breakout
 
-2D Continuous collision detection algorithm between circle and line segment written in `Java 11`.
-
-Logic can be found in the classes under ``com.github.berkbavas.breakout.math``,
-``com.github.berkbavas.breakout.physics.simulator.collision`` and
-``com.github.berkbavas.breakout.physics.simulator.helper``.
+Continuous collision detection algorithm between circle and line segment written in `JavaFX 11`.
+The project provides a simple bouncing ball dynamics as well and can be used
+as a library in order to implement simple 2d bouncy ball games like ``Breakout``.
 
 The project can be built and run with ``Maven``.
 
-There are two entry points; ``Debugger.java`` is for debugging purposes
-and ``Breakout.java`` is an application of the algorithm.
+There are two entry points:  ``mvn javafx:run -Pdebugger`` in order to run ``Debugger`` and
+``mvn javafx:run -Pbreakout`` for ``Breakout``.
+
+## Debugger
+
+## Breakout
