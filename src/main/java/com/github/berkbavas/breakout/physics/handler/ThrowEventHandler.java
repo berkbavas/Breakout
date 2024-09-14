@@ -2,7 +2,7 @@ package com.github.berkbavas.breakout.physics.handler;
 
 import com.github.berkbavas.breakout.core.GameObjects;
 import com.github.berkbavas.breakout.event.EventListener;
-import com.github.berkbavas.breakout.gui.OnDemandPaintCommandProcessor;
+import com.github.berkbavas.breakout.gui.GraphicsEngine;
 import com.github.berkbavas.breakout.gui.PaintCommandHandler;
 import com.github.berkbavas.breakout.gui.TrajectoryPlotter;
 import com.github.berkbavas.breakout.math.Point2D;
@@ -29,7 +29,7 @@ public class ThrowEventHandler implements EventListener {
     private boolean isEnabled = true;
 
     public ThrowEventHandler(GameObjects objects) {
-        this.painter = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
+        this.painter = GraphicsEngine.createHandler();
         this.ball = objects.getBall();
         this.colliders = objects.getColliders();
 

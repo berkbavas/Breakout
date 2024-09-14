@@ -18,14 +18,15 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @Getter
-public class GraphicsEngine extends Manager implements PaintCommandProcessor {
+public class GraphicsEngine extends Manager {
+    private final static ArrayList<PaintCommandHandler> handlers = new ArrayList<>();
+
     private final StackPane root;
     private final Canvas canvas;
     private final GameObjects objects;
     private final Ball ball;
     private final Painter painter;
     private final VisualDebugger visualDebugger;
-    private final ArrayList<PaintCommandHandler> handlers = new ArrayList<>();
     private final double width;
     private final double height;
     private final boolean isDebugMode;
@@ -105,11 +106,9 @@ public class GraphicsEngine extends Manager implements PaintCommandProcessor {
 
     }
 
-    @Override
-    public PaintCommandHandler createHandler() {
+    public static PaintCommandHandler createHandler() {
         PaintCommandHandler handler = new PaintCommandHandler();
         handlers.add(handler);
         return handler;
     }
-
 }

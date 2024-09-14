@@ -3,7 +3,6 @@ package com.github.berkbavas.breakout.core;
 import com.github.berkbavas.breakout.event.EventDispatcher;
 import com.github.berkbavas.breakout.gui.GraphicsEngine;
 import com.github.berkbavas.breakout.gui.ImGuiWindow;
-import com.github.berkbavas.breakout.gui.OnDemandPaintCommandProcessor;
 import com.github.berkbavas.breakout.util.GameObjectConstructor;
 import com.github.berkbavas.breakout.util.TransformationHelper;
 import javafx.animation.AnimationTimer;
@@ -41,7 +40,6 @@ public class Controller implements EventHandler<Event> {
         GameObjects objects = GameObjectConstructor.construct(isDebugMode);
 
         graphics = new GraphicsEngine(objects, isDebugMode);
-        OnDemandPaintCommandProcessor.initialize(graphics);
         TransformationHelper.initialize(objects.getWorld(), graphics.getCanvas());
 
         dispatcher = new EventDispatcher();

@@ -1,7 +1,7 @@
 package com.github.berkbavas.breakout.physics.handler;
 
 import com.github.berkbavas.breakout.core.GameObjects;
-import com.github.berkbavas.breakout.gui.OnDemandPaintCommandProcessor;
+import com.github.berkbavas.breakout.gui.GraphicsEngine;
 import com.github.berkbavas.breakout.gui.PaintCommandHandler;
 import com.github.berkbavas.breakout.math.Point2D;
 import com.github.berkbavas.breakout.physics.node.base.Draggable;
@@ -23,7 +23,7 @@ public class DebuggerDragEventHandler extends DragEventHandler {
     public DebuggerDragEventHandler(GameObjects objects) {
         super(objects);
         draggables = objects.getDraggables();
-        painter = OnDemandPaintCommandProcessor.getNextPaintCommandHandler();
+        painter = GraphicsEngine.createHandler();
     }
 
     @Override

@@ -44,7 +44,7 @@ public final class TrajectoryPlotter {
         if (INSTANCES.containsKey(caller)) {
             impl = INSTANCES.get(caller);
         } else {
-            impl = new TrajectoryPlotterInner(OnDemandPaintCommandProcessor.getNextPaintCommandHandler());
+            impl = new TrajectoryPlotterInner(GraphicsEngine.createHandler());
             INSTANCES.put(caller, impl);
         }
 
