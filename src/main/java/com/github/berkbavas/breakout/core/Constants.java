@@ -1,7 +1,6 @@
 package com.github.berkbavas.breakout.core;
 
 import com.github.berkbavas.breakout.util.BreakoutSimpleFloatProperty;
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
