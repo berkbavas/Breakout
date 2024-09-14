@@ -21,12 +21,15 @@ import java.util.stream.Collectors;
 @Getter
 public class NetForceCalculator {
     private final Set<Collider> colliders;
-    private Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
+    private Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY.get());
     private double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
     private Ray2D rayFromCenterToGround;
 
     public NetForceCalculator(Set<Collider> colliders) {
         this.colliders = colliders;
+
+        Constants.Physics.GRAVITY.addListener((o, newValue, oldValue) ->
+                gravity = new Vector2D(0, newValue.floatValue()));
     }
 
     public Result process(Ball ball, double deltaTime) {
@@ -51,7 +54,6 @@ public class NetForceCalculator {
     }
 
     public Result calculate(Ball ball) {
-        gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
         tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
         rayFromCenterToGround = new Ray2D(ball.getCenter(), gravity);
 

@@ -76,6 +76,10 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
 
         var dv = acceleration.multiply(deltaTime);
         velocity = velocity.add(dv);
+
+        if (Util.isFuzzyZero(velocity.length())) {
+            velocity = Vector2D.ZERO;
+        }
     }
 
     // Reflects the velocity without considering restitution
@@ -110,6 +114,10 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
         }
 
         velocity = vertical.reversed().add(horizontal); // Reflection is done here.
+
+        if (Util.isFuzzyZero(velocity.length())) {
+            velocity = Vector2D.ZERO;
+        }
     }
 
     public void translate(Vector2D direction, double distance) {

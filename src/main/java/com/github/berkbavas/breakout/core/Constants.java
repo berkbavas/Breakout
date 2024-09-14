@@ -1,5 +1,7 @@
 package com.github.berkbavas.breakout.core;
 
+import com.github.berkbavas.breakout.util.BreakoutSimpleFloatProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
@@ -67,7 +69,7 @@ public final class Constants {
 
     public final static class Physics {
         public static final float[] SIMULATION_RATIO = {0.0125f};
-        public static final float[] GRAVITY = {500.0f};
+        public static final BreakoutSimpleFloatProperty GRAVITY = new BreakoutSimpleFloatProperty(500.0f);
         public static final float[] NET_FORCE_CALCULATOR_TOLERANCE = {0.001f};
     }
 }

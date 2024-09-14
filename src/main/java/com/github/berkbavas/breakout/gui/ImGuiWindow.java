@@ -112,12 +112,19 @@ public class ImGuiWindow extends Application {
             if (!ImGui.collapsingHeader("Physics")) {
                 ImGui.sliderFloat("Obstacle Friction", Constants.Obstacle.FRICTION_COEFFICIENT, 0.0f, 1.0f);
                 ImGui.sliderFloat("World Friction", Constants.World.FRICTION_COEFFICIENT, 0.0f, 1.0f);
-                ImGui.sliderFloat("Gravity", Constants.Physics.GRAVITY, 0.000f, 3000.0f);
                 ImGui.sliderFloat("Net Force Calculator Tolerance", Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE, 0.0000f, 0.5f);
+
+                if (ImGui.sliderFloat("Gravity", Constants.Physics.GRAVITY.getAsArray(), 0.000f, 3000.0f)) {
+                    Constants.Physics.GRAVITY.update();
+                }
             }
 
             if (!ImGui.collapsingHeader("Simulation")) {
                 ImGui.sliderFloat("Simulation Speed", Constants.Physics.SIMULATION_RATIO, 0.0005f, 0.05f);
+
+                if (ImGui.checkbox("Visual Debugger", VisualDebugger.ENABLED.get())) {
+                    VisualDebugger.ENABLED.set(!VisualDebugger.ENABLED.get());
+                }
 
                 if (ImGui.checkbox("Trajectory Plotting", ThrowEventHandler.PLOT_TRAJECTORY_ENABLED.get())) {
                     ThrowEventHandler.PLOT_TRAJECTORY_ENABLED.set(!ThrowEventHandler.PLOT_TRAJECTORY_ENABLED.get());

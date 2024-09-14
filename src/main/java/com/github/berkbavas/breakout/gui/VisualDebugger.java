@@ -6,9 +6,12 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
 import com.github.berkbavas.breakout.physics.simulator.processor.StationaryTick;
 import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.paint.Color;
 
 public class VisualDebugger {
+    public final static SimpleBooleanProperty ENABLED = new SimpleBooleanProperty(true);
+
     private final static double INDICATE_COLLISION_DISTANCE = 100; // In world's distance unit.
 
     private final Ball ball;
@@ -17,6 +20,7 @@ public class VisualDebugger {
     public VisualDebugger(Ball ball, PaintCommandHandler handler) {
         this.ball = ball;
         this.handler = handler;
+
     }
 
     public void clear() {
@@ -24,6 +28,10 @@ public class VisualDebugger {
     }
 
     public void paint(Tick<? extends Collision> result) {
+        if (!ENABLED.get()) {
+            return;
+        }
+
         if (result instanceof StationaryTick) {
             handler.fill(ball, Color.LAWNGREEN);
         }
@@ -37,6 +45,9 @@ public class VisualDebugger {
     }
 
     public void paint() {
+        if (!ENABLED.get()) {
+            return;
+        }
 
         // Velocity indicator
         Point2D center = ball.getCenter();
