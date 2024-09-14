@@ -10,6 +10,24 @@
     <packaging>jar</packaging>
     <name>breakout</name>
 
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>debugger</id>
+            <properties>
+                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Debugger</javafx.mainClass>
+            </properties>
+        </profile>
+        <profile>
+            <id>breakout</id>
+            <properties>
+                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Breakout</javafx.mainClass>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
@@ -20,12 +38,6 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
 
@@ -50,7 +62,6 @@
             <artifactId>imgui-java-app</artifactId>
             <version>1.87.0</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -85,15 +96,12 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.8</version>
                 <configuration>
-                    <release>${maven.compiler.release}</release>
                     <launcher>breakout</launcher>
                     <jlinkImageName>breakout</jlinkImageName>
-                    <mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Breakout</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>
