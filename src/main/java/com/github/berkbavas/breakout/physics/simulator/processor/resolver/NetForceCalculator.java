@@ -1,100 +1,213 @@
 package com.github.berkbavas.breakout.physics.simulator.processor.resolver;
 
 import com.github.berkbavas.breakout.core.Constants;
+import com.github.berkbavas.breakout.math.Point2D;
+import com.github.berkbavas.breakout.math.Ray2D;
 import com.github.berkbavas.breakout.math.Util;
 import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
+import com.github.berkbavas.breakout.physics.simulator.collision.Conflict;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 public class NetForceCalculator {
     private final Set<Collider> colliders;
+    private Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
+    private double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
 
     public NetForceCalculator(Set<Collider> colliders) {
         this.colliders = colliders;
     }
 
-    public static void process(Result result, Ball ball, double deltaTime) {
-        if (result.getType() == ResultType.FREE) {
-            ball.move(deltaTime, result.getPull());
-        } else if (result.getType() == ResultType.SLIDE) {
-            ball.slide(deltaTime, result.getPull(), result.getResistance());
-        }
-
-        // For drawing
-        ball.setPull(result.getPull());
-        ball.setResistance(result.getResistance());
-    }
-
     public Result process(Ball ball, double deltaTime) {
         var result = calculate(ball);
-        process(result, ball, deltaTime);
+
+        var type = result.getType();
+        Vector2D netForce = result.getNetForce();
+
+        if (type == ResultType.APPLY_NET_FORCE) {
+            ball.move(netForce, deltaTime);
+        } else if (type == ResultType.BALL_IS_SLIDING) {
+            ball.slide(netForce, deltaTime);
+        } else if (type == ResultType.BALL_IS_AT_EQUILIBRIUM) {
+            ball.move(deltaTime); // No acceleration, just move with the current velocity.
+        } else if (type == ResultType.BALL_IS_AT_CORNER) {
+            ball.move(netForce, deltaTime);
+        }
+
+        ball.setNetForce(netForce);
+
         return result;
     }
 
     public Result calculate(Ball ball) {
-        final Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
-        final double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
-
-        Vector2D velocity = ball.getVelocity();
+        Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
+        double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
 
         var conflicts = CollisionEngine.findConflicts(colliders, ball.enlarge(tolerance));
 
-        var gravitySubjects = conflicts.stream()
-                .filter(conflict -> gravity.dot(conflict.getNormal()) <= 0)
-                .collect(Collectors.toList());
+        var gravitySubjects = conflicts.stream().filter(conflict -> gravity.dot(conflict.getNormal()) <= 0).collect(Collectors.toList());
 
         if (gravitySubjects.isEmpty()) {
             // No colliders around the ball, i.e., the ball is free to move.
-            return new Result(ResultType.FREE, gravity, Vector2D.ZERO);
+            return new Result(ResultType.APPLY_NET_FORCE, gravity);
         } else if (gravitySubjects.size() == 1) {
-            // Hmm... There is one collider around the ball.
-            // Let's find out if the ball is sliding on the collider.
-
-            // If v.n is zero then it means that velocity is perpendicular to the normal,
-            // and it is sliding on the collider.
-
-            var frictionSubjects = gravitySubjects.stream()
-                    .filter(conflict -> Util.isFuzzyZero(velocity.dot(conflict.getNormal())))
-                    .collect(Collectors.toList());
-
-            if (frictionSubjects.isEmpty()) {
-
-                Vector2D normal = gravitySubjects.get(0).getNormal();
-                Vector2D rejection = gravity.rejectionOf(normal);  // We need rejection, not projection.
-
-                return new Result(ResultType.FREE, rejection, Vector2D.ZERO);
-            } else {
-                // If we are here then the ball is sliding on the collider.
-                // Let's find push and resistance vectors.
-
-                Collider collider = frictionSubjects.get(0).getCollider();
-                Vector2D normal = frictionSubjects.get(0).getNormal();
-                double frictionCoefficient = collider.getFrictionCoefficient();
-                double resistanceMagnitude = gravity.projectOnto(normal).multiply(frictionCoefficient).length();
-                Vector2D resistance = velocity.normalized().reversed().multiply(resistanceMagnitude);
-                Vector2D rejection = gravity.rejectionOf(normal);  // We need rejection, not projection.
-
-                return new Result(ResultType.SLIDE, rejection, resistance);
-            }
+            return resolveSingleGravitySubject(gravitySubjects.get(0), ball);
         } else {
-            // If there are more than one collider around ball, then the ball is at equilibrium.
-            // Note that the normals of colliders around ball is against velocity.
-            // In other words, they are "holding" the ball against gravity.
-            return new Result(ResultType.NET_ZERO, Vector2D.ZERO, Vector2D.ZERO);
+            return resolveMultipleGravitySubjects(gravitySubjects, ball);
         }
     }
 
+    private Result resolveSingleGravitySubject(Conflict conflict, Ball ball) {
+
+        // Hmm... There is one collider around the ball.
+        // Let's find out if the ball is sliding on the collider.
+
+        // If velocity.normal is zero then it means that velocity is perpendicular to the normal,
+        // and it is sliding on the collider.
+
+        Vector2D velocity = ball.getVelocity();
+        Vector2D normal = conflict.getNormal();
+
+        // velocity.normal ~ 0 if the ball is sliding on the collider.
+        final boolean sliding = Util.isFuzzyZero(velocity.dot(normal));
+
+        if (sliding) {
+            // If we are here then the ball is sliding on the collider.
+            return createSlidingResult(conflict, ball);
+        } else {
+
+            if (ball.isStationary()) {
+                // Ball is not moving.
+                if (isBallAtCorner(conflict, ball)) {
+                    return createBallAtCornerResult(conflict, ball);
+                } else {
+                    return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
+                }
+            }
+
+            Vector2D netForce = gravity.rejectionOf(normal);  // We need rejection, not projection
+            return new Result(ResultType.APPLY_NET_FORCE, netForce);
+        }
+    }
+
+    private Result resolveMultipleGravitySubjects(List<Conflict> conflicts, Ball ball) {
+        var cornerSubjects = new ArrayList<Conflict>();
+
+        for (var conflict : conflicts) {
+            if (isBallAtCorner(conflict, ball)) {
+                cornerSubjects.add(conflict);
+            }
+        }
+
+        if (cornerSubjects.isEmpty()) {
+            // If there are more than one collider around ball, then the ball is at equilibrium.
+            // If the ball is at equilibrium then the normals of the colliders around ball is against velocity,
+            // hence they are "holding" the ball against the gravitation.
+            return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
+
+        } else if (cornerSubjects.size() == 1) {
+            // Ball is at corner.
+            var conflict = cornerSubjects.get(0);
+            return createBallAtCornerResult(conflict, ball);
+        } else {
+
+            if (isAtEquilibrium(cornerSubjects, ball)) {
+                return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
+            } else {
+                // Ball is at corner.
+
+                Point2D center = ball.getCenter();
+                Vector2D ground = gravity.normal();
+
+                var sorted = cornerSubjects.stream().sorted((c0, c1) -> {
+                    var contact0 = c0.getContact();
+                    var contact1 = c1.getContact();
+
+                    Vector2D centerToContact0 = contact0.getPointOnEdge().subtract(center);
+                    Vector2D centerToContact1 = contact1.getPointOnEdge().subtract(center);
+
+                    Vector2D p0 = centerToContact0.projectOnto(ground);
+                    Vector2D p1 = centerToContact1.projectOnto(ground);
+
+                    return Double.compare(p0.length(), p1.length());
+                }).collect(Collectors.toList());
+
+                Conflict conflict = sorted.get(0);
+
+                return createBallAtCornerResult(conflict, ball);
+            }
+        }
+    }
+
+    private Result createSlidingResult(Conflict conflict, Ball ball) {
+        // Let's find push and resistance vectors.
+
+        Vector2D velocity = ball.getVelocity();
+
+        Collider collider = conflict.getCollider();
+        Vector2D normal = conflict.getNormal();
+
+        double frictionCoefficient = collider.getFrictionCoefficient();
+        double resistanceMagnitude = gravity.projectOnto(normal).multiply(frictionCoefficient).length();
+
+        Vector2D resistance = velocity.normalized().reversed().multiply(resistanceMagnitude);
+        Vector2D rejection = gravity.rejectionOf(normal);  // We need rejection, not projection.
+        Vector2D netForce = rejection.add(resistance);
+        return new Result(ResultType.BALL_IS_SLIDING, netForce);
+    }
+
+    private Result createBallAtCornerResult(Conflict conflict, Ball ball) {
+        Point2D pointOnEdge = conflict.getContact().getPointOnEdge();
+        Vector2D circleToEdge = pointOnEdge.subtract(ball.getCenter());
+        Vector2D netForce = gravity.rejectionOf(circleToEdge);  // We need rejection, not projection.
+        return new Result(ResultType.BALL_IS_AT_CORNER, netForce);
+    }
+
+    private boolean isAtEquilibrium(List<Conflict> conflicts, Ball ball) {
+        Point2D center = ball.getCenter();
+        Vector2D ground = gravity.normal();
+
+        for (int i = 0; i < conflicts.size(); ++i) {
+            for (int j = i + 1; j < conflicts.size(); ++j) {
+                var contact0 = conflicts.get(i).getContact();
+                var contact1 = conflicts.get(j).getContact();
+
+                Vector2D centerToContact0 = contact0.getPointOnEdge().subtract(center);
+                Vector2D centerToContact1 = contact1.getPointOnEdge().subtract(center);
+
+                Vector2D p0 = centerToContact0.projectOnto(ground);
+                Vector2D p1 = centerToContact1.projectOnto(ground);
+
+                if (p0.dot(p1) < 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isBallAtCorner(Conflict conflict, Ball ball) {
+        var rayFromCenterToGround = new Ray2D(ball.getCenter(), gravity);
+        var intersection = rayFromCenterToGround.findIntersection(conflict.getEdge());
+        return intersection.isEmpty();
+    }
+
     public enum ResultType {
-        NET_ZERO,
-        SLIDE,
-        FREE
+        APPLY_NET_FORCE,
+        BALL_IS_SLIDING,
+        BALL_IS_AT_EQUILIBRIUM,
+        BALL_IS_AT_CORNER
     }
 
     @ToString
@@ -102,8 +215,7 @@ public class NetForceCalculator {
     @AllArgsConstructor
     public static class Result {
         private final ResultType type;
-        private final Vector2D pull;
-        private final Vector2D resistance;
+        private final Vector2D netForce;
     }
 
 }

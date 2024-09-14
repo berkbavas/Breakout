@@ -35,18 +35,17 @@ public class CollisionConstructor {
 
         if (isProspectiveCollision) {
             SeparateCriticalPointPair separate = (SeparateCriticalPointPair) pair;
-            Point2D pointOnCircle = separate.getPointOnCircle();
             Point2D pointOnEdge = separate.getPointOnEdge();
 
             if (isPointWithinCollisionTrajectory(center, pointOnEdge, velocity)) {
-                double distance = Point2D.distanceBetween(pointOnEdge, pointOnCircle);
+                double distance = separate.getDistance();
                 double timeToCollision = distance / speed;
                 boolean isInevitableCollision = timeToCollision <= deltaTime;
 
                 if (isInevitableCollision) {
                     return Optional.of(new InevitableCollision(collider, edge, separate, timeToCollision));
                 } else {
-                    return Optional.of(new PotentialCollision(collider, edge, separate, timeToCollision));
+                    return Optional.of(new PotentialCollision(collider, edge, separate));
                 }
             }
 

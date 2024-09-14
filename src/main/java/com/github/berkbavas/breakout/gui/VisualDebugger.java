@@ -46,18 +46,11 @@ public class VisualDebugger {
             handler.drawLine(center, p0, Color.CYAN, 2);
         }
 
-        // Acceleration indicator
-        Vector2D pull = ball.getPull();
-        if (pull.length() != 0) {
-            Point2D q0 = center.add(pull.multiply(0.1));
+        // Net force indicator
+        Vector2D netForce = ball.getNetForce();
+        if (netForce.length() != 0) {
+            Point2D q0 = center.add(netForce);
             handler.drawLine(center, q0, Color.MAGENTA, 2);
-        }
-
-        // Resistance indicator
-        Vector2D resistance = ball.getResistance();
-        if (resistance.length() != 0) {
-            Point2D r0 = center.add(resistance.multiply(1));
-            handler.drawLine(center, r0, Color.RED, 2);
         }
     }
 

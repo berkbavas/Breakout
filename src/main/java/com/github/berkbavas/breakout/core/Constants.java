@@ -26,7 +26,6 @@ public final class Constants {
         public static final Color COLOR = Color.WHITE;
         public static float[] RESTITUTION_FACTOR = {0.6f};
         public static float[] DO_NOT_BOUNCE_SPEED_THRESHOLD = {8.0f}; // Should be a function of gravity
-        public static float[] DO_NOT_REFLECT_ANGLE_THRESHOLD = {8.0f};
     }
 
     public final static class Paddle {

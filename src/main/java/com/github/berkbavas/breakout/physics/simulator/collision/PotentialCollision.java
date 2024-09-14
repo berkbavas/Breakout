@@ -24,7 +24,7 @@ public class PotentialCollision extends ProspectiveCollision {
     //
     //
 
-    public PotentialCollision(Collider collider, ColliderEdge edge, SeparateCriticalPointPair contact, double timeToCollision) {
-        super(collider, edge, contact, timeToCollision);
+    public PotentialCollision(Collider collider, ColliderEdge edge, SeparateCriticalPointPair contact) {
+        super(collider, edge, contact);
     }
 }

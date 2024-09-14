@@ -1,9 +1,10 @@
 package com.github.berkbavas.breakout.physics.simulator.processor;
 
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
-import com.github.berkbavas.breakout.physics.simulator.collision.PotentialCollision;
+import com.github.berkbavas.breakout.physics.simulator.collision.InevitableCollision;
 import com.github.berkbavas.breakout.physics.simulator.helper.CriticalPointPair;
 import com.github.berkbavas.breakout.physics.simulator.helper.CuttingCriticalPointPair;
+import com.github.berkbavas.breakout.physics.simulator.helper.SeparateCriticalPointPair;
 import com.github.berkbavas.breakout.physics.simulator.helper.TangentialCriticalPoint;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public abstract class Tick<T extends Collision> {
     private final double timeSpent;
     private final double minimumTimeToCollision;
     private final double minimumDistanceToCollision;
+    private final int numberOfSeparateCriticalPointPairs;
     private final int numberOfTangentialCriticalPoints;
     private final int numberOfCuttingCriticalPointPairs;
 
@@ -33,29 +35,34 @@ public abstract class Tick<T extends Collision> {
 
         int t0 = 0;
         int t1 = 0;
+        int t2 = 0;
 
         for (var collision : collisions) {
             CriticalPointPair pair = collision.getContact();
 
-            if (pair instanceof CuttingCriticalPointPair) {
+            if (pair instanceof SeparateCriticalPointPair) {
                 ++t0;
             }
-            if (pair instanceof TangentialCriticalPoint) {
+            if (pair instanceof CuttingCriticalPointPair) {
                 ++t1;
+            }
+            if (pair instanceof TangentialCriticalPoint) {
+                ++t2;
             }
         }
 
-        numberOfTangentialCriticalPoints = t0;
-        numberOfCuttingCriticalPointPairs = t1;
+        numberOfSeparateCriticalPointPairs = t0;
+        numberOfTangentialCriticalPoints = t1;
+        numberOfCuttingCriticalPointPairs = t2;
     }
 
     private double getMinimumTimeToCollisionInner() {
         var copy = new ArrayList<>(collisions);
         var sorted = copy.stream()
-                .filter(collision -> collision instanceof PotentialCollision)
+                .filter(collision -> collision instanceof InevitableCollision)
                 .sorted((c1, c2) -> {
-                    var pc1 = (PotentialCollision) c1;
-                    var pc2 = (PotentialCollision) c2;
+                    var pc1 = (InevitableCollision) c1;
+                    var pc2 = (InevitableCollision) c2;
 
                     return Double.compare(pc1.getTimeToCollision(), pc2.getTimeToCollision());
 
@@ -64,7 +71,7 @@ public abstract class Tick<T extends Collision> {
         if (sorted.isEmpty()) {
             return Double.MAX_VALUE;
         } else {
-            var minimum = (PotentialCollision) sorted.get(0);
+            var minimum = (InevitableCollision) sorted.get(0);
             return minimum.getTimeToCollision();
         }
     }
@@ -90,13 +97,15 @@ public abstract class Tick<T extends Collision> {
                         "    Remaining Time to Collision : %s%n" +
                         "    Time Spent                  : %.6f%n" +
                         "    Simulation Time             : %.6f%n" +
-                        "    # of Tangential CP          : %d%n" +
-                        "    # of Cutting CP             : %d",
+                        "    # of Separate CPs           : %d%n" +
+                        "    # of Tangential CPs         : %d%n" +
+                        "    # of Cutting CPs            : %d",
                 getChildName(),
                 getCollisions().size(),
                 minimumTimeToCollision == Double.MAX_VALUE ? "N/A" : String.format("%.6f", minimumTimeToCollision - timeSpent),
                 timeSpent,
                 simulationTime,
+                numberOfSeparateCriticalPointPairs,
                 numberOfTangentialCriticalPoints,
                 numberOfCuttingCriticalPointPairs);
     }

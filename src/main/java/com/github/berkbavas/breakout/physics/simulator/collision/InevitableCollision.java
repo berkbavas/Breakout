@@ -24,7 +24,10 @@ public class InevitableCollision extends ProspectiveCollision {
     //
     //
 
+    private final double timeToCollision;
+
     public InevitableCollision(Collider collider, ColliderEdge edge, SeparateCriticalPointPair contact, double timeToCollision) {
-        super(collider, edge, contact, timeToCollision);
+        super(collider, edge, contact);
+        this.timeToCollision = timeToCollision;
     }
 }

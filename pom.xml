@@ -17,13 +17,15 @@
             </activation>
             <id>debugger</id>
             <properties>
-                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Debugger</javafx.mainClass>
+                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Debugger
+                </javafx.mainClass>
             </properties>
         </profile>
         <profile>
             <id>breakout</id>
             <properties>
-                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Breakout</javafx.mainClass>
+                <javafx.mainClass>com.github.berkbavas.breakout/com.github.berkbavas.breakout.Breakout
+                </javafx.mainClass>
             </properties>
         </profile>
     </profiles>

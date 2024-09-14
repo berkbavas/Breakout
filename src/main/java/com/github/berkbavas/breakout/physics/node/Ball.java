@@ -18,8 +18,7 @@ import lombok.ToString;
 @Getter
 public class Ball extends DrawableCircle implements Draggable, GameObject {
     private Vector2D velocity;
-    private Vector2D pull = Vector2D.ZERO;
-    private Vector2D resistance = Vector2D.ZERO;
+    private Vector2D netForce = Vector2D.ZERO;
     private boolean freeze = false;
 
     public Ball(Point2D center, double radius, Vector2D velocity, Color color) {
@@ -32,45 +31,51 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
             return;
         }
 
-        var deltaPosition = velocity.multiply(deltaTime);
-        center = center.add(deltaPosition);
+
+        var dx = velocity.multiply(deltaTime);
+        center = center.add(dx);
+
+        if (Util.isFuzzyZero(velocity.length())) {
+            velocity = Vector2D.ZERO;
+        }
     }
 
-    public void slide(double deltaTime, Vector2D pull, Vector2D resistance) {
+    public void slide(Vector2D netForce, double deltaTime) {
         if (freeze) {
             return;
         }
 
-        Vector2D net = pull.add(resistance);
         double speed = velocity.length();
-        double dot = net.dot(velocity);
+        double dot = netForce.dot(velocity);
 
-        if (dot > 0 || dot == 0) {
+        if (dot >= 0) {
             // There are three cases:
             // 1) Velocity is zero.
             // 2) Net force is zero.
             // 3) Net force and velocity has the same direction.
             // In these three cases, we call move().
-            move(deltaTime, net);
+            move(netForce, deltaTime);
 
         } else {
             // dot < 0
             // Net force and velocity has opposite direction
-            double netMagnitude = net.length();
+            double netMagnitude = netForce.length();
             double timeUntilZeroSpeed = speed / netMagnitude;
 
-            move(Math.min(timeUntilZeroSpeed, deltaTime), net);
+            move(netForce, Math.min(timeUntilZeroSpeed, deltaTime));
         }
     }
 
-    public void move(double deltaTime, Vector2D acceleration) {
+    public void move(Vector2D acceleration, double deltaTime) {
         if (freeze) {
             return;
         }
 
-        // c = c + v*t + 0.5*a*t^2
-        center = center.add(velocity.multiply(deltaTime)).add(acceleration.multiply(0.5 * deltaTime * deltaTime));
-        velocity = velocity.add(acceleration.multiply(deltaTime));
+        var dx = velocity.multiply(deltaTime);
+        center = center.add(dx);
+
+        var dv = acceleration.multiply(deltaTime);
+        velocity = velocity.add(dv);
     }
 
     // Reflects the velocity without considering restitution
@@ -87,24 +92,25 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
             return;
         }
 
-        double angle = Vector2D.angleBetween(normal, velocity);
-        double normalizedAngle = Math.abs(angle) - 90;
-
+        // Find components
         Vector2D vertical = velocity.projectOnto(normal); // Vertical component
         Vector2D horizontal = velocity.rejectionOf(normal);  // Horizontal component
 
-        Vector2D verticalReduced = vertical.multiply(1 - restitution);
-        Vector2D horizontalReduced = horizontal.multiply(1 - friction);
+        // Restitution
+        vertical = vertical.multiply(1 - restitution); // Decreased
+        horizontal = horizontal.multiply(1 - friction); // Decreased
 
-        Vector2D calculated = verticalReduced.reversed().add(horizontalReduced);
+        // Clamp velocities down.
 
-        if (normalizedAngle < Constants.Ball.DO_NOT_REFLECT_ANGLE_THRESHOLD[0]) {
-            velocity = horizontalReduced;
-        } else if (calculated.length() > Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD[0]) {
-            velocity = calculated;
-        } else {
-            velocity = Vector2D.ZERO;
+        if (vertical.length() < Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD[0]) {
+            vertical = Vector2D.ZERO;
         }
+
+        if (horizontal.length() < Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD[0]) {
+            horizontal = Vector2D.ZERO;
+        }
+
+        velocity = vertical.reversed().add(horizontal); // Reflection is done here.
     }
 
     public void translate(Vector2D direction, double distance) {

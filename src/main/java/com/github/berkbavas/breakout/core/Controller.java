@@ -68,16 +68,16 @@ public class Controller implements EventHandler<Event> {
             }
         });
 
+        if (isDebugMode) {
+            gui.show(); // This line blocks until ImGui window is initialized.
+        }
+
         stage.setScene(scene);
         stage.setTitle(isDebugMode ? "Debugger" : "Breakout");
         stage.setMinWidth(800);
         stage.setMinHeight(600);
         stage.centerOnScreen();
         stage.show();
-
-        if (isDebugMode) {
-            gui.show();
-        }
 
         timer.start();
     }

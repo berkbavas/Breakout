@@ -26,7 +26,7 @@ public class PresentCollisionResolver extends CollisionResolver<PresentCollision
     @Override
     public Tick<? extends Collision> resolve(double deltaTime) {
         if (ball.isStationary()) {
-            netForceCalculator.process(ball, deltaTime);
+            var result = netForceCalculator.process(ball, deltaTime);
             return new StationaryTick<>(presents, deltaTime);
         }
 

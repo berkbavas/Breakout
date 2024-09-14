@@ -112,23 +112,13 @@ public class CollisionEngine {
         return criticalPoints.isEmpty() ? Optional.empty() : Optional.of(criticalPoints.get(0));
     }
 
-    public static void sortEarliestToLatest(List<? extends ProspectiveCollision> collisions) {
+    public static void sortEarliestToLatest(List<? extends InevitableCollision> collisions) {
         collisions.sort((c0, c1) -> {
             double ttc0 = c0.getTimeToCollision();
             double ttc1 = c1.getTimeToCollision();
 
             return Double.compare(ttc0, ttc1);
         });
-    }
-
-    public static ProspectiveCollision findEarliestCollision(List<? extends ProspectiveCollision> collisions) {
-        if (collisions.isEmpty()) {
-            throw new IllegalArgumentException("collisions is empty!");
-        }
-
-        List<? extends ProspectiveCollision> copy = new ArrayList<>(collisions);
-        sortEarliestToLatest(copy);
-        return copy.get(0);
     }
 
     public static Vector2D calculateCollectiveCollisionNormal(List<? extends ProspectiveCollision> collisions, Vector2D velocity) {

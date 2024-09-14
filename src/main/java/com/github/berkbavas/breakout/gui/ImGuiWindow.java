@@ -7,6 +7,7 @@ import com.github.berkbavas.breakout.math.Vector2D;
 import com.github.berkbavas.breakout.physics.handler.ThrowEventHandler;
 import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.simulator.collision.Collision;
+import com.github.berkbavas.breakout.physics.simulator.processor.StationaryTick;
 import com.github.berkbavas.breakout.physics.simulator.processor.Tick;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -14,34 +15,20 @@ import imgui.app.Application;
 import imgui.app.Configuration;
 import imgui.flag.ImGuiCond;
 
+import java.util.ArrayList;
+
 public class ImGuiWindow extends Application {
     private final Ball ball;
     private final PhysicsManager manager;
+    private final Object lock = new Object();
     private volatile boolean close = false;
-    private Tick<? extends Collision> tickResult;
+    private Tick<? extends Collision> tickResult = new StationaryTick<>(new ArrayList<>(), 0);
+    private volatile boolean initialized = false;
+    private boolean runOnce = true;
 
     public ImGuiWindow(GameObjects objects, PhysicsManager manager) {
         this.ball = objects.getBall();
         this.manager = manager;
-    }
-
-    public void update(Tick<? extends Collision> tickResult) {
-        this.tickResult = tickResult;
-    }
-
-    public void show() {
-        new Thread(() -> Application.launch(this)).start();
-    }
-
-    public void close() {
-        close = true;
-    }
-
-    @Override
-    protected void configure(Configuration config) {
-        config.setWidth(520);
-        config.setHeight(800);
-        config.setTitle("ImGui Window");
     }
 
     @Override
@@ -53,9 +40,47 @@ public class ImGuiWindow extends Application {
     }
 
     @Override
+    protected void configure(Configuration config) {
+        config.setWidth(520);
+        config.setHeight(800);
+        config.setTitle("ImGui Window");
+    }
+
+    public void update(Tick<? extends Collision> tickResult) {
+        this.tickResult = tickResult;
+    }
+
+    public void show() {
+        new Thread(() -> Application.launch(this)).start();
+
+        synchronized (lock) {
+            while (!initialized) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void close() {
+        close = true;
+    }
+
+    @Override
     public void process() {
         if (close) {
             System.exit(0);
+        }
+
+        if (runOnce) {
+            synchronized (lock) {
+                runOnce = false;
+                initialized = true;
+                lock.notifyAll();
+            }
         }
 
         ImGui.setNextWindowSize(440, 720, ImGuiCond.FirstUseEver);
@@ -65,15 +90,12 @@ public class ImGuiWindow extends Application {
             if (!ImGui.collapsingHeader("Stats")) {
                 ImGui.text(String.format("Position   : %10.2f, %10.2f", ball.getCenter().getX(), ball.getCenter().getY()));
                 ImGui.text(String.format("Velocity   : %10.4f, %10.4f", ball.getVelocity().getX(), ball.getVelocity().getY()));
-                ImGui.text(String.format("Pull       : %10.2f, %10.2f", ball.getPull().getX(), ball.getPull().getY()));
-                ImGui.text(String.format("Resistance : %10.2f, %10.2f", ball.getResistance().getX(), ball.getResistance().getY()));
+                ImGui.text(String.format("Net Force  : %10.2f, %10.2f", ball.getNetForce().getX(), ball.getNetForce().getY()));
                 ImGui.text(String.format("Speed      : %10.3f", ball.getSpeed()));
             }
 
             if (!ImGui.collapsingHeader("Tick Result")) {
-                if (tickResult != null) {
-                    ImGui.text(tickResult.toString());
-                }
+                ImGui.text(tickResult.toString());
             }
 
             if (!ImGui.collapsingHeader("Ball")) {
@@ -85,7 +107,6 @@ public class ImGuiWindow extends Application {
 
                 ImGui.sliderFloat("Restitution", Constants.Ball.RESTITUTION_FACTOR, 0.0f, 1.0f);
                 ImGui.sliderFloat("Bounce Speed Threshold", Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD, 0.0f, 50.0f);
-                ImGui.sliderFloat("Reflect Angle Threshold", Constants.Ball.DO_NOT_REFLECT_ANGLE_THRESHOLD, 0.0f, 30.0f);
             }
 
             if (!ImGui.collapsingHeader("Physics")) {

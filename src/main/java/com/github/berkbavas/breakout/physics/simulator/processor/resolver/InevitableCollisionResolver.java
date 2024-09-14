@@ -6,10 +6,10 @@ import com.github.berkbavas.breakout.physics.node.Ball;
 import com.github.berkbavas.breakout.physics.node.base.Collider;
 import com.github.berkbavas.breakout.physics.simulator.collision.CollisionEngine;
 import com.github.berkbavas.breakout.physics.simulator.collision.InevitableCollision;
-import com.github.berkbavas.breakout.physics.simulator.collision.ProspectiveCollision;
 import com.github.berkbavas.breakout.physics.simulator.processor.CrashTick;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,8 +26,15 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
 
     @Override
     public CrashTick<InevitableCollision> resolve(double deltaTime) {
-        ProspectiveCollision earliest = CollisionEngine.findEarliestCollision(inevitables);
+        assert !inevitables.isEmpty();
+
+        var sorted = inevitables.stream()
+                .sorted(Comparator.comparingDouble(InevitableCollision::getTimeToCollision))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        InevitableCollision earliest = sorted.get(0);
         Collider collider = earliest.getCollider();
+
         var filtered = inevitables.stream()
                 .filter(collision -> collision.getCollider() == collider)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -36,20 +43,17 @@ public class InevitableCollisionResolver extends CollisionResolver<InevitableCol
         Vector2D velocity = ball.getVelocity();
         Vector2D normal = CollisionEngine.calculateCollectiveCollisionNormal(filtered, velocity);
 
-        if (normal.l2norm() == 0) {
-            // TODO: Think about a smart solution for this case.
-            if (isDebugMode) {
-                netForceCalculator.process(ball, deltaTime);
-            }
-        } else {
 
-            if (isDebugMode) {
-                netForceCalculator.process(ball, ttc);
+        if (isDebugMode) {
+            var result = netForceCalculator.process(ball, ttc);
+
+            if (normal.l2norm() != 0) {
                 ball.collide(normal, Constants.Ball.RESTITUTION_FACTOR[0], collider.getFrictionCoefficient());
-            } else {
-                ball.move(deltaTime);
-                ball.collide(normal);
             }
+
+        } else {
+            ball.move(deltaTime);
+            ball.collide(normal);
         }
 
         return new CrashTick<>(filtered, normal, ttc);

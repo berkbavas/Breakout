@@ -50,6 +50,12 @@ public class GraphicsEngine extends Manager {
         visualDebugger = new VisualDebugger(ball, createHandler());
     }
 
+    public static PaintCommandHandler createHandler() {
+        PaintCommandHandler handler = new PaintCommandHandler();
+        handlers.add(handler);
+        return handler;
+    }
+
     public void update(Tick<? extends Collision> result) {
         if (isPaused()) {
             return;
@@ -104,11 +110,5 @@ public class GraphicsEngine extends Manager {
 
         painter.restore();
 
-    }
-
-    public static PaintCommandHandler createHandler() {
-        PaintCommandHandler handler = new PaintCommandHandler();
-        handlers.add(handler);
-        return handler;
     }
 }

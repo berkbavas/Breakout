@@ -29,10 +29,6 @@ public class PotentialCollisionResolver extends CollisionResolver<PotentialColli
 
         if (isDebugMode) {
             var result = netForceCalculator.process(ball, deltaTime);
-
-            if (result.getType() == NetForceCalculator.ResultType.NET_ZERO) {
-                ball.move(deltaTime);
-            }
         } else {
             ball.move(deltaTime);
         }
