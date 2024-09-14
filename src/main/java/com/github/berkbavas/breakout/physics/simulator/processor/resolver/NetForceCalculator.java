@@ -23,6 +23,7 @@ public class NetForceCalculator {
     private final Set<Collider> colliders;
     private Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
     private double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
+    private Ray2D rayFromCenterToGround;
 
     public NetForceCalculator(Set<Collider> colliders) {
         this.colliders = colliders;
@@ -50,8 +51,9 @@ public class NetForceCalculator {
     }
 
     public Result calculate(Ball ball) {
-        Vector2D gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
-        double tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
+        gravity = new Vector2D(0, Constants.Physics.GRAVITY[0]);
+        tolerance = Constants.Physics.NET_FORCE_CALCULATOR_TOLERANCE[0];
+        rayFromCenterToGround = new Ray2D(ball.getCenter(), gravity);
 
         var conflicts = CollisionEngine.findConflicts(colliders, ball.enlarge(tolerance));
 
@@ -88,7 +90,7 @@ public class NetForceCalculator {
 
             if (ball.isStationary()) {
                 // Ball is not moving.
-                if (isBallAtCorner(conflict, ball)) {
+                if (isBallAtCorner(conflict)) {
                     return createBallAtCornerResult(conflict, ball);
                 } else {
                     return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
@@ -101,10 +103,19 @@ public class NetForceCalculator {
     }
 
     private Result resolveMultipleGravitySubjects(List<Conflict> conflicts, Ball ball) {
+
+        if (isAtEquilibrium(conflicts, ball)) {
+            // If there are more than one collider around ball, then the ball is at equilibrium.
+            // If the ball is at equilibrium then the normals of the colliders around ball is against velocity,
+            // hence they are "holding" the ball against the gravitation.
+            return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
+        }
+
         var cornerSubjects = new ArrayList<Conflict>();
 
+
         for (var conflict : conflicts) {
-            if (isBallAtCorner(conflict, ball)) {
+            if (isBallAtCorner(conflict)) {
                 cornerSubjects.add(conflict);
             }
         }
@@ -114,7 +125,6 @@ public class NetForceCalculator {
             // If the ball is at equilibrium then the normals of the colliders around ball is against velocity,
             // hence they are "holding" the ball against the gravitation.
             return new Result(ResultType.BALL_IS_AT_EQUILIBRIUM, Vector2D.ZERO);
-
         } else if (cornerSubjects.size() == 1) {
             // Ball is at corner.
             var conflict = cornerSubjects.get(0);
@@ -169,13 +179,24 @@ public class NetForceCalculator {
     private Result createBallAtCornerResult(Conflict conflict, Ball ball) {
         Point2D pointOnEdge = conflict.getContact().getPointOnEdge();
         Vector2D circleToEdge = pointOnEdge.subtract(ball.getCenter());
-        Vector2D netForce = gravity.rejectionOf(circleToEdge);  // We need rejection, not projection.
+        Vector2D projection = gravity.projectOnto(circleToEdge);
+        Vector2D netForce = gravity.rejectionOf(circleToEdge).add(projection.reversed());
         return new Result(ResultType.BALL_IS_AT_CORNER, netForce);
     }
 
     private boolean isAtEquilibrium(List<Conflict> conflicts, Ball ball) {
         Point2D center = ball.getCenter();
         Vector2D ground = gravity.normal();
+
+        for (var conflict : conflicts) {
+            boolean ballIsOnCollider = rayFromCenterToGround.findIntersection(conflict.getEdge()).isPresent();
+            if (ballIsOnCollider) {
+                Vector2D rejection = gravity.rejectionOf(conflict.getNormal());
+                if (Util.isFuzzyZero(rejection.l2norm())) {
+                    return true;
+                }
+            }
+        }
 
         for (int i = 0; i < conflicts.size(); ++i) {
             for (int j = i + 1; j < conflicts.size(); ++j) {
@@ -197,10 +218,8 @@ public class NetForceCalculator {
         return false;
     }
 
-    private boolean isBallAtCorner(Conflict conflict, Ball ball) {
-        var rayFromCenterToGround = new Ray2D(ball.getCenter(), gravity);
-        var intersection = rayFromCenterToGround.findIntersection(conflict.getEdge());
-        return intersection.isEmpty();
+    private boolean isBallAtCorner(Conflict conflict) {
+        return rayFromCenterToGround.findIntersection(conflict.getEdge()).isEmpty();
     }
 
     public enum ResultType {

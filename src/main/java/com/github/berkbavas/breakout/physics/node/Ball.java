@@ -101,7 +101,6 @@ public class Ball extends DrawableCircle implements Draggable, GameObject {
         horizontal = horizontal.multiply(1 - friction); // Decreased
 
         // Clamp velocities down.
-
         if (vertical.length() < Constants.Ball.DO_NOT_BOUNCE_SPEED_THRESHOLD[0]) {
             vertical = Vector2D.ZERO;
         }
