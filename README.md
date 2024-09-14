@@ -1,6 +1,6 @@
 # Breakout
 
-Continuous collision detection algorithm between circle and line segment written in `JavaFX 11`.
+Continuous collision detection algorithm between circle and line segment written in `Java 11`.
 The project provides a simple bouncing ball dynamics as well and can be used
 as a library in order to implement simple 2d bouncy ball games like ``Breakout``.
 
