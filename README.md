@@ -2,7 +2,7 @@
 
 Continuous collision detection algorithm between circle and line segment written in `Java`.
 The project provides a simple bouncing ball dynamics as well and can be used
-as a library in order to implement simple 2d bouncy ball games like ``Breakout``.
+as a library in order to implement simple 2D bouncy ball games like ``Breakout``.
 
 The project can be built and run with ``Maven``.
 
