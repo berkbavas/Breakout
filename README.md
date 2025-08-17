@@ -39,10 +39,8 @@ mvn javafx:run -Pbreakout
 
 ## Demo
 
-**Debugger**
 [Debugger](https://github.com/user-attachments/assets/62305376-e13d-450e-813e-401cba68d1da)
 
-**Breakout**
 [Breakout](https://github.com/user-attachments/assets/a72b0965-f39b-416f-b196-5c04f24f3f87)
 
 ## License
