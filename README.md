@@ -1,19 +1,50 @@
+
 # Breakout
 
-Continuous collision detection algorithm between circle and line segment written in `Java`.
-The project provides a simple bouncing ball dynamics as well and can be used
-as a library in order to implement simple 2D bouncy ball games like ``Breakout``.
+Breakout is a Java-based 2D game engine and demo featuring continuous collision detection between circles and line segments. It includes a simple bouncing ball physics engine and can be used as a library for building classic games like Breakout.
 
-The project can be built and run with ``Maven``.
+## Features
 
-There are two entry points:  ``mvn javafx:run -Pdebugger`` in order to run ``Debugger`` and
-``mvn javafx:run -Pbreakout`` for ``Breakout``.
+- Continuous collision detection (circle vs. line segment)
+- Simple 2D physics engine
+- Debugger mode for visualizing collisions and trajectories
+- Ready-to-use Breakout game demo
 
-## Debugger
+## Getting Started
 
-https://github.com/user-attachments/assets/62305376-e13d-450e-813e-401cba68d1da
+### Prerequisites
 
-## Breakout
+- Java 17 or higher
+- Maven
 
-https://github.com/user-attachments/assets/a72b0965-f39b-416f-b196-5c04f24f3f87
+### Build & Run
 
+Clone the repository and use Maven to build and run:
+
+```sh
+mvn clean install
+```
+
+#### Run Debugger
+
+```sh
+mvn javafx:run -Pdebugger
+```
+
+#### Run Breakout
+
+```sh
+mvn javafx:run -Pbreakout
+```
+
+## Demo
+
+**Debugger**
+[Debugger](https://github.com/user-attachments/assets/62305376-e13d-450e-813e-401cba68d1da)
+
+**Breakout**
+[Breakout](https://github.com/user-attachments/assets/a72b0965-f39b-416f-b196-5c04f24f3f87)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
